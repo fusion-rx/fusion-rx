@@ -69,7 +69,7 @@ export class ExpressService implements AfterAppInit {
         this.express = express();
     }
 
-    ngAfterAppInit(): void {
+    fsnAfterAppInit(): void {
         this.express.listen(this._expressPort, this._expressHost, () => {
             logger.log(
                 `Express server listening on ${this._expressHost}:${this._expressPort}`

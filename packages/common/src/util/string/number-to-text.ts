@@ -2,8 +2,6 @@ import { digitToText } from './digit-to-text';
 import { evalTens } from './eval-tens';
 
 export function numberToText(num: number): string {
-    console.log();
-
     if (num <= 9) {
         return digitToText(num) + '';
     } else {

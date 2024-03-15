@@ -71,7 +71,6 @@ describe('Injectable', () => {
 
     test('Dynamically injected', () => {
         const app = boostrap(MyModule);
-        console.log(app.providers);
         const importService: ImportService =
             app.providers['ImportService'].instance;
         expect(importService.dynamicallyInjected.returnDynamicVal()).toEqual(3);

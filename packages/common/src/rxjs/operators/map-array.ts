@@ -1,5 +1,5 @@
 import { Observable, map } from 'rxjs';
-import { toArray } from '../../type';
+import { toArray } from '../../util/type';
 
 /**
  * Coerces an projected value into an Array.

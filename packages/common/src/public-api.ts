@@ -6,7 +6,7 @@ export * from './util/math';
 export * from './util/object';
 export * from './util/operators';
 export * from './util/parse';
-export * from './util/rxjs';
+export * from './rxjs';
 export * from './util/string';
 export * from './util/type';
 export * from './util/url';

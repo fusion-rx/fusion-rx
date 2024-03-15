@@ -10,6 +10,9 @@
 **/*.js.map
 **/*.tsbuildinfo
 
+packages/cli
+packages/node
+
 
 # dependencies
 **/node_modules

@@ -160,7 +160,6 @@ function initializeModule(
         // Get providers injected into the constructor with `@Inject()`
         const factoryProviderVals =
             Reflect.getMetadata(INJECT, provider.reference) ?? [];
-        console.log(factoryProviderVals);
 
         // Iterate over the provider's injected dependencies and attempt to
         // inject them from the local module or the exports of an imported module.
@@ -293,13 +292,7 @@ function initializeModule(
     // Check for `onModuleInit` lifecycle hook in local providers
     Object.values(localProviders).forEach((provider) => {
         if (implementsOnModuleInit(provider.instance))
-            provider.instance.ngOnModuleInit();
-    });
-
-    // Check for `onModuleInit` lifecycle hook in root providers
-    Object.values(rootProviders).forEach((provider) => {
-        if (implementsAfterAppInit(provider.instance))
-            provider.instance.ngAfterAppInit();
+            provider.instance.fsnOnModuleInit();
     });
 
     const sgModule = {
@@ -313,7 +306,7 @@ function initializeModule(
         const invokeAfterAppInit = (moduleRef: FsnModuleRef) => {
             Object.values(moduleRef.providers).forEach((provider) => {
                 if (implementsAfterAppInit(provider.instance))
-                    provider.instance.ngAfterAppInit();
+                    provider.instance.fsnAfterAppInit();
             });
             Object.values(moduleRef.imports ?? {}).forEach((imported) => {
                 invokeAfterAppInit(imported);
@@ -327,7 +320,7 @@ function initializeModule(
         // Check for `afterAppInit` lifecycle hook in root providers
         Object.values(rootProviders).forEach((provider) => {
             if (implementsAfterAppInit(provider.instance))
-                provider.instance.ngAfterAppInit();
+                provider.instance.fsnAfterAppInit();
         });
     }
 

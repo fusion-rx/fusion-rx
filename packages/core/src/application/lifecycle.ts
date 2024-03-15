@@ -4,7 +4,7 @@
  * @publicApi
  */
 export interface OnModuleInit {
-    ngOnModuleInit(): void;
+    fsnOnModuleInit(): void;
 }
 
 export const implementsOnModuleInit = (val: any): val is OnModuleInit => {
@@ -12,7 +12,7 @@ export const implementsOnModuleInit = (val: any): val is OnModuleInit => {
         val !== undefined &&
         val !== null &&
         typeof val === 'object' &&
-        val.sgOnModuleInit
+        val.fsnOnModuleInit
     );
 };
 
@@ -22,7 +22,7 @@ export const implementsOnModuleInit = (val: any): val is OnModuleInit => {
  * @publicApi
  */
 export interface AfterAppInit {
-    ngAfterAppInit(): void;
+    fsnAfterAppInit(): void;
 }
 
 export const implementsAfterAppInit = (val: any): val is AfterAppInit => {
@@ -30,6 +30,6 @@ export const implementsAfterAppInit = (val: any): val is AfterAppInit => {
         val !== undefined &&
         val !== null &&
         typeof val === 'object' &&
-        val.sgAfterAppInit
+        val.fsnAfterAppInit
     );
 };
