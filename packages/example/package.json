@@ -1,0 +1,51 @@
+{
+    "name": "@fusion-rx/example",
+    "version": "1.0.0",
+    "description": "An example fusion-rx application.",
+    "author": "Alexander Porrello",
+    "license": "MIT",
+    "source": "app/main.ts",
+    "main": "../../dist/example/index.js",
+    "module": "../../dist/example/index.mjs",
+    "types": "../../dist/example/index.types.d.ts",
+    "targets": {
+        "main": {
+            "context": "node",
+            "outputFormat": "commonjs"
+        },
+        "module": {
+            "context": "browser",
+            "outputFormat": "esmodule"
+        }
+    },
+    "scripts": {
+        "build": "npx tsc -p tsconfig.build.json",
+        "postbuild:parcel": "node ../../tools/post-build/index.js",
+        "build:parcel": "npx parcel build && npm run postbuild",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:cov": "jest --coverage"
+    },
+    "dependencies": {
+        "@fusion-rx/common": "^0.1.0",
+        "@fusion-rx/core": "^0.1.0",
+        "chalk": "^4.1.2",
+        "qs": "^6.11.2",
+        "rxjs": "^7.5.0"
+    },
+    "devDependencies": {
+        "@types/qs": "^6.9.10"
+    },
+    "exports": {
+        "./package.json": {
+            "default": "./package.json"
+        },
+        ".": {
+            "node": "./index.js",
+            "esm2020": "./index.mjs",
+            "es2020": "./index.mjs",
+            "types": "./index.types.d.ts",
+            "default": "./index.js"
+        }
+    }
+}

@@ -1,0 +1,9 @@
+{
+    "name": "@fusion-rx/workspace-init",
+    "version": "1.0.0",
+    "description": "Initializes workspaces for projects that build their dist files to a different location than the project root.",
+    "main": "index.js",
+    "bin": "src/cli.js",
+    "author": "Alexander Porrello",
+    "license": "MIT"
+}

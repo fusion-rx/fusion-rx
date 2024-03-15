@@ -1,0 +1,49 @@
+{
+    "$schema": "https://raw.githubusercontent.com/SchemaStore/schemastore/master/src/schemas/json/package.json",
+    "required": ["workspacesConf"],
+    "properties": {
+        "workspacesConf": {
+            "description": "Defines the options for FusionRx Workspace Helper Configuration Files",
+            "type": "object",
+            "required": ["srcRoot", "outDir", "projects"],
+            "properties": {
+                "srcRoot": {
+                    "type": "string",
+                    "description": "The source root of projects in this workspace relative to the location of fsn-workspace.json"
+                },
+                "outDir": {
+                    "type": "string",
+                    "description": "The output directory of the workspaces in this project relative to fsn-workspace.json"
+                },
+                "preinstall": {
+                    "type": "boolean",
+                    "description": "True if `npm install` should be run prior to the workspaces being built."
+                },
+                "projects": {
+                    "type": "array",
+                    "description": "Init details for each project in this workspace.",
+                    "required": ["source"],
+                    "items": {
+                        "type": "object",
+                        "description": "Init details for a project in this workspace.",
+                        "properties": {
+                            "source": {
+                                "type": "string",
+                                "description": "The path to the project root relative to `srcRoot`."
+                            },
+                            "buildCommand": {
+                                "type": "string",
+                                "description": "The npm command that builds the project."
+                            },
+                            "buildFrom": {
+                                "type": "string",
+                                "description": "Whether the build command should be run in the project or the workspace root.",
+                                "enum": ["project", "root"]
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}

@@ -1,0 +1,10 @@
+{
+    "name": "@fusion-rx/postbuild",
+    "version": "1.0.0",
+    "description": "Executes post-build steps for fusion-rx",
+    "bin": {
+        "postbuild": "./index.js"
+    },
+    "author": "Alexander Porrello",
+    "license": "MIT"
+}

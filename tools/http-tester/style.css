@@ -1,0 +1,105 @@
+@font-face {
+    font-family: 'Google Sans';
+    src: url('./assets/google-sans.woff2') format('woff2');
+}
+
+html {
+    display: flex;
+}
+
+body {
+    --body-color: #000000ec;
+    --body-z1: #ffffff20;
+    --body-z2: #ffffff11;
+    --body-text: #ffffffec;
+
+    --border-radius: 4px;
+
+    --primary: #0d47a1;
+    --primary-lighter: #b6c8e3;
+    --primary-darker: #072f85;
+    --accent: #388e3c;
+    --accent-lighter: #c3ddc5;
+    --accent-darker: #247127;
+    --warn: #f44336;
+    --warn-lighter: #fcc7c3;
+    --warn-darker: #ef2c22;
+
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    background: var(--body-color);
+    color: var(--body-text);
+    font-family: 'Google Sans';
+    font-size: 1rem;
+    flex-grow: 1;
+}
+
+.primary {
+    background: var(--primary-lighter);
+    color: var(--primary);
+}
+
+.accent {
+    background: var(--primary-lighter);
+    color: var(--primary);
+}
+
+.warn {
+    background: var(--primary-lighter);
+    color: var(--primary);
+}
+
+.default {
+    background: var(--body-z1);
+    color: var(--body-text);
+}
+
+button {
+    border: none;
+    border-radius: var(--border-radius);
+    font-family: 'Google Sans';
+}
+
+.elm-form {
+    border: none;
+    border-radius: var(--border-radius);
+    border: solid 1px var(--body-z1);
+    display: flex;
+    gap: 8px;
+    padding: 8px;
+    margin: 0;
+    flex-wrap: wrap;
+}
+
+.elm-form-error {
+    border: solid 1px var(--warn) !important;
+}
+
+.elm-input-wrapper {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex-grow: 1;
+}
+
+.elm-input-label {
+    display: flex;
+    font-size: 12px;
+}
+
+.elm-input {
+    background: #99999938;
+    border: solid 1px var(--body-z2);
+    border-radius: var(--border-radius);
+    padding: 4px;
+    outline: none;
+    color: var(--body-text);
+    font-family: 'Google Sans';
+    height: 100%;
+    font-size: 1rem;
+}
+
+.output {
+    flex-grow: 1;
+}
