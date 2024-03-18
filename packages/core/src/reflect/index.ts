@@ -9,3 +9,4 @@ export * from './get-injected-dependencies';
 export * from './set-metadata';
 export * from './get-function-name';
 export * from './reflect';
+export * from './get-metadata';

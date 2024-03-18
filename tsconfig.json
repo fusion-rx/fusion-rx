@@ -32,7 +32,8 @@
         "noImplicitOverride": true,
         "noPropertyAccessFromIndexSignature": true,
         "skipLibCheck": true,
-        "resolveJsonModule": true
+        "resolveJsonModule": true,
+        "isolatedModules": true
     },
     "exclude": ["./dist"]
 }

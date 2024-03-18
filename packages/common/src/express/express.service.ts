@@ -1,9 +1,6 @@
-import { AfterAppInit, Logger } from '@fusion-rx/core';
+import { AfterAppInit, Logger, Injectable, Inject } from '@fusion-rx/core';
 import { Observable } from 'rxjs';
 import express, { Request, Response } from 'express';
-
-import { Injectable } from '../../../core/src/di';
-import { Inject } from '../../../core/src/di/inject';
 
 const logger = new Logger('ExpressService');
 

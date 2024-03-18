@@ -8,7 +8,6 @@ export const decorate = Reflect.decorate;
 export const defineMetadata = Reflect.defineMetadata;
 export const defineProperty = Reflect.defineProperty;
 export const get = Reflect.get;
-export const getMetadata = Reflect.getMetadata;
 export const getMetadataKeys = Reflect.getMetadataKeys;
 export const getOwnMetadata = Reflect.getOwnMetadata;
 export const getOwnMetadataKeys = Reflect.getOwnMetadataKeys;
