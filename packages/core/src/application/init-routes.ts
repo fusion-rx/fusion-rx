@@ -1,25 +1,24 @@
-import { ROUTES, CLASS_NAME, INJECTED_DEPS } from '../di';
-import { BASE_ROUTE } from '../di/route';
-import { Class } from '../interface';
-import { getMetadata } from '../reflect';
-import { FsnRouteRef } from './refs';
+import { BASE_ROUTE, TEMPLATE, TEMPLATE_URL } from '../di/route';
+import { FsnInjectableRef, FsnRouteRef } from './refs';
 
-export const intitRoutes = (moduleRef: Class<any>) => {
-    getMetadata<Class<any>[]>(ROUTES, moduleRef, []).forEach((ref) => {
-        const routeName = Reflect.getMetadata(CLASS_NAME, ref);
-        const injected = getMetadata<string[]>(INJECTED_DEPS, ref, []);
-        const baseRoute = Reflect.getMetadata(BASE_ROUTE, ref);
+export const processRoute = (injectable: FsnInjectableRef) => {
+    const baseUrl = Reflect.getMetadata(BASE_ROUTE, injectable.reference);
+    const templateUrl = Reflect.getMetadata(TEMPLATE_URL, injectable.reference);
+    const template = Reflect.getMetadata(TEMPLATE, injectable.reference);
 
-        const route: FsnRouteRef = {
-            routeName,
-            injected,
-            reference: ref,
-            baseRoute
-        };
+    const route: FsnRouteRef = {
+        injected: injectable.injected,
+        baseUrl,
+        providedIn: 'module',
+        providerName: injectable.providerName,
+        reference: injectable.reference,
+        instance: injectable.instance,
+        template,
+        templateUrl,
+        dynamicInjections: injectable.dynamicInjections
+    };
 
-        if (injected.length === 0) {
-            route.instance = new ref();
-        } else {
-        }
-    });
+    console.log(route.template, route.templateUrl);
+
+    return route;
 };

@@ -12,7 +12,7 @@ import {
     getMetadata
 } from '../reflect';
 import { rootProviders } from './bootstrap';
-import { FsnProvidereRef, FsnModuleRef } from './refs';
+import { FsnInjectableRef, FsnModuleRef } from './refs';
 
 /**
  * Determines if `e` is a native error.
@@ -51,7 +51,7 @@ const isInitialized = (val: any) => {
 export class ProviderInitializer {
     constructor(
         /** Provider names mapped to provider refs */
-        public providers: Record<string, FsnProvidereRef>,
+        public providers: Record<string, FsnInjectableRef>,
         /** Imported module names mapped to module refs */
         public imports: Record<string, FsnModuleRef>,
         /** The name of the modules in which `providers` is registered */
@@ -62,7 +62,7 @@ export class ProviderInitializer {
      * Initialize all providers.
      */
     public init() {
-        const initializedProviders: Record<string, FsnProvidereRef> = {};
+        const initializedProviders: Record<string, FsnInjectableRef> = {};
 
         Object.keys(this.providers).forEach((key) => {
             const provider = this._initializeProvider(this.providers[key]);
@@ -87,7 +87,7 @@ export class ProviderInitializer {
      * @returns The provider reference with an `instance`
      * @throws Will throw a meaningful error if the provider cannot be initialized
      */
-    private _initializeProvider(provider: FsnProvidereRef): FsnProvidereRef {
+    private _initializeProvider(provider: FsnInjectableRef): FsnInjectableRef {
         // If this provider has an instance, it has already been initialized
         if (provider.instance) return provider;
 
@@ -98,7 +98,7 @@ export class ProviderInitializer {
         }
     }
 
-    private _initializeInjectableProvider(provider: FsnProvidereRef) {
+    private _initializeInjectableProvider(provider: FsnInjectableRef) {
         // To avoid unnecessary type-checking, create a reference
         // to the provider reference cast to Class
         const reference = provider.reference as Class<any>;
@@ -137,7 +137,7 @@ export class ProviderInitializer {
         return provider;
     }
 
-    private _initializeFactoryProvider(provider: FsnProvidereRef) {
+    private _initializeFactoryProvider(provider: FsnInjectableRef) {
         // To avoid unnecessary type-checking, create a reference
         // to the provider reference cast to FactoryProvider
         const reference = provider.reference as FactoryProvider;

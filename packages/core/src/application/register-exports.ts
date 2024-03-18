@@ -1,4 +1,4 @@
-import { FsnProvidereRef } from './refs';
+import { FsnInjectableRef } from './refs';
 import { CLASS_NAME, EXPORTS, PROVIDED_IN } from '../di';
 import { Class } from '../interface';
 import { getMetadata } from '../reflect';
@@ -6,7 +6,7 @@ import { getMetadata } from '../reflect';
 export const registerExports = (
     moduleRef: Class<any>,
     moduleName: string,
-    localProviders: Record<string, FsnProvidereRef>
+    localProviders: Record<string, FsnInjectableRef>
 ) => {
     // Add the instance of exported modules to the `exports` of the
     // registered module.

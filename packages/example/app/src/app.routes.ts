@@ -1,7 +1,11 @@
-import { Injectable } from '@fusion-rx/core';
+import { Route } from '@fusion-rx/core';
 import { ExpressService } from '@fusion-rx/common';
 
-@Injectable()
+@Route({
+    template: `{
+        "hello-world": {}
+    }`
+})
 export class AppRoutes {
     constructor(private _expressService: ExpressService) {}
 

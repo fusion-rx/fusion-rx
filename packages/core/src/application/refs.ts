@@ -5,10 +5,10 @@ export declare type FsnModuleRef = {
     moduleName: string;
     exports: Record<string, any>;
     imports: Record<string, FsnModuleRef>;
-    providers: Record<string, FsnProvidereRef>;
+    providers: Record<string, FsnInjectableRef>;
 };
 
-export declare type FsnProvidereRef = {
+export declare type FsnInjectableRef = {
     providerName: string;
     providedIn: 'root' | 'module';
     injected: string[];
@@ -18,10 +18,8 @@ export declare type FsnProvidereRef = {
     instance?: any;
 };
 
-export declare type FsnRouteRef = {
-    routeName: string;
-    injected: string[];
-    reference: Class<any>;
-    baseRoute?: string;
-    instance?: any;
+export declare type FsnRouteRef = FsnInjectableRef & {
+    baseUrl: string;
+    templateUrl?: string;
+    template?: string;
 };
