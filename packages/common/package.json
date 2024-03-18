@@ -20,7 +20,7 @@
     },
     "scripts": {
         "postbuild": "node ../../tools/post-build/index.js",
-        "build": "npx parcel build && npm run postbuild",
+        "build": "npx parcel build",
         "test": "jest",
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage"

@@ -56,7 +56,7 @@ export function initializeModule(
     ).init();
 
     // Register the providers that this module exports
-    const exports = registerExports(moduleRef, providers);
+    const exports = registerExports(moduleRef, moduleName, providers);
 
     // Call onModuleInit for providers in this module that implement
     // the lifecycle hook

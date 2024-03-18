@@ -1,10 +1,11 @@
 import { FsnProvidereRef } from './refs';
-import { EXPORTS } from '../di';
+import { CLASS_NAME, EXPORTS, PROVIDED_IN } from '../di';
 import { Class } from '../interface';
 import { getMetadata } from '../reflect';
 
 export const registerExports = (
     moduleRef: Class<any>,
+    moduleName: string,
     localProviders: Record<string, FsnProvidereRef>
 ) => {
     // Add the instance of exported modules to the `exports` of the
@@ -15,10 +16,12 @@ export const registerExports = (
         // The exports array holds references to classes, so we have to
         // get the class name so we can export the registered provider's
         // instance
-        const exportName = exported.prototype?.constructor?.name;
+        const exportName = Reflect.getMetadata(CLASS_NAME, exported);
+
+        console.log(exportName);
 
         // TODO - we need to handle dynamic providers
-        if (!exportName)
+        if (exportName === undefined)
             throw new Error(
                 `Failed to resolve provider ? ` +
                     `exported from ${exportName} at position ${index}. ` +
@@ -27,10 +30,10 @@ export const registerExports = (
 
         // If we've somehow gotten this far without initializing
         // the exported provider, then we have to throw an error.
-        if (!localProviders[exportName].instance) {
+        if (localProviders[exportName]?.instance === undefined) {
             throw new Error(
-                `Failed to resolve provider ${exportName} ` +
-                    `exported from ${exportName} at position ${index}. ` +
+                `Failed to resolve exported provider ${exportName} ` +
+                    `from module ${moduleName} at position ${index}. ` +
                     'Is it a valid class decorated with @Injectable()?'
             );
         }
@@ -42,7 +45,13 @@ export const registerExports = (
     };
 
     getMetadata<Class<any>[]>(EXPORTS, moduleRef, []).forEach(
-        (exported, index) => registerExport(exported, index)
+        (exported, index) => {
+            // If this provider is injected in the root context, there's
+            // no need to register it as an export.
+            if (Reflect.getMetadata(PROVIDED_IN, exported) !== 'root') {
+                registerExport(exported, index);
+            }
+        }
     );
 
     return exports;
