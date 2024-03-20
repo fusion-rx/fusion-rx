@@ -1,3 +1,5 @@
+import { getInjectedDependencies, getMetadata } from '@fusion-rx/shared';
+
 import { FsnInjectableRef } from './refs';
 import {
     FactoryProvider,
@@ -9,7 +11,6 @@ import {
     isInjectableRef
 } from '../di';
 import { Class, isClass } from '../interface';
-import { getInjectedDependencies, getMetadata } from '../reflect';
 
 /**
  * Registers a local provider.

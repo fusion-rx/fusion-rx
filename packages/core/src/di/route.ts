@@ -1,5 +1,6 @@
+import { getInjectedDependencies } from '@fusion-rx/shared';
+
 import { Class, isClass } from '../interface';
-import { getInjectedDependencies } from '../reflect';
 import { INJECTED_DEPS, PROVIDED_IN } from './injectable';
 import { CLASS_NAME } from './module';
 

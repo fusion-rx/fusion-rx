@@ -1,4 +1,10 @@
 import {
+    getClassName,
+    getConstructorParameters,
+    getMetadata
+} from '@fusion-rx/shared';
+
+import {
     CLASS_NAME,
     FactoryProvider,
     INJECT,
@@ -6,11 +12,6 @@ import {
     isInjectableRef
 } from '../di';
 import { Class, isClass } from '../interface';
-import {
-    getClassName,
-    getConstructorParameters,
-    getMetadata
-} from '../reflect';
 import { rootProviders } from './bootstrap';
 import { FsnInjectableRef, FsnModuleRef } from './refs';
 

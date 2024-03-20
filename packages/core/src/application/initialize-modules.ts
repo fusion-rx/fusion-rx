@@ -1,3 +1,5 @@
+import { getMetadata } from '@fusion-rx/shared';
+
 import { FsnModuleRef } from './refs';
 import {
     ModuleWithProviders,
@@ -13,7 +15,6 @@ import { afterAppInit, onModuleInit } from './lifecycle';
 import { registerExports } from './register-exports';
 import { registerProviders } from './register-providers';
 import { registerImports } from './register-imports';
-import { getMetadata } from '../reflect';
 import { ProviderInitializer } from './initialize-providers';
 import { initRoute } from './init-routes';
 

@@ -1,6 +1,7 @@
 import { Route } from '@fusion-rx/core';
 import { CharacterService } from './character.service';
-import { ExpressService, handleNoElementsInSequence } from '@fusion-rx/common';
+import { ExpressService } from '@fusion-rx/common';
+import { handleNoElementsInSequence } from '@fusion-rx/shared';
 import { catchError, last, scan } from 'rxjs';
 import { SeinfeldCharacter } from '../database/character-db';
 

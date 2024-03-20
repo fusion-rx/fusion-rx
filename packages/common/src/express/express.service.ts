@@ -1,4 +1,5 @@
-import { AfterAppInit, Logger, Injectable, Inject } from '@fusion-rx/core';
+import { AfterAppInit, Injectable, Inject } from '@fusion-rx/core';
+import { Logger } from '@fusion-rx/shared';
 import {
     NEVER,
     Observable,

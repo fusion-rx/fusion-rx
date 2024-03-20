@@ -1,7 +1,8 @@
+import { getMetadata } from '@fusion-rx/shared';
+
 import { FsnInjectableRef } from './refs';
 import { CLASS_NAME, EXPORTS, PROVIDED_IN } from '../di';
 import { Class } from '../interface';
-import { getMetadata } from '../reflect';
 
 export const registerExports = (
     moduleRef: Class<any>,
