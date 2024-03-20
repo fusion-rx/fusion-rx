@@ -4,4 +4,4 @@ export * from './flat-scan-to-object';
 export * from './map-array';
 export * from './never-if-null';
 export * from './scan-to-object';
-export * from './catch-no-elements-in-sequence';
+export * from './handle-no-elements-in-sequence';

@@ -15,7 +15,7 @@ import { registerProviders } from './register-providers';
 import { registerImports } from './register-imports';
 import { getMetadata } from '../reflect';
 import { ProviderInitializer } from './initialize-providers';
-import { processRoute } from './init-routes';
+import { initRoute } from './init-routes';
 
 export function initializeModule(
     moduleRef: Class<any> | ModuleWithProviders<any>,
@@ -75,11 +75,13 @@ export function initializeModule(
     // Separate routes from providers
     Object.keys(routeRefs)
         .map((routeName) => {
-            return providers[routeName];
+            const provider = providers[routeName];
+            delete providers[routeName];
+            return provider;
         })
         .forEach((routeRef) => {
             // And initialize the routes
-            processRoute(routeRef);
+            initRoute(routeRef);
         });
 
     // Create this modules reference object for return
