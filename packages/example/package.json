@@ -1,6 +1,7 @@
 {
     "name": "@fusion-rx/example",
-    "version": "1.0.0",
+    "version": "0.1.0",
+    "private": true,
     "description": "An example Fusion application.",
     "author": "Alexander Porrello",
     "license": "MIT",
