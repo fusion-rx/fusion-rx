@@ -1,5 +1,6 @@
 {
     "name": "@fusion-rx/test",
+    "private": true,
     "version": "0.1.0",
     "description": "Provides test data for unit testing.",
     "author": "Alexander Porrello",

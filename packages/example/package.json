@@ -1,7 +1,7 @@
 {
     "name": "@fusion-rx/example",
     "version": "1.0.0",
-    "description": "An example fusion-rx application.",
+    "description": "An example Fusion application.",
     "author": "Alexander Porrello",
     "license": "MIT",
     "source": "app/main.ts",
