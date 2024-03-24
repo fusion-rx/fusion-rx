@@ -1,0 +1,94 @@
+{
+    "$schema": "http://json-schema.org/draft-07/schema#",
+    "$id": "SchematicsFusionProjectConfig",
+    "title": "Fusion Project Config Schema",
+    "type": "object",
+    "additionalProperties": false,
+    "description": "Defines a fsnconfig.json file.",
+    "required": ["name", "version"],
+    "properties": {
+        "$schema": {
+            "type": "string"
+        },
+        "name": {
+            "description": "The name of the Fusion workspace.",
+            "type": "string"
+        },
+        "version": {
+            "description": "The version of this workspace",
+            "type": "string"
+        },
+        "newProjectsRoot": {
+            "description": "The directory in which new Fusion projects will be generated relative to this file.",
+            "type": "string"
+        },
+        "workspace": {
+            "type": "object",
+            "$ref": "#/definitions/workspace"
+        },
+        "workspaces": {
+            "description": "Defines workspaces that will be managed by Fusion.",
+            "type": "object",
+            "patternProperties": {
+                "^(?:@[a-zA-Z0-9._-]+/)?[a-zA-Z0-9._-]+$": {
+                    "$ref": "#/definitions/workspace"
+                }
+            }
+        }
+    },
+    "definitions": {
+        "workspace": {
+            "type": "object",
+            "description": "Defines a workspace",
+            "required": ["projects"],
+            "properties": {
+                "root": {
+                    "description": "The root of the workspace relative to this config. If undefined, will use resolve() to determine the root.",
+                    "type": "string"
+                },
+                "sourceRoot": {
+                    "description": "The root of the workspace projects relative to `root`. If undefined, will use `root` as the srcRoot.",
+                    "type": "string"
+                },
+                "outDir": {
+                    "description": "The output directory of the project builds relative to `root`. If undefined, will not create the output directory prior to building.",
+                    "type": "string"
+                },
+                "projects": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/project"
+                    }
+                },
+                "preInstall": {
+                    "description": "If `npm install` should be run prior to building the workspace projects.",
+                    "type": "boolean"
+                }
+            }
+        },
+        "project": {
+            "type": "object",
+            "description": "Defines properties for a project in this workspace",
+            "required": ["source", "buildCommand", "buildFrom"],
+            "properties": {
+                "source": {
+                    "description": "The source of the project, relative to the workspace srcRoot.",
+                    "type": "string"
+                },
+                "buildCommand": {
+                    "description": "The build command for the project.",
+                    "type": "string"
+                },
+                "buildFrom": {
+                    "description": "Whether the build command should be run in the workspace root or the project root.",
+                    "type": "string",
+                    "enum": ["root", "project"]
+                },
+                "preInstall": {
+                    "description": "Whether `npm install` should be run prior to buildiing.",
+                    "type": "boolean"
+                }
+            }
+        }
+    }
+}
