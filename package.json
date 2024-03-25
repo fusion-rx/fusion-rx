@@ -1,31 +1,66 @@
 {
+    "$schema": "./packages/cli/src/schema/init-workspace-schema.json",
     "name": "fusion-rx",
     "version": "0.0.1",
     "description": "FusionRx - The modern middleware developer's framework",
     "author": "Alexander Porrello",
     "license": "MIT",
     "type": "module",
+    "scripts": {
+        "build": "npm run build:core && npm run build:node && npm run build:nest && npm run build:config",
+        "build:cli": "cd packages/cli && npm run build",
+        "build:shared": "cd packages/shared && npm run build",
+        "build:common": "cd packages/common && npm run build",
+        "build:core": "cd packages/core && npm run build",
+        "build:node": "cd packages/node && npm run build",
+        "build:example": "cd packages/example && npm run build",
+        "serve:example": "node dist/example/app/main.js"
+    },
+    "outDir": "dist",
     "workspaces": [
         "dist/shared",
         "dist/common",
         "dist/node",
         "dist/cli",
         "dist/core",
-        "dist/test",
-        "dist/schematics",
-        "dist/compiler"
+        "dist/test"
     ],
-    "scripts": {
-        "build": "npm run build:core && npm run build:node && npm run build:nest && npm run build:config",
-        "build:cli": "cd packages/cli && npm run build",
-        "build:common": "cd packages/common && npm run build",
-        "build:core": "cd packages/core && npm run build",
-        "build:node": "cd packages/node && npm run build",
-        "build:schematics": "cd packages/schematics && npm run build",
-        "build:example": "cd packages/example && npm run build",
-        "serve:example": "node dist/example/app/main.js"
+    "workspacesConf": {
+        "srcRoot": "packages",
+        "outDir": "dist",
+        "projects": [
+            {
+                "source": "cli",
+                "buildCommand": "npm run build:cli",
+                "buildFrom": "root"
+            },
+            {
+                "source": "common",
+                "buildCommand": "npm run build:common",
+                "buildFrom": "root"
+            },
+            {
+                "source": "node",
+                "buildCommand": "npm run build:node",
+                "buildFrom": "root"
+            },
+            {
+                "source": "nest",
+                "buildCommand": "npm run build:nest",
+                "buildFrom": "root"
+            },
+            {
+                "source": "config",
+                "buildCommand": "npm run build:config",
+                "buildFrom": "root"
+            },
+            {
+                "source": "test",
+                "buildComman": "npm run build",
+                "buildFrom": "project"
+            }
+        ]
     },
-    "outDir": "dist",
     "dependencies": {
         "express": "^4.18.3",
         "node-fetch": "^3.3.2",

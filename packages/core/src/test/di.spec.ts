@@ -1,4 +1,5 @@
-import { FsnModuleRef, boostrap } from '../application';
+import { boostrap } from '../application';
+import { FsnModuleRef } from '../application/refs';
 import { MainModule, TestDependencyTree } from './test-app.spec';
 
 describe('FsnModule', () => {

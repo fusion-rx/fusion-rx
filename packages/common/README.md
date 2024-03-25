@@ -1,21 +1,13 @@
-## Angular Interop
+# @fusion-rx/common
 
-In order to use `@fusion-rx/core` with Angular, you have to polyfill `buffer`. Install the
-`buffer` package from `npm`:
+This package extends the functionality of @fusion-rx/core, providing...
 
-```bash
-npm install --save-dev buffer
-```
+## ExpressService
 
-And add the following to `polyfills.ts` in your Angular application:
+The express service allows you to create an API that uses express under
+the hood.
 
-```typescript
-import * as Buffer from 'node_modules/buffer';
-(window as any).global = window;
-(window as any).process = {};
-(window as any).process = window;
-(window as any).process.browser = true;
-(window as any).process.version = '';
-(window as any).process.versions = { node: false };
-(window as any).global.Buffer = Buffer.Buffer;
-```
+## HttpClient
+
+Adapted from Angular's HttpClient, Fusion's HttpClient allows you to
+place requests to external APIs and services.

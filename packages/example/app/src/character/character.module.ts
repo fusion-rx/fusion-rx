@@ -5,6 +5,7 @@ import { CharacterRouteService } from './character.routes';
 
 @FsnModule({
     imports: [DatabaseModule],
-    providers: [CharacterService, CharacterRouteService]
+    providers: [CharacterService],
+    routes: [CharacterRouteService]
 })
 export class CharacterModule {}

@@ -1,9 +1,9 @@
 import { Class } from '../interface';
 import { initializeModule } from './initialize-modules';
-import { FsnProvidereRef } from './refs';
+import { FsnInjectableRef } from './refs';
 
 /** Maps providers injected in the 'root' context to their class names. */
-export const rootProviders: Record<string, FsnProvidereRef> = {};
+export const rootProviders: Record<string, FsnInjectableRef> = {};
 
 /**
  * Initializes a FusionRx application.

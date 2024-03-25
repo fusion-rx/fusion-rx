@@ -1,0 +1,49 @@
+{
+    "name": "@fusion-rx/shared",
+    "version": "0.1.0",
+    "description": "Provides functionality shared between all Fusion packages.",
+    "author": "Alexander Porrello",
+    "license": "MIT",
+    "source": "src/public-api.ts",
+    "main": "../../dist/shared/index.js",
+    "module": "../../dist/shared/index.mjs",
+    "types": "../../dist/shared/index.types.d.ts",
+    "targets": {
+        "main": {
+            "context": "node",
+            "outputFormat": "commonjs"
+        },
+        "module": {
+            "context": "browser",
+            "outputFormat": "esmodule"
+        }
+    },
+    "scripts": {
+        "postbuild": "node ../../tools/post-build/index.js",
+        "build": "npx parcel build && npm run postbuild",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:cov": "jest --coverage"
+    },
+    "dependencies": {
+        "chalk": "^4.1.2",
+        "qs": "^6.11.2",
+        "reflect-metadata": "^0.1.13",
+        "rxjs": "^7.5.0"
+    },
+    "devDependencies": {
+        "@types/qs": "^6.9.10"
+    },
+    "exports": {
+        "./package.json": {
+            "default": "./package.json"
+        },
+        ".": {
+            "node": "./index.js",
+            "esm2020": "./index.mjs",
+            "es2020": "./index.mjs",
+            "types": "./index.types.d.ts",
+            "default": "./index.js"
+        }
+    }
+}

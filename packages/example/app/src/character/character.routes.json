@@ -1,0 +1,12 @@
+{
+    "getCharacterByName": {
+        "request": {
+            "type": "get",
+            "url": "/character/:name",
+            "params": {
+                "name": "string"
+            }
+        },
+        "handler": "characterService.getCharacterByName"
+    }
+}

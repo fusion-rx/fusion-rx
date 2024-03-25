@@ -1,39 +1,64 @@
-import { AfterAppInit, Logger, Injectable, Inject } from '@fusion-rx/core';
-import { Observable } from 'rxjs';
+import { AfterAppInit, Injectable, Inject } from '@fusion-rx/core';
+import { Logger } from '@fusion-rx/shared';
+import {
+    NEVER,
+    Observable,
+    Subject,
+    catchError,
+    concatMap,
+    isObservable,
+    map,
+    of
+} from 'rxjs';
 import express, { Request, Response } from 'express';
+import { isPromise } from 'util/types';
 
 const logger = new Logger('ExpressService');
 
 export declare type HttpMethod = 'get' | 'put' | 'post' | 'patch' | 'delete';
 
-export declare type ParamType = 'string' | 'boolean' | 'number' | 'array';
+export declare type Param = Record<string, any>;
+
+export declare type ParamType =
+    | 'string'
+    | 'boolean'
+    | 'number'
+    | 'array'
+    | 'string[]'
+    | 'number[]'
+    | 'boolean[]';
 
 export declare interface Options {
-    includeRawRequest?: boolean;
     params?: Record<string, ParamType>;
     query?: Record<string, ParamType>;
 }
 
-export declare interface RequestResponse {
+export declare type ReqHandler<T> = (
+    req: T
+) => Observable<any> | Promise<any> | any | Promise<any> | any;
+
+export declare interface ReqResponse {
     cookies: Record<string, any>;
     headers: Record<string, any> | string[];
     rawHeaders: string[];
     hostname: string;
     httpVersion: string;
-    res: Response;
-    params?: Record<string, any>;
-    query?: Record<string, any>;
-    req?: Request;
 }
 
 const parseParams = (received: any, expected?: Record<string, ParamType>) => {
-    if (!expected) return undefined;
+    if (!expected) return received;
 
     const parseParamValue = (type: ParamType, value: string) => {
         if (value === null || value === undefined) return undefined;
         switch (type) {
             case 'array':
                 return value.split(',');
+            case 'string[]':
+                return value.split(',');
+            case 'number[]':
+                return value.split(',').map((val) => Number.parseInt(val));
+            case 'boolean[]':
+                return value.split(',').map((val) => val === 'true');
             case 'boolean':
                 return value === 'true';
             case 'number':
@@ -51,6 +76,30 @@ const parseParams = (received: any, expected?: Record<string, ParamType>) => {
     });
 
     return parsed;
+};
+
+const evalSignature = (
+    optionsOrHandler: Options | ReqHandler<any>,
+    handlerOrNull?: ReqHandler<any>
+): {
+    handler: ReqHandler<any>;
+    options: Options;
+} => {
+    if (typeof optionsOrHandler === 'object') {
+        if (handlerOrNull !== undefined)
+            return {
+                handler: handlerOrNull,
+                options: optionsOrHandler
+            };
+        else {
+            throw new Error();
+        }
+    } else {
+        return {
+            handler: optionsOrHandler,
+            options: {}
+        };
+    }
 };
 
 @Injectable({
@@ -74,217 +123,6 @@ export class ExpressService implements AfterAppInit {
         });
     }
 
-    // Handle signatures that include raw request
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public register<B = any>(
-        method: HttpMethod,
-        route: string | string[]
-    ): Observable<Response>;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public register<B = any>(
-        method: HttpMethod,
-        route: string | string[],
-        options: Options & {
-            includeRawRequest: true;
-        }
-    ): Observable<
-        RequestResponse & {
-            req: Request;
-            body?: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public register<P extends Record<string, any> = any, B = any>(
-        method: HttpMethod,
-        route: string | string[],
-        options: Options & {
-            includeRawRequest: true;
-            params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            req: Request;
-            params: P;
-            body?: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public register<Q extends Record<string, any> = any, B = any>(
-        method: HttpMethod,
-        route: string | string[],
-        options: Options & {
-            includeRawRequest: true;
-            query: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            req: Request;
-            query: Q;
-            body?: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public register<
-        P extends Record<string, any> = any,
-        Q extends Record<string, any> = any,
-        B = any
-    >(
-        method: HttpMethod,
-        route: string | string[],
-        options: Options & {
-            includeRawRequest: true;
-            params: Record<string, ParamType>;
-            query: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            req: Request;
-            params: P;
-            query: Q;
-            body?: B;
-        }
-    >;
-
-    // Handle signatures that exclude raw request
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public register<B = any>(
-        method: HttpMethod,
-        route: string | string[],
-        options?: Options & {
-            includeRawRequest?: false;
-        }
-    ): Observable<
-        RequestResponse & {
-            body?: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public register<P extends Record<string, any> = any, B = any>(
-        method: HttpMethod,
-        route: string | string[],
-        options: Options & {
-            includeRawRequest?: false;
-            params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-            body?: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public register<Q extends Record<string, any> = any, B = any>(
-        method: HttpMethod,
-        route: string | string[],
-        options: {
-            includeRawRequest?: false;
-            query: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            query: Q;
-            body?: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public register<
-        P extends Record<string, any> = any,
-        Q extends Record<string, any> = any,
-        B = any
-    >(
-        method: HttpMethod,
-        route: string | string[],
-        options: Options & {
-            includeRawRequest?: false;
-            query: Record<string, ParamType>;
-            params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-            query: Q;
-            body?: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public register(
-        method: HttpMethod,
-        route: string | string[],
-        options?: Options
-    ) {
-        return this._register(method, route, options);
-    }
-
     /**
      * Internal method that registers express endpoints.
      * @param method The HTTP method type to register
@@ -292,528 +130,554 @@ export class ExpressService implements AfterAppInit {
      * @param options Options that determine the information
      * observed by the return observable.
      */
-    private _register(
-        method: HttpMethod,
-        route: string | string[],
-        options?: Options
-    ) {
+    private _register(args: {
+        method: HttpMethod;
+        route: string | string[];
+        handler: ReqHandler<
+            ReqResponse & {
+                params: any;
+                query: any;
+                body?: any;
+            }
+        >;
+        options?: Options;
+    }): Observable<any> {
         // Join array route
-        let endpoint = Array.isArray(route) ? route.join('/') : route;
+        let endpoint = Array.isArray(args.route)
+            ? args.route.join('/')
+            : args.route;
 
         // Express is finicky with starting methods with a forward-slash,
         // so if the endpoint doesn't, add one.
         if (!endpoint.startsWith('/')) endpoint = '/' + endpoint;
 
         // Log the method type to the endpoint
-        logger.log(`Mapped ${method.toUpperCase()} => ${endpoint}`);
+        logger.log(`Mapped ${args.method.toUpperCase()} => ${endpoint}`);
 
-        return new Observable<any>((subscriber) => {
-            this.express[method](route, (req: Request, res: Response) => {
-                const response: RequestResponse & {
+        const reqSubject = new Subject<{
+            req: ReqResponse & {
+                params: any;
+                query: any;
+                body?: any;
+            };
+            res: Response;
+        }>();
+
+        this.express[args.method](
+            args.route,
+            (request: Request, response: Response) => {
+                const req: ReqResponse & {
+                    params: any;
+                    query: any;
                     body?: any;
                 } = {
-                    res,
-                    params: options?.params
-                        ? parseParams(req.params, options.params)
-                        : req.params,
-                    query: options?.query
-                        ? parseParams(req.query, options.query)
-                        : req.query,
-                    httpVersion: req.httpVersion,
-                    headers: req.headers,
-                    rawHeaders: req.rawHeaders,
-                    hostname: req.hostname,
-                    cookies: req.cookies
+                    params: parseParams(request.params, args.options?.params),
+                    query: parseParams(request.query, args.options?.query),
+                    cookies: request.cookies,
+                    headers: request.headers,
+                    rawHeaders: request.rawHeaders,
+                    hostname: request.hostname,
+                    httpVersion: request.httpVersion
                 };
 
-                if (options?.includeRawRequest) {
-                    response.req = req;
-                }
-
                 if (
-                    method === 'post' ||
-                    method === 'patch' ||
-                    (method === 'put' && req.body)
+                    args.method === 'post' ||
+                    args.method === 'patch' ||
+                    args.method === 'put'
                 ) {
-                    response.body = req.body;
+                    req['body'] = request.body ?? {};
                 }
 
-                subscriber.next(response);
-            });
-        });
+                reqSubject.next({
+                    req,
+                    res: response
+                });
+            }
+        );
+
+        return reqSubject.pipe(
+            concatMap((next) => {
+                const handlerRes = args.handler(next.req);
+
+                let response: Observable<any>;
+
+                if (isObservable(handlerRes)) {
+                    response = handlerRes;
+                } else if (isPromise(handlerRes)) {
+                    response = new Observable((subscriber) => {
+                        handlerRes
+                            .then((value) => {
+                                subscriber.next(value);
+                                subscriber.complete();
+                            })
+                            .catch((reason) => {
+                                subscriber.error(reason);
+                            });
+                    });
+                } else {
+                    response = of(handlerRes);
+                }
+
+                return response.pipe(
+                    catchError((caught) => {
+                        next.res.status(caught['status'] ?? 500).send(caught);
+                        return NEVER;
+                    }),
+                    map((handlerResponse) => {
+                        next.res.send(handlerResponse);
+                        return handlerResponse;
+                    })
+                );
+            })
+        );
     }
 
-    // Handle signatures that exclude raw request
+    /**
+     * Registers a `delete` REST endpoint.
+     * @param route The HTTP method route
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
+     */
+    public delete<P extends Param = any, B = any>(
+        route: string | string[],
+        options: Options & {
+            params: Record<string, ParamType>;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Record<string, any>;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to delete
+     * Registers a `delete` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
+     */
+    public delete<Q extends Param = any>(
+        route: string | string[],
+        options: {
+            query: Record<string, ParamType>;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: Record<string, any>;
+                query: Q;
+            }
+        >
+    ): Observable<any>;
+
+    /**
+     * Registers a `delete` REST endpoint.
+     * @param route The HTTP method route
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
+     */
+    public delete<P extends Param = any, Q extends Param = any>(
+        route: string | string[],
+        options: Options & {
+            query: Record<string, ParamType>;
+            params: Record<string, ParamType>;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Q;
+            }
+        >
+    ): Observable<any>;
+
+    /**
+     * Registers a `delete` REST endpoint.
+     * @param route The HTTP method route
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
     public delete(
         route: string | string[],
-        options?: Options & {
-            includeRawRequest?: false;
-        }
-    ): Observable<RequestResponse>;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to delete
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public delete<P extends Record<string, any> = any>(
-        route: string | string[],
-        options: Options & {
-            includeRawRequest?: false;
-            params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to delete
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public delete<Q extends Record<string, any> = any>(
-        route: string | string[],
-        options: {
-            includeRawRequest?: false;
-            query: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            query: Q;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to delete
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public delete<
-        P extends Record<string, any> = any,
-        Q extends Record<string, any> = any
-    >(
-        route: string | string[],
-        options: Options & {
-            includeRawRequest?: false;
-            query: Record<string, ParamType>;
-            params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-            query: Q;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public delete(route: string | string[], options?: Options) {
-        return this._register('delete', route, options);
+        optionsOrHandler: Options | ReqHandler<any>,
+        handlerOrNull?: ReqHandler<any>
+    ): Observable<any> {
+        const opts = evalSignature(optionsOrHandler, handlerOrNull);
+        return this._register({
+            method: 'delete',
+            route,
+            handler: opts.handler,
+            options: opts.options
+        });
     }
 
-    // Handle signatures that exclude raw request
+    /**
+     * Registers a `get` REST endpoint.
+     * @param route The HTTP method route
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
+     */
+    public get<P extends Param = any>(
+        route: string | string[],
+        options: Options & {
+            params: Record<string, ParamType>;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Record<string, any>;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to get
+     * Registers a `get` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
+     */
+    public get<Q extends Param = any>(
+        route: string | string[],
+        options: {
+            query: Record<string, ParamType>;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: Record<string, any>;
+                query: Q;
+            }
+        >
+    ): Observable<any>;
+
+    /**
+     * Registers a `get` REST endpoint.
+     * @param route The HTTP method route
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
+     */
+    public get<P extends Param = any, Q extends Param = any>(
+        route: string | string[],
+        options: Options & {
+            query: Record<string, ParamType>;
+            params: Record<string, ParamType>;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Q;
+            }
+        >
+    ): Observable<any>;
+
+    /**
+     * Registers a `get` REST endpoint.
+     * @param route The HTTP method route
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
     public get(
         route: string | string[],
-        options?: Options & {
-            includeRawRequest?: false;
-        }
-    ): Observable<RequestResponse>;
+        handler: ReqHandler<
+            ReqResponse & {
+                params: Record<string, any>;
+                query: Record<string, any>;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to get
+     * Registers a `get` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
-    public get<P extends Record<string, any> = any>(
+    public get(
         route: string | string[],
-        options: Options & {
-            includeRawRequest?: false;
-            params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to get
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public get<Q extends Record<string, any> = any>(
-        route: string | string[],
-        options: {
-            includeRawRequest?: false;
-            query: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            query: Q;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to get
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public get<
-        P extends Record<string, any> = any,
-        Q extends Record<string, any> = any
-    >(
-        route: string | string[],
-        options: Options & {
-            includeRawRequest?: false;
-            query: Record<string, ParamType>;
-            params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-            query: Q;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public get(route: string | string[], options?: Options) {
-        return this._register('get', route, options);
+        optionsOrHandler: Options | ReqHandler<any>,
+        handlerOrNull?: ReqHandler<any>
+    ): Observable<any> {
+        const opts = evalSignature(optionsOrHandler, handlerOrNull);
+        return this._register({
+            method: 'get',
+            route,
+            handler: opts.handler,
+            options: opts.options
+        });
     }
 
-    // Handle signatures that exclude raw request
-
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to patch
+     * Registers a `patch` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
-    public patch<B = any>(
-        route: string | string[],
-        options?: Options & {
-            includeRawRequest?: false;
-        }
-    ): Observable<
-        RequestResponse & {
-            body: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to patch
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public patch<P extends Record<string, any> = any, B = any>(
+    public patch<P extends Param = any, B = any>(
         route: string | string[],
         options: Options & {
-            includeRawRequest?: false;
             params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-            body: B;
-        }
-    >;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Record<string, any>;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to patch
+     * Registers a `patch` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
-    public patch<Q extends Record<string, any> = any, B = any>(
+    public patch<Q extends Param = any, B = any>(
         route: string | string[],
         options: {
-            includeRawRequest?: false;
             query: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            query: Q;
-            body: B;
-        }
-    >;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: Record<string, any>;
+                query: Q;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to patch
+     * Registers a `patch` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
-    public patch<
-        P extends Record<string, any> = any,
-        Q extends Record<string, any> = any,
-        B = any
-    >(
+    public patch<P extends Param = any, Q extends Param = any, B = any>(
         route: string | string[],
         options: Options & {
-            includeRawRequest?: false;
             query: Record<string, ParamType>;
             params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-            query: Q;
-            body: B;
-        }
-    >;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Q;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
+     * Registers a `patch` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
-    public patch(route: string | string[], options?: Options) {
-        return this._register('patch', route, options);
+    public patch<P extends Param = any, Q extends Param = any, B = any>(
+        route: string | string[],
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Q;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
+
+    /**
+     * Registers a `patch` REST endpoint.
+     * @param route The HTTP method route
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
+     */
+    public patch(
+        route: string | string[],
+        handlerOrOptions: Options | ReqHandler<any>,
+        handlerOrNull?: (req: any) => ReqHandler<any>
+    ): Observable<any> {
+        const opts = evalSignature(handlerOrOptions, handlerOrNull);
+        return this._register({
+            method: 'patch',
+            route,
+            handler: opts.handler,
+            options: opts.options
+        });
     }
 
-    // Handle signatures that exclude raw request
-
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to post
+     * Registers a `post` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
-    public post<B = any>(
-        route: string | string[],
-        options?: Options & {
-            includeRawRequest?: false;
-        }
-    ): Observable<
-        RequestResponse & {
-            body: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to post
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public post<P extends Record<string, any> = any, B = any>(
+    public post<P extends Param = any, B = any>(
         route: string | string[],
         options: Options & {
-            includeRawRequest?: false;
             params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-            body: B;
-        }
-    >;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Record<string, any>;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to post
+     * Registers a `post` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
-    public post<Q extends Record<string, any> = any, B = any>(
+    public post<Q extends Param = any, B = any>(
         route: string | string[],
         options: {
-            includeRawRequest?: false;
             query: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            query: Q;
-            body: B;
-        }
-    >;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: Record<string, any>;
+                query: Q;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to post
+     * Registers a `post` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
-    public post<
-        P extends Record<string, any> = any,
-        Q extends Record<string, any> = any,
-        B = any
-    >(
+    public post<P extends Param = any, Q extends Param = any, B = any>(
         route: string | string[],
         options: Options & {
-            includeRawRequest?: false;
             query: Record<string, ParamType>;
             params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-            query: Q;
-            body: B;
-        }
-    >;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Q;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
+     * Registers a `post` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
-    public post(route: string | string[], options?: Options) {
-        return this._register('post', route, options);
+    public post(
+        route: string | string[],
+        handlerOrOptions: Options | ReqHandler<any>,
+        handlerOrNull?: ReqHandler<any>
+    ): Observable<any> {
+        const opts = evalSignature(handlerOrOptions, handlerOrNull);
+        return this._register({
+            method: 'post',
+            route,
+            handler: opts.handler,
+            options: opts.options
+        });
     }
 
-    public put(route: string | string[]): Observable<{
-        req: Request;
-        res: Response;
-    }>;
-
-    // Handle signatures that exclude raw request
+    /**
+     * Registers a `put` REST endpoint.
+     * @param route The HTTP method route
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
+     */
+    public put<P extends Param = any, B = any>(
+        route: string | string[],
+        options: Options & {
+            params: Record<string, ParamType>;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Record<string, any>;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to put
+     * Registers a `put` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
+     */
+    public put<Q extends Param = any, B = any>(
+        route: string | string[],
+        options: {
+            query: Record<string, ParamType>;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: Record<string, any>;
+                query: Q;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
+
+    /**
+     * Registers a `put` REST endpoint.
+     * @param route The HTTP method route
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
+     */
+    public put<P extends Param = any, Q extends Param = any, B = any>(
+        route: string | string[],
+        options: Options & {
+            query: Record<string, ParamType>;
+            params: Record<string, ParamType>;
+        },
+        handler: ReqHandler<
+            ReqResponse & {
+                params: P;
+                query: Q;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
+
+    /**
+     * Registers a `put` REST endpoint.
+     * @param route The HTTP method route
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
     public put<B = any>(
         route: string | string[],
-        options?: Options & {
-            includeRawRequest?: false;
-        }
-    ): Observable<
-        RequestResponse & {
-            body: B;
-        }
-    >;
+        handler: ReqHandler<
+            ReqResponse & {
+                params: Param;
+                query: Param;
+                body?: B;
+            }
+        >
+    ): Observable<any>;
 
     /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to put
+     * Registers a `put` REST endpoint.
      * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
+     * @param options Options that determine values provided to `handler`
+     * @param handler A closure that returns the response payload
      */
-    public put<P extends Record<string, any> = any, B = any>(
+    public put(
         route: string | string[],
-        options: Options & {
-            includeRawRequest?: false;
-            params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-            body: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to put
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public put<Q extends Record<string, any> = any, B = any>(
-        route: string | string[],
-        options: {
-            includeRawRequest?: false;
-            query: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            query: Q;
-            body: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to put
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public put<
-        P extends Record<string, any> = any,
-        Q extends Record<string, any> = any,
-        B = any
-    >(
-        route: string | string[],
-        options: Options & {
-            includeRawRequest?: false;
-            query: Record<string, ParamType>;
-            params: Record<string, ParamType>;
-        }
-    ): Observable<
-        RequestResponse & {
-            params: P;
-            query: Q;
-            body: B;
-        }
-    >;
-
-    /**
-     * Abstracted HTTP Handler for all HTTP methods.
-     * @param method The HTTP method type to register
-     * @param route The HTTP method route
-     * @param options Options that determine the information
-     * observed by the return observable.
-     */
-    public put(route: string | string[], options?: Options) {
-        return this._register('put', route, options);
+        handlerOrOptions: Options | ReqHandler<any>,
+        handlerOrNull?: ReqHandler<any>
+    ): Observable<any> {
+        const opts = evalSignature(handlerOrOptions, handlerOrNull);
+        return this._register({
+            method: 'post',
+            route,
+            handler: opts.handler,
+            options: opts.options
+        });
     }
 }

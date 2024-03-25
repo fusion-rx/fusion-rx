@@ -11,7 +11,7 @@ import { CharacterModule } from './character/character.module';
         }),
         CharacterModule
     ],
-    providers: [AppRoutes]
+    routes: [AppRoutes]
 })
 export class AppModule {
     constructor() {}
