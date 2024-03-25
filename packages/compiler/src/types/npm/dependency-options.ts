@@ -1,3 +1,4 @@
+import { DependencySpecifier, SemverRange } from '../alias';
 import { JSONObject } from '../json';
 import {
     BundleBehavior,
@@ -6,13 +7,12 @@ import {
     SpecifierType
 } from './dependency';
 import { EnvironmentOptions } from './environment';
-import { DependencySpecifier, SemverRange } from 'compiler/alias';
 
 /**
  * Usen when creating a Dependency, see that.
  * @section transformer
  */
-export type DependencyOptions = {
+export declare type DependencyOptions = {
     /** The specifier used to resolve the dependency. */
     readonly specifier: DependencySpecifier;
 

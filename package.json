@@ -12,7 +12,8 @@
         "dist/cli",
         "dist/core",
         "dist/test",
-        "dist/schematics"
+        "dist/schematics",
+        "dist/compiler"
     ],
     "scripts": {
         "build": "npm run build:core && npm run build:node && npm run build:nest && npm run build:config",

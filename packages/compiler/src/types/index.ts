@@ -27,9 +27,10 @@ export type {
 } from './file-system';
 export type {
     DefaultTargetOptions,
-    DetailedReportOptions,
-    CompilerOptions as InitialParcelOptions
-} from './initial-parcel-options';
+    Engines,
+    OutputFormat
+} from './default-target-options';
+export type { CompilerOptions } from './initial-parcel-options';
 export type { JSONObject, JSONValue } from './json';
 export type { PackageManager, ResolveResult } from './package-manager';
 export type { FarmOptions, WorkerFarm } from './worker-farm';

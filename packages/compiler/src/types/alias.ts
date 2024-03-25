@@ -1,14 +1,14 @@
 /** An alias for string */
-export type DependencySpecifier = string;
+export declare type DependencySpecifier = string;
 /** An alias for typeof process.env */
-export type EnvMap = typeof process.env;
+export declare type EnvMap = typeof process.env;
 /** An alias for string */
-export type FilePath = string;
+export declare type FilePath = string;
 /** An alias for string */
-export type Glob = string;
+export declare type Glob = string;
 /** An alias for string */
-export type GlobPattern = string;
+export declare type GlobPattern = string;
 /** An alias for string */
-export type PackageName = string;
+export declare type PackageName = string;
 /** An alias for string */
-export type SemverRange = string;
+export declare type SemverRange = string;

@@ -4,15 +4,15 @@ import { JSONObject } from '../json';
 import { DependencySpecifier, SemverRange } from '../alias';
 import { Target } from './package-target-descriptor';
 
-export type SpecifierType = 'commonjs' | 'esm' | 'url' | 'custom';
-export type DependencyPriority = 'sync' | 'parallel' | 'lazy';
-export type BundleBehavior = 'inline' | 'isolated';
+export declare type SpecifierType = 'commonjs' | 'esm' | 'url' | 'custom';
+export declare type DependencyPriority = 'sync' | 'parallel' | 'lazy';
+export declare type BundleBehavior = 'inline' | 'isolated';
 
 /**
  * The location within the source file where the dependency was found.
  * Source locations are 1-based, meaning lines and columns start at 1
  */
-export type SourceLocation = {
+export declare type SourceLocation = {
     readonly filePath: string;
 
     /** inclusive */
@@ -34,7 +34,7 @@ export type SourceLocation = {
  *
  * @section transformer
  */
-export interface Dependency {
+export declare interface Dependency {
     /** The id of the dependency. */
     readonly id: string;
 

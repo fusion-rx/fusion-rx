@@ -1,10 +1,10 @@
-import { FilePath, Glob, PackageName, SemverRange } from 'compiler/alias';
-import { Engines } from './engines';
+import { FilePath, Glob, PackageName, SemverRange } from '../alias';
+import { Engines } from '../default-target-options';
 import { PackageTargetDescriptor } from './package-target-descriptor';
 
-export type PackageDependencies = Record<string, string>;
+export declare type PackageDependencies = Record<string, string>;
 
-export type PackageJSON = {
+export declare type PackageJSON = {
     name: PackageName;
     version: SemverRange;
     type?: 'module';

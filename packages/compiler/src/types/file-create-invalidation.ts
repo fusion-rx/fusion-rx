@@ -1,24 +1,24 @@
 import { FilePath, Glob } from './alias';
 
-export type FileInvalidation = {
+export declare type FileInvalidation = {
     filePath: FilePath;
 };
 
-export type FileAboveInvalidation = {
+export declare type FileAboveInvalidation = {
     fileName: string;
     aboveFilePath: FilePath;
 };
 
-export type FileCreateInvalidation =
+export declare type FileCreateInvalidation =
     | FileInvalidation
     | GlobInvalidation
     | FileAboveInvalidation;
 
-export type GlobInvalidation = {
+export declare type GlobInvalidation = {
     glob: Glob;
 };
 
-export type Invalidations = {
+export declare type Invalidations = {
     invalidateOnFileCreate: Array<
         FileInvalidation | GlobInvalidation | FileAboveInvalidation
     >;

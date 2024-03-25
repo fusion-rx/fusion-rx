@@ -12,7 +12,7 @@ type Mutable = [
     }
 ];
 
-export interface MutableDependencySymbols extends Iterable<Mutable> {
+export declare interface MutableDependencySymbols extends Iterable<Mutable> {
     /**
      * The symbols taht are imports are unknown, rather than just empty.
      * This is the default state.

@@ -1,11 +1,11 @@
 import { Readable, Writable } from 'stream';
 import { FilePath, GlobPattern } from './alias';
 
-export interface AsyncSubscription {
+export declare interface AsyncSubscription {
     unsubscribe(): Promise<void>;
 }
 
-export type BackendType =
+export declare type BackendType =
     | 'fs-events'
     | 'watchman'
     | 'inotify'
@@ -13,7 +13,7 @@ export type BackendType =
     | 'brute-force';
 
 // https://nodejs.org/api/fs.html#fs_class_fs_dirent
-export interface Dirent {
+export declare interface Dirent {
     readonly name: string;
     isBlockDevice(): boolean;
     isCharacterDevice(): boolean;
@@ -24,7 +24,7 @@ export interface Dirent {
     isSymbolicLink(): boolean;
 }
 
-export type Encoding =
+export declare type Encoding =
     | 'hex'
     | 'utf8'
     | 'utf-8'
@@ -36,11 +36,11 @@ export type Encoding =
     | 'utf16le'
     | 'latin1';
 
-export type FileOptions = {
+export declare type FileOptions = {
     mode?: number;
 };
 
-export interface FileSystem {
+export declare interface FileSystem {
     readFile(filePath: FilePath): Promise<Buffer>;
     readFile(filePath: FilePath, encoding: Encoding): Promise<string>;
     readFileSync(filePath: FilePath): Buffer;
@@ -127,7 +127,7 @@ export interface FileSystem {
     findFirstFile(filePaths: Array<FilePath>): FilePath | null | undefined;
 }
 
-export interface Stats {
+export declare interface Stats {
     dev: number;
     ino: number;
     mode: number;
@@ -155,7 +155,7 @@ export interface Stats {
     isSocket(): boolean;
 }
 
-export interface WatcherOptions {
+export declare interface WatcherOptions {
     ignore?: (FilePath | GlobPattern)[];
     backend?: BackendType;
 }

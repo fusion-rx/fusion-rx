@@ -1,29 +1,15 @@
 import { SourceLocation } from './dependency';
-import { Environment, EnvironmentContext, OutputFormat } from './environment';
+import { Environment, EnvironmentContext } from './environment';
 import { FilePath, PackageName } from '../alias';
 import { TargetSourceMapOptions } from './target-source-map-options';
-import { Engines } from './engines';
+import { Engines, OutputFormat } from '../default-target-options';
 
-/**
- * The target format when using the JS API.
- *
- * (Same as PackageTargetDescriptor, but <code>distDir</code> is required.)
- */
-export type TargetDescriptor = PackageTargetDescriptor & {
-    readonly distDir: FilePath;
-    readonly distEntry?: FilePath;
-};
-
-export type PackageTargetDescriptor = {
-    readonly context?: EnvironmentContext;
-    readonly engines?: Engines;
+export declare type PackageTargetDescriptorBase = {
     readonly includeNodeModules?:
         | boolean
         | Array<PackageName>
         | Record<PackageName, boolean>;
-    readonly outputFormat?: OutputFormat;
     readonly publicUrl?: string;
-    readonly distDir?: FilePath;
     readonly sourceMap?: boolean | TargetSourceMapOptions;
     readonly isLibrary?: boolean;
     readonly optimize?: boolean;
@@ -31,10 +17,26 @@ export type PackageTargetDescriptor = {
     readonly source?: FilePath | Array<FilePath>;
 };
 
+export declare type PackageTargetDescriptor = PackageTargetDescriptorBase & {
+    readonly context?: EnvironmentContext;
+    readonly engines?: Engines;
+    readonly outputFormat?: OutputFormat;
+    readonly distDir?: FilePath;
+};
+
 /**
- * A parsed version of PackageTargetDescriptor
+ * The target format when using the JS API. Same as {@link PackageTargetDescriptor},
+ * but `distDir` is required.
  */
-export interface Target {
+export declare type TargetDescriptor = PackageTargetDescriptor & {
+    readonly distDir: FilePath;
+    readonly distEntry?: FilePath;
+};
+
+/**
+ * A parsed version of {@link PackageTargetDescriptor}
+ */
+export declare interface Target {
     /** The output filename of the entry */
     readonly distEntry: FilePath | null | undefined;
 

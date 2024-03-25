@@ -1,6 +1,6 @@
 import type { Readable } from 'stream';
 
-export interface Cache {
+export declare interface Cache {
     ensure(): Promise<void>;
     has(key: string): Promise<boolean>;
     get<T>(key: string): Promise<T | null | undefined>;

@@ -1,5 +1,5 @@
 /** Corresponds to <code>pkg#targets.*.sourceMap</code> */
-export type TargetSourceMapOptions = {
+export declare type TargetSourceMapOptions = {
     readonly sourceRoot?: string;
     readonly inline?: boolean;
     readonly inlineSources?: boolean;

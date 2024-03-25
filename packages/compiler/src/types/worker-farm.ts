@@ -1,7 +1,7 @@
 import { FilePath } from './alias';
 import { BackendType } from './file-system';
 
-export type FarmOptions = {
+export declare type FarmOptions = {
     maxConcurrentWorkers: number;
     maxConcurrentCallsPerWorker: number;
     forcedKillTime: number;

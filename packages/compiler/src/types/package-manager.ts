@@ -7,7 +7,7 @@ import {
 } from './file-create-invalidation';
 import { PackageJSON } from './npm';
 
-export interface PackageManager {
+export declare interface PackageManager {
     require(
         id: DependencySpecifier,
         from: FilePath,
@@ -36,7 +36,7 @@ export interface PackageManager {
     invalidate(id: DependencySpecifier, from: FilePath): void;
 }
 
-export type ResolveResult = {
+export declare type ResolveResult = {
     resolved: FilePath | DependencySpecifier;
     pkg?: PackageJSON | null | undefined;
     invalidateOnFileCreate: Array<

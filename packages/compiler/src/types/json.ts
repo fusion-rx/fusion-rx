@@ -1,6 +1,6 @@
-export type JSONObject = { [key: string]: JSONValue };
+export declare type JSONObject = { [key: string]: JSONValue };
 
-export type JSONValue =
+export declare type JSONValue =
     | null
     | void
     | boolean

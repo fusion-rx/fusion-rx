@@ -1,12 +1,12 @@
-import { PackageName } from 'compiler/alias';
 import { SourceLocation } from './dependency';
 import { TargetSourceMapOptions } from './target-source-map-options';
-import { Engines } from './engines';
+import { PackageName } from '../alias';
+import { Engines, OutputFormat } from '../default-target-options';
 
 /**
  * Options used when {@link Environment}.
  */
-export type EnvironmentOptions = {
+export declare type EnvironmentOptions = {
     readonly context?: EnvironmentContext;
     readonly engines?: Engines;
     readonly includeNodeModules?:
@@ -22,7 +22,7 @@ export type EnvironmentOptions = {
     readonly loc?: SourceLocation | null | undefined;
 };
 
-export interface Environment {
+export declare interface Environment {
     readonly id: string;
     readonly context: EnvironmentContext;
     readonly engines: Engines;
@@ -71,7 +71,7 @@ export interface Environment {
 }
 
 /** In which environment the output should run (influces e.g. bundle loaders) */
-export type EnvironmentContext =
+export declare type EnvironmentContext =
     | 'browser'
     | 'web-worker'
     | 'service-worker'
@@ -80,7 +80,7 @@ export type EnvironmentContext =
     | 'electron-main'
     | 'electron-renderer';
 
-export type EnvironmentFeature =
+export declare type EnvironmentFeature =
     | 'esmodules'
     | 'dynamic-import'
     | 'worker-module'
@@ -89,9 +89,7 @@ export type EnvironmentFeature =
     | 'arrow-functions'
     | 'global-this';
 
-export type OutputFormat = 'esmodule' | 'commonjs' | 'global';
-
-export type SourceType = 'script' | 'module';
+export declare type SourceType = 'script' | 'module';
 
 /**
  * A resolved browserslist.
@@ -107,7 +105,7 @@ export type SourceType = 'script' | 'module';
  * }
  * ````
  */
-export type VersionMap = {
+export declare type VersionMap = {
     edge?: string;
     firefox?: string;
     chrome?: string;
