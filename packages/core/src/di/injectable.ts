@@ -1,5 +1,6 @@
+import { getInjectedDependencies } from '@fusion-rx/shared';
+
 import { Class, isClass } from '../interface';
-import { getInjectedDependencies } from '../reflect';
 import { CLASS_NAME } from './module';
 
 export const PROVIDED_IN = '__ng-injectable-provided-in__';

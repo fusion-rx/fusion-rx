@@ -1,10 +1,13 @@
+import { getMetadata } from '@fusion-rx/shared';
+
 import { FsnModuleRef } from './refs';
 import {
     ModuleWithProviders,
     defineFsnModuleMetadata,
     CLASS_NAME,
     PROVIDERS,
-    FactoryProvider
+    FactoryProvider,
+    ROUTES
 } from '../di';
 import { isModuleWithProviders } from '../di/module-with-provider';
 import { Class } from '../interface';
@@ -12,8 +15,8 @@ import { afterAppInit, onModuleInit } from './lifecycle';
 import { registerExports } from './register-exports';
 import { registerProviders } from './register-providers';
 import { registerImports } from './register-imports';
-import { getMetadata } from '../reflect';
 import { ProviderInitializer } from './initialize-providers';
+import { initRoute } from './init-routes';
 
 export function initializeModule(
     moduleRef: Class<any> | ModuleWithProviders<any>,
@@ -39,18 +42,26 @@ export function initializeModule(
     // Recursively initialize all imported modules
     const imports = registerImports(moduleRef);
 
-    const providerMetadata = getMetadata<(Class<any> | FactoryProvider)[]>(
-        PROVIDERS,
-        moduleRef,
-        []
+    // Create provider references for all of this module's providers
+    const providerRefs = registerProviders(
+        getMetadata<(Class<any> | FactoryProvider)[]>(PROVIDERS, moduleRef, [])
     );
 
-    // Create provider references for all of this module's providers
-    const providerRefs = registerProviders(providerMetadata);
+    // Create route references for all of this module's route
+    const routeRefs = registerProviders(
+        getMetadata<Class<any>[]>(ROUTES, moduleRef, [])
+    );
+
+    // Providers and routes must be initialized together, since
+    // routes can import providers
+    const injectableRefs = {
+        ...providerRefs,
+        ...routeRefs
+    };
 
     // Initialize the providers from their references
     const providers = new ProviderInitializer(
-        providerRefs,
+        injectableRefs,
         imports,
         moduleName
     ).init();
@@ -61,6 +72,18 @@ export function initializeModule(
     // Call onModuleInit for providers in this module that implement
     // the lifecycle hook
     onModuleInit(providers);
+
+    // Separate routes from providers
+    Object.keys(routeRefs)
+        .map((routeName) => {
+            const provider = providers[routeName];
+            delete providers[routeName];
+            return provider;
+        })
+        .forEach((routeRef) => {
+            // And initialize the routes
+            initRoute(routeRef);
+        });
 
     // Create this modules reference object for return
     const fsnModule = {

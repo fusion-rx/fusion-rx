@@ -1,5 +1,5 @@
 import { rootProviders } from './bootstrap';
-import { FsnModuleRef, FsnProvidereRef } from './refs';
+import { FsnModuleRef, FsnInjectableRef } from './refs';
 
 /**
  * Method that is run after the local module is initialized.
@@ -20,7 +20,7 @@ export const implementsOnModuleInit = (val: any): val is OnModuleInit => {
 };
 
 export const onModuleInit = (
-    localProviders: Record<string, FsnProvidereRef>
+    localProviders: Record<string, FsnInjectableRef>
 ) => {
     Object.values(localProviders).forEach((provider) => {
         if (implementsOnModuleInit(provider.instance))

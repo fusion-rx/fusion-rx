@@ -1,4 +1,6 @@
-import { FsnProvidereRef } from './refs';
+import { getInjectedDependencies, getMetadata } from '@fusion-rx/shared';
+
+import { FsnInjectableRef } from './refs';
 import {
     FactoryProvider,
     isFactoryProvider,
@@ -9,7 +11,6 @@ import {
     isInjectableRef
 } from '../di';
 import { Class, isClass } from '../interface';
-import { getInjectedDependencies, getMetadata } from '../reflect';
 
 /**
  * Registers a local provider.
@@ -19,7 +20,7 @@ export const registerProvider = (ref: Class<any>) => {
     // If this is not a factory provider, all of the provider's metadata
     // was registered in the Injectable() decorator, so we can create its
     // refernece from the registered metadata
-    const provider: FsnProvidereRef = {
+    const provider: FsnInjectableRef = {
         providerName: Reflect.getMetadata(CLASS_NAME, ref),
         providedIn: getMetadata<'module' | 'root'>(PROVIDED_IN, ref, 'module'),
         injected: getMetadata<string[]>(INJECTED_DEPS, ref, []),
@@ -40,7 +41,7 @@ export const registerProvider = (ref: Class<any>) => {
 
 export const registerFactoryProvider = (ref: FactoryProvider) => {
     // The factory provider provides the name, reference (the provider itself).
-    const provider: FsnProvidereRef = {
+    const provider: FsnInjectableRef = {
         providerName: ref.provide,
         injected: [],
         providedIn: 'module', // All factory providers are injected in the 'module' context
@@ -103,10 +104,10 @@ export const registerFactoryProvider = (ref: FactoryProvider) => {
  * @param ref An injected class or Factory Provider
  */
 export const registerProviders = (refs: (Class<any> | FactoryProvider)[]) => {
-    const providers: Record<string, FsnProvidereRef> = {};
+    const providers: Record<string, FsnInjectableRef> = {};
 
     refs.forEach((ref) => {
-        let provider: FsnProvidereRef;
+        let provider: FsnInjectableRef;
 
         if (isFactoryProvider(ref)) {
             provider = registerFactoryProvider(ref);

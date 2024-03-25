@@ -1,7 +1,7 @@
 {
     "name": "@fusion-rx/common",
     "version": "0.1.0",
-    "description": "Provides common functionality for FusionRx packages.",
+    "description": "Extends functionality of @fusion-rx/core.",
     "author": "Alexander Porrello",
     "license": "MIT",
     "source": "src/public-api.ts",
@@ -27,6 +27,7 @@
     },
     "dependencies": {
         "@fusion-rx/core": "0.1.0",
+        "@fusion-rx/shared": "0.1.0",
         "qs": "^6.11.2",
         "reflect-metadata": "^0.1.13",
         "rxjs": "^7.5.0",
