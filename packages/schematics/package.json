@@ -4,23 +4,9 @@
     "description": "Defines Fusion schematics and their types.",
     "author": "Alexander Porrello",
     "license": "MIT",
-    "source": "src/public-api.ts",
-    "main": "../../dist/schematics/index.js",
-    "module": "../../dist/schematics/index.mjs",
-    "types": "../../dist/schematics/index.types.d.ts",
-    "targets": {
-        "main": {
-            "context": "node",
-            "outputFormat": "commonjs"
-        },
-        "module": {
-            "context": "browser",
-            "outputFormat": "esmodule"
-        }
-    },
+    "main": "src/public-api",
     "scripts": {
-        "postbuild": "node ../../tools/post-build/index.js",
-        "build": "npx parcel build && npm run postbuild && cp -r src/**/*.json ../../dist/schematics"
+        "build": "npx tsc -p tsconfig.build.json"
     },
     "dependencies": {},
     "devDependencies": {},

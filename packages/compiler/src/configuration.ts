@@ -3,7 +3,7 @@ import {
     OutputFormat,
     PackageTargetDescriptorBase,
     TargetDescriptor
-} from '../types';
+} from './types';
 
 /**
  * Provides a function for configuring compilation targets.
@@ -17,10 +17,10 @@ export const configureTarget = (
     distDir: string,
     context: EnvironmentContext,
     outputFormat: OutputFormat,
-    options: PackageTargetDescriptorBase
+    options?: PackageTargetDescriptorBase
 ): TargetDescriptor => ({
     distDir,
     context,
     outputFormat,
-    ...options
+    ...(options ?? {})
 });

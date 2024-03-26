@@ -1,3 +1,4 @@
+export * from './event-subject';
 export * from './reactive-subject';
 export * from './toggle-subject';
 export type { FromTryCatchFn } from './interop';

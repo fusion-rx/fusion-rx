@@ -1,2 +1,3 @@
 export * from './types';
-export * from './conf';
+export * from './compile';
+export * from './configuration';

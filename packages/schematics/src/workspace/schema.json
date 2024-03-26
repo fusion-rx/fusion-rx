@@ -22,6 +22,15 @@
             "description": "The directory in which new Fusion projects will be generated relative to this file.",
             "type": "string"
         },
+        "projects": {
+            "description": "Defines projects managed in this workspace by Fusion.",
+            "type": "object",
+            "patternProperties": {
+                "^(?:@[a-zA-Z0-9._-]+/)?[a-zA-Z0-9._-]+$": {
+                    "$ref": "#/definitions/project"
+                }
+            }
+        },
         "workspace": {
             "type": "object",
             "$ref": "#/definitions/workspace"
@@ -43,11 +52,11 @@
             "required": ["projects"],
             "properties": {
                 "root": {
-                    "description": "The root of the workspace relative to this config. If undefined, will use resolve() to determine the root.",
+                    "description": "Root of the project files.",
                     "type": "string"
                 },
                 "sourceRoot": {
-                    "description": "The root of the workspace projects relative to `root`. If undefined, will use `root` as the srcRoot.",
+                    "description": "The root of the source files and assets.",
                     "type": "string"
                 },
                 "outDir": {
@@ -55,9 +64,12 @@
                     "type": "string"
                 },
                 "projects": {
-                    "type": "array",
-                    "items": {
-                        "$ref": "#/definitions/project"
+                    "description": "Defines workspaces that will be managed by Fusion.",
+                    "type": "object",
+                    "patternProperties": {
+                        "^(?:@[a-zA-Z0-9._-]+/)?[a-zA-Z0-9._-]+$": {
+                            "$ref": "#/definitions/project"
+                        }
                     }
                 },
                 "preInstall": {
@@ -69,24 +81,100 @@
         "project": {
             "type": "object",
             "description": "Defines properties for a project in this workspace",
-            "required": ["source", "buildCommand", "buildFrom"],
+            "required": ["projectType", "root"],
             "properties": {
-                "source": {
+                "projectType": {
+                    "description": "Specify if the project is an application or library",
+                    "type": "string",
+                    "enum": ["application", "library"]
+                },
+                "root": {
                     "description": "The source of the project, relative to the workspace srcRoot.",
                     "type": "string"
                 },
-                "buildCommand": {
-                    "description": "The build command for the project.",
+                "sourceRoot": {
+                    "description": "The root of the source files and assets.",
                     "type": "string"
-                },
-                "buildFrom": {
-                    "description": "Whether the build command should be run in the workspace root or the project root.",
-                    "type": "string",
-                    "enum": ["root", "project"]
                 },
                 "preInstall": {
                     "description": "Whether `npm install` should be run prior to buildiing.",
                     "type": "boolean"
+                },
+                "architect": {
+                    "type": "object",
+                    "properties": {
+                        "build": {
+                            "$ref": "#/definitions/build"
+                        },
+                        "serve": {
+                            "$ref": "#/definitions/serve"
+                        },
+                        "test": {
+                            "$ref": "#/definitions/test"
+                        }
+                    }
+                }
+            }
+        },
+        "build": {
+            "type": "object",
+            "properties": {
+                "builder": {
+                    "type": "string",
+                    "enum": ["parcel", "tsc"]
+                },
+                "options": {
+                    "type": "object",
+                    "properties": {
+                        "project": {
+                            "description": "The file path for the fsn-packagr configuration file, relative to the current workspace.",
+                            "type": "string"
+                        },
+                        "outputPath": {
+                            "type": "string"
+                        },
+                        "main": {
+                            "type": "string"
+                        },
+                        "tsConfig": {
+                            "type": "string"
+                        },
+                        "targets": {
+                            "type": "object",
+                            "patternProperties": {
+                                "^(?:@[a-zA-Z0-9._-]+/)?[a-zA-Z0-9._-]+$": {
+                                    "$ref": "#/definitions/target"
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        },
+        "serve": {
+            "type": "object"
+        },
+        "test": {
+            "type": "object"
+        },
+        "target": {
+            "type": "object",
+            "properties": {
+                "context": {
+                    "type": "string",
+                    "enum": [
+                        "browser",
+                        "web-worker",
+                        "service-worker",
+                        "worklet",
+                        "node",
+                        "electron-main",
+                        "electron-renderer"
+                    ]
+                },
+                "outputFormat": {
+                    "type": "string",
+                    "enum": ["esmodule", "commonjs", "global"]
                 }
             }
         }

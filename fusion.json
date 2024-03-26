@@ -1,0 +1,41 @@
+{
+    "$schema": "./packages/schematics/src/workspace/schema.json",
+    "name": "Fusion-rx",
+    "version": "0.1.0",
+    "newProjectsRoot": "packages",
+    "projects": {
+        "core": {
+            "projectType": "library",
+            "root": "packages/core",
+            "sourceRoot": "packages/core/src",
+            "architect": {
+                "build": {
+                    "builder": "parcel",
+                    "options": {
+                        "outputPath": "dist",
+                        "main": "src/public-api.ts",
+                        "tsConfig": "tsconfig.app.json",
+                        "targets": {
+                            "main": {
+                                "context": "node",
+                                "outputFormat": "commonjs"
+                            },
+                            "module": {
+                                "context": "browser",
+                                "outputFormat": "esmodule"
+                            }
+                        },
+                        "assets": []
+                    },
+                    "configurations": {
+                        "production": {
+                            "disableCache": true
+                        },
+                        "development": {}
+                    },
+                    "defaultConfiguration": "production"
+                }
+            }
+        }
+    }
+}

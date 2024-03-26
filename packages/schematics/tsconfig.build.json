@@ -1,7 +1,8 @@
 {
     "extends": "../../tsconfig.build.json",
     "compilerOptions": {
-        "outDir": "../../dist/example"
+        "outDir": "../../dist/schematics",
+        "resolveJsonModule": true
     },
-    "include": ["package.json", "app/**/*.json", "app/**/*.ts"]
+    "include": ["package.json", "src/**/*.json", "src/*.ts"]
 }
