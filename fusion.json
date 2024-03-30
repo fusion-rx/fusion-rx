@@ -1,0 +1,149 @@
+{
+    "$schema": "./packages/compiler/src/schematics/schema.json",
+    "name": "Fusion-rx",
+    "version": "0.1.0",
+    "newProjectsRoot": "packages",
+    "projects": {
+        "shared": {
+            "projectType": "library",
+            "root": "packages/shared",
+            "sourceRoot": "packages/shared/src",
+            "architect": {
+                "build": {
+                    "builder": "tsc",
+                    "options": {
+                        "outputPath": "dist",
+                        "main": "src/public-api.ts",
+                        "tsConfig": "tsconfig.build.json",
+                        "targets": {},
+                        "assets": []
+                    },
+                    "configurations": {
+                        "production": {
+                            "disableCache": true
+                        },
+                        "development": {}
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "test": {
+                    "builder": "jest",
+                    "options": {
+                        "main": "src/test.ts",
+                        "tsConfig": "tsconfig.spec.ts",
+                        "jestConfig": "jest.conf.js",
+                        "assets": []
+                    }
+                }
+            }
+        },
+        "core": {
+            "projectType": "library",
+            "root": "packages/core",
+            "sourceRoot": "packages/core/src",
+            "architect": {
+                "build": {
+                    "builder": "tsc",
+                    "options": {
+                        "outputPath": "dist",
+                        "main": "src/public-api.ts",
+                        "tsConfig": "tsconfig.build.json",
+                        "targets": {
+                            "main": {
+                                "context": "node",
+                                "outputFormat": "commonjs"
+                            },
+                            "module": {
+                                "context": "browser",
+                                "outputFormat": "esmodule"
+                            }
+                        },
+                        "assets": []
+                    },
+                    "configurations": {
+                        "production": {
+                            "disableCache": true
+                        },
+                        "development": {}
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "test": {
+                    "builder": "jest",
+                    "options": {
+                        "main": "src/test.ts",
+                        "tsConfig": "tsconfig.spec.ts",
+                        "jestConfig": "jest.conf.js",
+                        "assets": []
+                    }
+                }
+            }
+        },
+        "common": {
+            "projectType": "library",
+            "root": "packages/common",
+            "sourceRoot": "packages/common/src",
+            "architect": {
+                "build": {
+                    "builder": "tsc",
+                    "options": {
+                        "outputPath": "dist",
+                        "main": "src/public-api.ts",
+                        "tsConfig": "tsconfig.build.json",
+                        "targets": {},
+                        "assets": []
+                    },
+                    "configurations": {
+                        "production": {
+                            "disableCache": true
+                        },
+                        "development": {}
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "test": {
+                    "builder": "jest",
+                    "options": {
+                        "main": "src/test.ts",
+                        "tsConfig": "tsconfig.spec.ts",
+                        "jestConfig": "jest.conf.js",
+                        "assets": []
+                    }
+                }
+            }
+        },
+        "test": {
+            "projectType": "library",
+            "root": "packages/test",
+            "sourceRoot": "packages/test/src",
+            "architect": {
+                "build": {
+                    "builder": "tsc",
+                    "options": {
+                        "outputPath": "dist",
+                        "main": "src/public-api.ts",
+                        "tsConfig": "tsconfig.build.json",
+                        "targets": {},
+                        "assets": []
+                    },
+                    "configurations": {
+                        "production": {
+                            "disableCache": true
+                        },
+                        "development": {}
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "test": {
+                    "builder": "jest",
+                    "options": {
+                        "main": "src/test.ts",
+                        "tsConfig": "tsconfig.spec.ts",
+                        "jestConfig": "jest.conf.js",
+                        "assets": []
+                    }
+                }
+            }
+        }
+    }
+}

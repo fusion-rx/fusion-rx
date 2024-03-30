@@ -1,5 +1,6 @@
 # compiled output
 **/*dist
+**/*dist*
 **/*.tmp
 **/*public
 **/*.public
@@ -10,7 +11,7 @@
 **/*.js.map
 **/*.tsbuildinfo
 
-packages/cli
+packages/.cli
 packages/node
 
 

@@ -21,7 +21,8 @@
     },
     "scripts": {
         "postbuild": "node ../../tools/post-build/index.js",
-        "build": "npx parcel build && npm run postbuild && cp src/database.md ../../dist/test/database.md",
+        "copy:assets": "cp src/database.md ../../dist/test/database.md",
+        "build": "npx parcel build && npm run postbuild && copy:assets",
         "test": "jest",
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage"

@@ -1,0 +1,39 @@
+{
+    "outDir": "dist",
+    "workspaces": {
+        "srcRoot": "packages",
+        "outDir": "dist",
+        "projects": [
+            {
+                "name": "cli",
+                "buildCommand": "npm run build:cli",
+                "buildFrom": "root"
+            },
+            {
+                "name": "common",
+                "buildCommand": "npm run build:common",
+                "buildFrom": "root"
+            },
+            {
+                "name": "node",
+                "buildCommand": "npm run build:node",
+                "buildFrom": "root"
+            },
+            {
+                "name": "nest",
+                "buildCommand": "npm run build:nest",
+                "buildFrom": "root"
+            },
+            {
+                "name": "config",
+                "buildCommand": "npm run build:config",
+                "buildFrom": "root"
+            },
+            {
+                "name": "test",
+                "buildComman": "npm run build",
+                "buildFrom": "project"
+            }
+        ]
+    }
+}

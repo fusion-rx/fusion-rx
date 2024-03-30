@@ -1,7 +1,7 @@
 {
     "extends": "../../tsconfig.build.json",
     "compilerOptions": {
-        "outDir": "../../dist/core"
+        "outDir": "../../dist/compiler"
     },
-    "include": ["package.json", "src/*.ts", "src/**/*.ts"]
+    "include": ["package.json", "src/public-api.ts", "src/**/*.ts"]
 }
