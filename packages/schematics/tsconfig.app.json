@@ -1,8 +1,0 @@
-{
-    "extends": "../../tsconfig.json",
-    "compilerOptions": {
-        "outDir": "dist",
-        "isolatedModules": true
-    },
-    "include": ["app/**/*.ts"]
-}

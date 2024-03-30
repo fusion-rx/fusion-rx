@@ -1,5 +1,21 @@
-import { threeDigits, padTwo } from '../format';
 import { DateTimeFormatter } from './format-unit';
+
+/**
+ * Prepends zeros to `num` to make it two digits long.
+ * @param num A number
+ * @returns `num` as-is for two-digit numbers and prepended with
+ * one zero for one-digit numbers.
+ */
+export const padTwo = (num: number) => (num < 10 ? '0' + num : `${num}`);
+
+/**
+ * Prepends zeros to `num` to make it three digits long.
+ * @param num A number
+ * @returns `num` as-is for three-digit numbers, prepended with
+ * two zeros for three-digit numbers and two zeros for single-digit numbers.
+ */
+export const padThree = (num: number) =>
+    num < 100 ? '0' + padTwo(num) : `${num}`;
 
 export declare type SysTimezone = {
     /** The difference between the timezone and UTC hours. */
@@ -365,9 +381,7 @@ export class DateTz extends Date {
      * `YYYY-MM-DDTHH:mm:ss.SSS` format.
      */
     public toLocalString(includeMS = true) {
-        const ms = includeMS
-            ? `.${threeDigits(this.getUTCMilliseconds())}`
-            : '';
+        const ms = includeMS ? `.${padThree(this.getUTCMilliseconds())}` : '';
 
         return (
             `${this.getFullYear()}-${padTwo(this.getMonth() + 1)}-${padTwo(this.getDate())}T` +
@@ -381,9 +395,7 @@ export class DateTz extends Date {
      * `YYYY-MM-DDTHH:mm:ss.SSS` format.
      */
     override toUTCString(includeMS = true) {
-        const ms = includeMS
-            ? `.${threeDigits(this.getUTCMilliseconds())}`
-            : '';
+        const ms = includeMS ? `.${padThree(this.getUTCMilliseconds())}` : '';
 
         return (
             `${this.getUTCFullYear()}-${padTwo(this.getUTCMonth() + 1)}-${padTwo(this.getUTCDate())}T` +

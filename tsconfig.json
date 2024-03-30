@@ -8,7 +8,7 @@
         "lib": ["es2020"],
         "incremental": true,
         "types": ["reflect-metadata", "jest", "node"],
-        "baseUrl": "./packages",
+        "baseUrl": "tools/packages",
         "declaration": true,
         "declarationMap": true,
         "sourceMap": true,

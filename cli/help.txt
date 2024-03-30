@@ -1,0 +1,12 @@
+fsn command [--arguments] <argument-values>
+
+Usage:
+    fsn serve                           Serve applications with the settings specified in fusion.json.
+        [--project | -p] <project>      Specify the project to serve in multi-project workspaces.
+    fsn build                           Build the application or library with the settings specified in fusion.json.
+        [--project | -p] <project>      Specify the project to build in multi-project workspaces.
+        [--watch]                       Whether the project should be recompiled when changes have been made.
+    fsn config
+        [--init | -i]                   Initializes the fusion workspace to use @fusion-rx/config
+        [--project | -p] <project>      Sets the project that will overload base configurations.
+        [--env | -e] <environment>      Sets the target environment for the build.
