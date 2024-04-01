@@ -32,3 +32,5 @@ Thumbs.db
 !tools/**/*.js
 !packages/cli/**/*.js
 !packages/cli/**/*.d.ts
+!cli/**/*.js
+!cli/**/*.d.ts
