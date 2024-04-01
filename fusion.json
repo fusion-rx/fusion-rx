@@ -1,5 +1,5 @@
 {
-    "$schema": "./packages/compiler/src/schematics/schema.json",
+    "$schema": "./cli/src/fusion/workspace/schema.json",
     "name": "Fusion-rx",
     "version": "0.1.0",
     "newProjectsRoot": "packages",
@@ -123,6 +123,39 @@
                         "outputPath": "dist",
                         "main": "src/public-api.ts",
                         "tsConfig": "tsconfig.build.json",
+                        "targets": {},
+                        "assets": []
+                    },
+                    "configurations": {
+                        "production": {
+                            "disableCache": true
+                        },
+                        "development": {}
+                    },
+                    "defaultConfiguration": "production"
+                },
+                "test": {
+                    "builder": "jest",
+                    "options": {
+                        "main": "src/test.ts",
+                        "tsConfig": "tsconfig.spec.ts",
+                        "jestConfig": "jest.conf.js",
+                        "assets": []
+                    }
+                }
+            }
+        },
+        "example": {
+            "projectType": "application",
+            "root": "packages/example",
+            "sourceRoot": "packages/example/app",
+            "architect": {
+                "build": {
+                    "builder": "tsc",
+                    "options": {
+                        "outputPath": "dist",
+                        "main": "main.ts",
+                        "tsConfig": "tsconfig.app.json",
                         "targets": {},
                         "assets": []
                     },

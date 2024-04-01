@@ -5,29 +5,8 @@ import { join } from 'path';
 import ts from 'typescript';
 import ora from 'ora';
 
-import { loadProjectConfig } from './read-fusion-config.js';
+import { readFusionConfig } from './fusion/read-fusion-config.js';
 import { writePackageManifest } from './manifest.js';
-
-/**
- * @param {string} path
- * @toDo is there a way to do this with the typescript API?
- */
-const getAllTsFiles = (path) => {
-    /** @type {string[]} */
-    const tsFiles = [];
-
-    if (existsSync(path) && statSync(path).isDirectory()) {
-        readdirSync(path).forEach((pathOrDir) => {
-            tsFiles.push(...getAllTsFiles(join(path, pathOrDir)));
-        });
-    } else {
-        if (path.endsWith('.ts') && !path.endsWith('.spec.ts')) {
-            tsFiles.push(path);
-        }
-    }
-
-    return tsFiles;
-};
 
 /**
  *
@@ -35,7 +14,30 @@ const getAllTsFiles = (path) => {
  * @returns
  */
 export const createTsProgramFromFsnCompilerOpts = (options) => {
-    const allTsFiles = getAllTsFiles(options.projectRoot);
+    /**
+     * @param {string} path
+     * @toDo is there a way to do this with the typescript API?
+     */
+    const listAllTsFiles = (path) => {
+        /** @type {string[]} */
+        const tsFiles = [];
+
+        if (existsSync(path) && statSync(path).isDirectory()) {
+            readdirSync(path).forEach((pathOrDir) => {
+                tsFiles.push(...listAllTsFiles(join(path, pathOrDir)));
+            });
+        } else {
+            if (path.endsWith('.ts') && !path.endsWith('.spec.ts')) {
+                tsFiles.push(path);
+            }
+        }
+
+        return tsFiles;
+    };
+
+    console.log(options);
+
+    const allTsFiles = listAllTsFiles(options.sourceRoot);
     const program = ts.createProgram({
         options: options.tscOptions,
         rootNames: Array.isArray(options.rootNames)
@@ -47,10 +49,12 @@ export const createTsProgramFromFsnCompilerOpts = (options) => {
 
 /**
  * Compiles a Fusion project
- * @param {import('./types').FusionCompilerOptions} project A Fusion project
- * @returns
+ * @param {string} [projectName] A Fusion project
+ * @returns The results of the compilation
  */
-const compile = (project) => {
+export const compile = (projectName) => {
+    const project = readFusionConfig(projectName);
+
     console.log(
         `Building Fusion Package\n\n` +
             '------------------------------------------------------------------------------\n' +
@@ -76,14 +80,4 @@ const compile = (project) => {
         );
         return result;
     });
-};
-
-/**
- *
- * @param {string} [projectName]
- * @param {'build' | 'test' | 'serve'} [operation]
- */
-export const compileTypescript = (projectName, operation) => {
-    const config = loadProjectConfig(projectName, operation ?? 'build');
-    return compile(config);
 };

@@ -3,9 +3,16 @@
 import { resolve } from 'path';
 import ts from 'typescript';
 
-export const readTsConfig = (tsConfigName = 'tsconfig.build.json') => {
+/**
+ *
+ * @param {string} tsConfigName The name of the tsconfig file (such as `tsconfig.build.json`).
+ * Defaults to `tsconfig.json`.
+ * @param {string} [path] The path to the tsconfig file.
+ * @returns
+ */
+export const readTsConfig = (tsConfigName = 'tsconfig.json', path) => {
     const configFilePath = ts.findConfigFile(
-        resolve(),
+        path ?? resolve(),
         ts.sys.fileExists,
         tsConfigName
     );
@@ -29,13 +36,14 @@ export const readTsConfig = (tsConfigName = 'tsconfig.build.json') => {
     const compilerOptions = ts.parseJsonConfigFileContent(
         configFile.config,
         ts.sys,
-        './'
+        path ?? './'
     );
 
     if (compilerOptions.errors.length > 0) {
         throw {
             message: 'Failed to parse tsconfig.json',
-            stack: compilerOptions.errors
+            errors: compilerOptions.errors,
+            stack: new Error().stack
         };
     }
 

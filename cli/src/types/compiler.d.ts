@@ -27,4 +27,6 @@ export declare type FusionCompilerOptions = {
     watch?: boolean;
 
     tsConfigFileName: string;
+
+    sourceRoot: string;
 };

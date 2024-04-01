@@ -6,7 +6,7 @@ import { resolve } from 'path';
 
 import { logError, logSuccess, logWarning, logInfo } from './util/index.js';
 import { readTsConfig } from './typescript/index.js';
-import { loadProjectConfig } from './read-fusion-config.js';
+import { readFusionConfig } from './fusion/read-fusion-config.js';
 
 /**
  * @typedef {import('typescript').Diagnostic} Diagnostic
@@ -29,7 +29,7 @@ const watchEvent = new EventEmitter();
  */
 export const watchCli = (project) => {
     watchEvent.on('status', logEvent);
-    const fsnProject = loadProjectConfig(project, 'build');
+    const fsnProject = readFusionConfig(project);
 
     watch(fsnProject);
 };

@@ -6,7 +6,7 @@ import chalk from 'chalk';
 import { exit } from 'process';
 
 import { arg, args, printHelp } from './src/util/index.js';
-import { compileTypescript } from './src/compiler.js';
+import { compile } from './src/compiler.js';
 import { watchCli } from './src/watch.js';
 
 const help = () => printHelp('help.txt');
@@ -17,10 +17,10 @@ const build = () => {
 
     if (project) {
         if (watch) return watchCli(project);
-        return compileTypescript(project);
+        return compile(project);
     } else {
         if (watch) return watchCli();
-        return compileTypescript();
+        return compile();
     }
 };
 
