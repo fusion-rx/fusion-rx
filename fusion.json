@@ -4,6 +4,29 @@
     "version": "0.1.0",
     "newProjectsRoot": "packages",
     "projects": {
+        "example": {
+            "projectType": "application",
+            "root": "packages/example",
+            "sourceRoot": "packages/example/app",
+            "architect": {
+                "build": {
+                    "builder": "tsc",
+                    "options": {
+                        "outputPath": "dist",
+                        "main": "main.ts",
+                        "tsConfig": "tsconfig.app.json"
+                    }
+                },
+                "test": {
+                    "builder": "jest",
+                    "options": {
+                        "main": "src/test.ts",
+                        "tsConfig": "tsconfig.spec.ts",
+                        "jestConfig": "jest.conf.js"
+                    }
+                }
+            }
+        },
         "shared": {
             "projectType": "library",
             "root": "packages/shared",
@@ -13,26 +36,16 @@
                     "builder": "tsc",
                     "options": {
                         "outputPath": "dist",
-                        "main": "src/public-api.ts",
-                        "tsConfig": "tsconfig.build.json",
-                        "targets": {},
-                        "assets": []
-                    },
-                    "configurations": {
-                        "production": {
-                            "disableCache": true
-                        },
-                        "development": {}
-                    },
-                    "defaultConfiguration": "production"
+                        "main": "public-api.ts",
+                        "tsConfig": "tsconfig.build.json"
+                    }
                 },
                 "test": {
                     "builder": "jest",
                     "options": {
-                        "main": "src/test.ts",
+                        "main": "test.ts",
                         "tsConfig": "tsconfig.spec.ts",
-                        "jestConfig": "jest.conf.js",
-                        "assets": []
+                        "jestConfig": "jest.conf.js"
                     }
                 }
             }
@@ -46,7 +59,7 @@
                     "builder": "tsc",
                     "options": {
                         "outputPath": "dist",
-                        "main": "src/public-api.ts",
+                        "main": "public-api.ts",
                         "tsConfig": "tsconfig.build.json",
                         "targets": {
                             "main": {
@@ -57,24 +70,15 @@
                                 "context": "browser",
                                 "outputFormat": "esmodule"
                             }
-                        },
-                        "assets": []
-                    },
-                    "configurations": {
-                        "production": {
-                            "disableCache": true
-                        },
-                        "development": {}
-                    },
-                    "defaultConfiguration": "production"
+                        }
+                    }
                 },
                 "test": {
                     "builder": "jest",
                     "options": {
-                        "main": "src/test.ts",
+                        "main": "test.ts",
                         "tsConfig": "tsconfig.spec.ts",
-                        "jestConfig": "jest.conf.js",
-                        "assets": []
+                        "jestConfig": "jest.conf.js"
                     }
                 }
             }
@@ -88,26 +92,16 @@
                     "builder": "tsc",
                     "options": {
                         "outputPath": "dist",
-                        "main": "src/public-api.ts",
-                        "tsConfig": "tsconfig.build.json",
-                        "targets": {},
-                        "assets": []
-                    },
-                    "configurations": {
-                        "production": {
-                            "disableCache": true
-                        },
-                        "development": {}
-                    },
-                    "defaultConfiguration": "production"
+                        "main": "public-api.ts",
+                        "tsConfig": "tsconfig.build.json"
+                    }
                 },
                 "test": {
                     "builder": "jest",
                     "options": {
-                        "main": "src/test.ts",
+                        "main": "test.ts",
                         "tsConfig": "tsconfig.spec.ts",
-                        "jestConfig": "jest.conf.js",
-                        "assets": []
+                        "jestConfig": "jest.conf.js"
                     }
                 }
             }
@@ -121,59 +115,16 @@
                     "builder": "tsc",
                     "options": {
                         "outputPath": "dist",
-                        "main": "src/public-api.ts",
-                        "tsConfig": "tsconfig.build.json",
-                        "targets": {},
-                        "assets": []
-                    },
-                    "configurations": {
-                        "production": {
-                            "disableCache": true
-                        },
-                        "development": {}
-                    },
-                    "defaultConfiguration": "production"
-                },
-                "test": {
-                    "builder": "jest",
-                    "options": {
-                        "main": "src/test.ts",
-                        "tsConfig": "tsconfig.spec.ts",
-                        "jestConfig": "jest.conf.js",
-                        "assets": []
+                        "main": "public-api.ts",
+                        "tsConfig": "tsconfig.build.json"
                     }
-                }
-            }
-        },
-        "example": {
-            "projectType": "application",
-            "root": "packages/example",
-            "sourceRoot": "packages/example/app",
-            "architect": {
-                "build": {
-                    "builder": "tsc",
-                    "options": {
-                        "outputPath": "dist",
-                        "main": "main.ts",
-                        "tsConfig": "tsconfig.app.json",
-                        "targets": {},
-                        "assets": []
-                    },
-                    "configurations": {
-                        "production": {
-                            "disableCache": true
-                        },
-                        "development": {}
-                    },
-                    "defaultConfiguration": "production"
                 },
                 "test": {
                     "builder": "jest",
                     "options": {
-                        "main": "src/test.ts",
+                        "main": "test.ts",
                         "tsConfig": "tsconfig.spec.ts",
-                        "jestConfig": "jest.conf.js",
-                        "assets": []
+                        "jestConfig": "jest.conf.js"
                     }
                 }
             }

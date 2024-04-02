@@ -3,8 +3,8 @@
     "$id": "SchematicsFusionProjectConfig",
     "title": "Fusion Project Config Schema",
     "type": "object",
-    "additionalProperties": false,
     "description": "Defines a fsnconfig.json file.",
+    "additionalProperties": false,
     "required": ["name", "version"],
     "properties": {
         "$schema": {
@@ -43,8 +43,9 @@
     },
     "definitions": {
         "workspace": {
-            "type": "object",
             "description": "Defines a workspace",
+            "type": "object",
+            "additionalProperties": false,
             "required": ["projects"],
             "properties": {
                 "root": {
@@ -67,16 +68,13 @@
                             "$ref": "#/definitions/project"
                         }
                     }
-                },
-                "preInstall": {
-                    "description": "If `npm install` should be run prior to building the workspace projects.",
-                    "type": "boolean"
                 }
             }
         },
         "project": {
-            "type": "object",
             "description": "Defines properties for a project in this workspace",
+            "type": "object",
+            "additionalProperties": false,
             "required": ["projectType", "root"],
             "properties": {
                 "projectType": {
@@ -85,19 +83,16 @@
                     "enum": ["application", "library"]
                 },
                 "root": {
-                    "description": "The source of the project, relative to the workspace srcRoot.",
+                    "description": "The source of the project relative to this configuration file.",
                     "type": "string"
                 },
                 "sourceRoot": {
-                    "description": "The root of the source files and assets.",
+                    "description": "The root of the source files and assets relative to this configuration file.",
                     "type": "string"
-                },
-                "preInstall": {
-                    "description": "Whether `npm install` should be run prior to buildiing.",
-                    "type": "boolean"
                 },
                 "architect": {
                     "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "build": {
                             "$ref": "#/definitions/build"
@@ -113,23 +108,34 @@
             }
         },
         "build": {
+            "description": "Options that control the build.",
             "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "builder": {
+                    "description": "The builder used to compile the project's source code.",
                     "type": "string",
                     "enum": ["parcel", "tsc"]
                 },
                 "options": {
                     "type": "object",
+                    "additionalProperties": false,
                     "properties": {
                         "outputPath": {
+                            "description": "The output path of the project, relative to this configuration file.",
                             "type": "string"
                         },
                         "main": {
+                            "description": "The entrypoint of the application, such as main.ts or index.ts, relative to root.",
                             "type": "string"
                         },
                         "tsConfig": {
+                            "description": "The name of the tsconfig file used to build the application.",
                             "type": "string"
+                        },
+                        "assets": {
+                            "description": "Assets to include in the build",
+                            "type": "array"
                         },
                         "targets": {
                             "type": "object",
@@ -144,13 +150,45 @@
             }
         },
         "serve": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false
         },
         "test": {
-            "type": "object"
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+                "builder": {
+                    "description": "A unit test library.",
+                    "type": "string",
+                    "enum": ["jest"]
+                },
+                "options": {
+                    "type": "object",
+                    "additionalProperties": false,
+                    "properties": {
+                        "main": {
+                            "description": "The entry test file relative to root.",
+                            "type": "string"
+                        },
+                        "tsConfig": {
+                            "description": "The name of the tsconfig file used to build the application.",
+                            "type": "string"
+                        },
+                        "jestConfig": {
+                            "description": "The name of the jest configuration file.",
+                            "type": "string"
+                        },
+                        "assets": {
+                            "description": "Assets to include in the build",
+                            "type": "array"
+                        }
+                    }
+                }
+            }
         },
         "target": {
             "type": "object",
+            "additionalProperties": false,
             "properties": {
                 "context": {
                     "type": "string",

@@ -35,8 +35,6 @@ export const createTsProgramFromFsnCompilerOpts = (options) => {
         return tsFiles;
     };
 
-    console.log(options);
-
     const allTsFiles = listAllTsFiles(options.sourceRoot);
     const program = ts.createProgram({
         options: options.tscOptions,
