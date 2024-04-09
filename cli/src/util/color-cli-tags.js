@@ -13,7 +13,9 @@ export const colorCLITags = (line, color, startChar, endChar) => {
     if (argStart > -1 && argEnd > -1) {
         line =
             line.substring(0, argStart) +
+            ' ' +
             color(line.substring(argStart, argEnd + 1)) +
+            ' ' +
             line.substring(argEnd + 1, line.length);
     }
 

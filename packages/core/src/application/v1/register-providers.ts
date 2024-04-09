@@ -9,14 +9,14 @@ import {
     INJECTED_DEPS,
     INJECT,
     isInjectableRef
-} from '../di';
-import { Class, isClass } from '../interface';
+} from '../../di';
+import { Type, isType } from '../../interface';
 
 /**
  * Registers a local provider.
  * @param ref An injected class or Factory Provider
  */
-export const registerProvider = (ref: Class<any>) => {
+export const registerProvider = (ref: Type<any>) => {
     // If this is not a factory provider, all of the provider's metadata
     // was registered in the Injectable() decorator, so we can create its
     // refernece from the registered metadata
@@ -72,7 +72,7 @@ export const registerFactoryProvider = (ref: FactoryProvider) => {
                 // class, so we can provide the injected class after it has been
                 // initialized.
                 provider.injected[index] = injectedClassName;
-            } else if (isClass(arg)) {
+            } else if (isType(arg)) {
                 // If a non-injectable class is provided, we get its
                 // injected dependencies.
                 const argParams = getInjectedDependencies(arg);
@@ -103,7 +103,7 @@ export const registerFactoryProvider = (ref: FactoryProvider) => {
  * Registers a local provider.
  * @param ref An injected class or Factory Provider
  */
-export const registerProviders = (refs: (Class<any> | FactoryProvider)[]) => {
+export const registerProviders = (refs: (Type<any> | FactoryProvider)[]) => {
     const providers: Record<string, FsnInjectableRef> = {};
 
     refs.forEach((ref) => {

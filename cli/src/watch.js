@@ -28,55 +28,8 @@ const watchEvent = new EventEmitter();
  * @param {string} [project]
  */
 export const watchCli = (project) => {
-    watchEvent.on('status', logEvent);
     const fsnProject = readFusionConfig(project);
-
     watch(fsnProject);
-};
-
-/**
- * Initializes a watcher.
- * @param {import('./types/index.js').FusionCompilerOptions} project The name of the tsconfig file
- * that is configured for building/watching.
- */
-export const watch = (project) => {
-    const tsConfig = readTsConfig();
-
-    tsConfig.watchOptions = {
-        watchFile: ts.WatchFileKind.UseFsEventsOnParentDirectory
-    };
-
-    const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
-
-    const host = ts.createWatchCompilerHost(
-        resolve(project.projectRoot, project.tsConfigFileName),
-        {},
-        ts.sys,
-        createProgram,
-        (diagnostic) => watchEvent.emit('status', diagnostic),
-        (diagnostic) => watchEvent.emit('status', diagnostic)
-    );
-
-    const origCreateProgram = host.createProgram;
-
-    // @ts-ignore
-    host.createProgram = (rootNames, options, host, oldProgram) =>
-        origCreateProgram(rootNames, options, host, oldProgram);
-    const origPostProgramCreate = host.afterProgramCreate;
-    host.afterProgramCreate = (program) => {
-        if (origPostProgramCreate) origPostProgramCreate(program);
-    };
-
-    // Create an initial program, watch files, and update
-    // the program over time.
-    ts.createWatchProgram(host);
-};
-
-/** @type {FormatDiagnosticsHost} **/
-const formatHost = {
-    getCanonicalFileName: (path) => path,
-    getCurrentDirectory: ts.sys.getCurrentDirectory,
-    getNewLine: () => ts.sys.newLine
 };
 
 /**
@@ -84,6 +37,13 @@ const formatHost = {
  * @param {Diagnostic} statusEvent
  */
 const logEvent = (statusEvent) => {
+    /** @type {FormatDiagnosticsHost} **/
+    const formatHost = {
+        getCanonicalFileName: (path) => path,
+        getCurrentDirectory: ts.sys.getCurrentDirectory,
+        getNewLine: () => ts.sys.newLine
+    };
+
     // Format the diagnostic message and remove the prefix
     let formattedMsg = ts.formatDiagnosticsWithColorAndContext(
         [statusEvent],
@@ -119,4 +79,44 @@ const logEvent = (statusEvent) => {
                 );
             }
     }
+};
+
+/**
+ * Initializes a watcher.
+ * @param {import('./types/index.js').FusionCompilerOptions} project The name of the tsconfig file
+ * that is configured for building/watching.
+ */
+export const watch = (project) => {
+    watchEvent.on('status', logEvent);
+
+    const tsConfig = readTsConfig();
+
+    tsConfig.watchOptions = {
+        watchFile: ts.WatchFileKind.UseFsEventsOnParentDirectory
+    };
+
+    const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
+
+    const host = ts.createWatchCompilerHost(
+        resolve(project.projectRoot, project.tsConfigFileName),
+        {},
+        ts.sys,
+        createProgram,
+        (diagnostic) => watchEvent.emit('status', diagnostic),
+        (diagnostic) => watchEvent.emit('status', diagnostic)
+    );
+
+    const origCreateProgram = host.createProgram;
+
+    // @ts-ignore
+    host.createProgram = (rootNames, options, host, oldProgram) =>
+        origCreateProgram(rootNames, options, host, oldProgram);
+    const origPostProgramCreate = host.afterProgramCreate;
+    host.afterProgramCreate = (program) => {
+        if (origPostProgramCreate) origPostProgramCreate(program);
+    };
+
+    // Create an initial program, watch files, and update
+    // the program over time.
+    ts.createWatchProgram(host);
 };

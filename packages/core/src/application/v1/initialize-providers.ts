@@ -10,9 +10,9 @@ import {
     INJECT,
     isFactoryProvider,
     isInjectableRef
-} from '../di';
-import { Class, isClass } from '../interface';
-import { rootProviders } from './bootstrap';
+} from '../../di';
+import { Type, isType } from '../../interface';
+import { rootProviders_v1 } from './bootstrap';
 import { FsnInjectableRef, FsnModuleRef } from './refs';
 
 /**
@@ -71,7 +71,7 @@ export class ProviderInitializer {
             if (provider.providedIn === 'root') {
                 // If this provider is injected in the 'root' context, add it to
                 // the root providers
-                rootProviders[key] = provider;
+                rootProviders_v1[key] = provider;
             } else {
                 // If this provider is injected in the 'module' context,
                 // update its reference
@@ -102,7 +102,7 @@ export class ProviderInitializer {
     private _initializeInjectableProvider(provider: FsnInjectableRef) {
         // To avoid unnecessary type-checking, create a reference
         // to the provider reference cast to Class
-        const reference = provider.reference as Class<any>;
+        const reference = provider.reference as Type<any>;
 
         if (provider.injected.length === 0) {
             // This provider has no injected dependencies, so we can initialize it
@@ -166,7 +166,7 @@ export class ProviderInitializer {
                         );
                     }
 
-                    if (isClass(dep)) {
+                    if (isType(dep)) {
                         const argDeps = getConstructorParameters(dep);
 
                         if (Object.keys(argDeps).length === 0) {
@@ -233,6 +233,11 @@ export class ProviderInitializer {
         providerName: string,
         dynamicInjections: any[]
     ): any {
+        // If there are no dynamic injectsion, we can return.
+        if (dynamicInjections.length === 0) {
+            return [];
+        }
+
         // If a factory provider was injected with `@Inject()`,
         // its instance should already be initialized
         if (dynamicInjections[index]) {
@@ -244,20 +249,20 @@ export class ProviderInitializer {
         }
 
         // Check if this provider is declared in the `root` context
-        if (rootProviders[providerName]) {
-            if (rootProviders[providerName].instance) {
+        if (rootProviders_v1[providerName]) {
+            if (rootProviders_v1[providerName].instance) {
                 // Since `instance` exists, the injected provider has
                 // already been initialized
-                return rootProviders[providerName].instance;
+                return rootProviders_v1[providerName].instance;
             } else {
                 // The injected provider has not been initialized.
                 // We don't need to handle errors, because if the provider
                 // cannot be initialized, `initProvider` will throw a useful error.
-                rootProviders[providerName] = this._initializeProvider(
+                rootProviders_v1[providerName] = this._initializeProvider(
                     this.providers[providerName]
                 );
 
-                return rootProviders[providerName].instance;
+                return rootProviders_v1[providerName].instance;
             }
         }
 
@@ -302,6 +307,8 @@ export class ProviderInitializer {
                     'was never initialized in its module.'
             );
         }
+
+        console.log(index, providerName, dynamicInjections);
 
         // If the provider cannot be found in any imported modules,
         // then it doesn't exist or wasn't exported from an imported module

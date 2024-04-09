@@ -1,7 +1,7 @@
-import { Class } from '../interface';
 import { FsnModule as FsnModule } from './module';
+import { Type } from '../interface';
 
-export interface ModuleWithProviders<T = Class<any>> extends FsnModule {
+export interface ModuleWithProviders<T = Type<any>> extends FsnModule {
     ngModule: T;
 }
 

@@ -1,5 +1,5 @@
-import { rootProviders } from './bootstrap';
-import { FsnModuleRef, FsnInjectableRef } from './refs';
+import { rootProviders_v1 } from './v1/bootstrap';
+import { FsnModuleRef, FsnInjectableRef } from './v1/refs';
 
 /**
  * Method that is run after the local module is initialized.
@@ -72,7 +72,7 @@ export const afterAppInit = (fsnModule: FsnModuleRef) => {
     processModuleProviders(fsnModule);
 
     // Check for `afterAppInit` lifecycle hook in root providers
-    Object.values(rootProviders).forEach((provider) => {
+    Object.values(rootProviders_v1).forEach((provider) => {
         if (implementsAfterAppInit(provider.instance))
             provider.instance.fsnAfterAppInit();
     });

@@ -9,3 +9,4 @@ export * from './prepend';
 export * from './starts-with';
 export * from './title-case';
 export * from './wrap';
+export * from './color-cli';

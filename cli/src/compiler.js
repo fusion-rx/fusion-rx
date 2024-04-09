@@ -62,7 +62,7 @@ export const compile = (projectName) => {
 
     const spinner = ora().start('Compiling Fusion project');
     new Promise((resolve) => {
-        project.tscOptions.module = ts.ModuleKind.ES2015;
+        project.tscOptions.module = ts.ModuleKind.CommonJS;
         project.tscOptions.target = ts.ScriptTarget.ES2017;
         project.tscOptions.outDir = project.outDir;
 

@@ -1,60 +1,30 @@
-import { Class } from '../interface/class';
-import { FactoryProvider } from './inject';
+import { FactoryProvider } from './factory-provider';
 import { ModuleWithProviders } from './module-with-provider';
-
-export const CLASS_NAME = '__fsn-class-name__';
-export const IMPORTS = '__fsn-module-imports__';
-export const EXPORTS = '__fsn-module-exports__';
-export const PROVIDERS = '__fsn-module-providers__';
-export const ROUTES = '__fsn-routes__';
+import { Type } from '../interface/type';
+import { reflectModule } from '../reflection/reflect-module';
 
 export declare interface FsnModule {
-    providers?: Array<Class<any> | FactoryProvider> | undefined;
-    exports?: Array<Class<any> | FactoryProvider> | undefined;
-    imports?: Array<Class<any> | ModuleWithProviders<any>> | undefined;
-    routes?: Array<Class<any>> | undefined;
+    providers: Array<Type<any> | FactoryProvider>;
+    exports: Array<Type<any> | FactoryProvider>;
+    imports: Array<Type<any> | ModuleWithProviders<any>>;
+    routes: Array<Type<any>>;
 }
 
 /**
- * Module decorator and metadata.
+ * ## FsnModule
+ *
+ * **FsnModules** configure the injector and the compiler and help organize
+ * related things together by promiting abstraction and informating hiding.
+ *
+ * A FsnModule is a class marked by the `@FsnModule` decorator. `@FsnModule`
+ * accepts a metadata object that describes how to compile providers and routes.
+ * It identifies the module's own routes, as well as its providers, making some
+ * of them public though the `exports` property, so that external providers
+ * can use them.
  *
  * @publicApi
  */
-export const FsnModule = (ngModule: FsnModule) => {
-    return function (moduleRef: Class<any>) {
-        Reflect.defineMetadata(
-            CLASS_NAME,
-            moduleRef?.prototype?.constructor?.name,
-            moduleRef
-        );
-        Reflect.defineMetadata(IMPORTS, ngModule.imports ?? [], moduleRef);
-        Reflect.defineMetadata(EXPORTS, ngModule.exports ?? [], moduleRef);
-        Reflect.defineMetadata(PROVIDERS, ngModule.providers ?? [], moduleRef);
-        Reflect.defineMetadata(ROUTES, ngModule.routes ?? [], moduleRef);
+export const FsnModule =
+    (fsnModule: Partial<FsnModule>) => (reference: Type<any>) => {
+        reflectModule(reference, fsnModule);
     };
-};
-
-/**
- * Defines the metadata for a ngModule in a class reference.
- * @param ngMdoule An object that defines the metadata for a ngModule
- * @param moduleRef A reference to the module class
- * @param overrideExisting Whether already-defined metadata params should
- * be overriden (in cases such as ModuleWithProviders) or replaced
- * with the new ngModule values.
- */
-export const defineFsnModuleMetadata = (
-    ngMdoule: FsnModule,
-    moduleRef: Class<any>
-) => {
-    Reflect.defineMetadata(
-        CLASS_NAME,
-        moduleRef?.prototype?.constructor?.name,
-        moduleRef
-    );
-    Reflect.defineMetadata(IMPORTS, ngMdoule.imports ?? [], moduleRef);
-    Reflect.defineMetadata(EXPORTS, ngMdoule.exports ?? [], moduleRef);
-    Reflect.defineMetadata(PROVIDERS, ngMdoule.providers ?? [], moduleRef);
-    Reflect.defineMetadata(ROUTES, ngMdoule.routes ?? [], moduleRef);
-
-    return moduleRef;
-};

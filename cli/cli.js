@@ -8,6 +8,7 @@ import { exit } from 'process';
 import { arg, args, printHelp } from './src/util/index.js';
 import { compile } from './src/compiler.js';
 import { watchCli } from './src/watch.js';
+import { serveCli } from './src/serve.js';
 
 const help = () => printHelp('help.txt');
 
@@ -26,12 +27,8 @@ const build = () => {
 
 const serve = () => {
     const project = arg('-p', '--project');
-    const watch = args.includes('--watch');
 
-    return {
-        project,
-        watch
-    };
+    if (project) return serveCli(project);
 };
 
 const config = () => {

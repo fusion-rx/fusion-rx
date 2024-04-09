@@ -1,5 +1,5 @@
 import { Subscription, isObservable } from 'rxjs';
-import { BASE_ROUTE, TEMPLATE, TEMPLATE_URL } from '../di/route';
+import { BASE_ROUTE, TEMPLATE, TEMPLATE_URL } from '../../di/route';
 import { FsnInjectableRef, FsnRouteRef } from './refs';
 
 export const routeSubscriptions = new Subscription();

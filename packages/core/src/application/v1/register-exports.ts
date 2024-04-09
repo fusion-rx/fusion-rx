@@ -1,11 +1,11 @@
 import { getMetadata } from '@fusion-rx/shared';
 
 import { FsnInjectableRef } from './refs';
-import { CLASS_NAME, EXPORTS, PROVIDED_IN } from '../di';
-import { Class } from '../interface';
+import { CLASS_NAME, EXPORTS, PROVIDED_IN } from '../../di';
+import { Type } from '../../interface';
 
 export const registerExports = (
-    moduleRef: Class<any>,
+    moduleRef: Type<any>,
     moduleName: string,
     localProviders: Record<string, FsnInjectableRef>
 ) => {
@@ -13,7 +13,7 @@ export const registerExports = (
     // registered module.
     const exports: Record<string, any> = {};
 
-    const registerExport = (exported: Class<any>, index: number) => {
+    const registerExport = (exported: Type<any>, index: number) => {
         // The exports array holds references to classes, so we have to
         // get the class name so we can export the registered provider's
         // instance
@@ -45,7 +45,7 @@ export const registerExports = (
         exports[exportName] = localProviders[exportName].instance;
     };
 
-    getMetadata<Class<any>[]>(EXPORTS, moduleRef, []).forEach(
+    getMetadata<Type<any>[]>(EXPORTS, moduleRef, []).forEach(
         (exported, index) => {
             // If this provider is injected in the root context, there's
             // no need to register it as an export.

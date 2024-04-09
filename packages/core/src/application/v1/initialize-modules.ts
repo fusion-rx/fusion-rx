@@ -3,15 +3,15 @@ import { getMetadata } from '@fusion-rx/shared';
 import { FsnModuleRef } from './refs';
 import {
     ModuleWithProviders,
-    defineFsnModuleMetadata,
+    _defineFsnModuleMetadata,
     CLASS_NAME,
     PROVIDERS,
     FactoryProvider,
     ROUTES
-} from '../di';
-import { isModuleWithProviders } from '../di/module-with-provider';
-import { Class } from '../interface';
-import { afterAppInit, onModuleInit } from './lifecycle';
+} from '../../di';
+import { isModuleWithProviders } from '../../di/module-with-provider';
+import { Type } from '../../interface';
+import { afterAppInit, onModuleInit } from '../lifecycle';
 import { registerExports } from './register-exports';
 import { registerProviders } from './register-providers';
 import { registerImports } from './register-imports';
@@ -19,13 +19,13 @@ import { ProviderInitializer } from './initialize-providers';
 import { initRoute } from './init-routes';
 
 export function initializeModule(
-    moduleRef: Class<any> | ModuleWithProviders<any>,
+    moduleRef: Type<any> | ModuleWithProviders<any>,
     isRootModule = false
 ): FsnModuleRef {
     // If this is a `ModuleWithProviders`, we need to initialize
     // the dynamic metadata for the module class reference
     if (isModuleWithProviders(moduleRef)) {
-        moduleRef = defineFsnModuleMetadata(moduleRef, moduleRef.ngModule);
+        moduleRef = _defineFsnModuleMetadata(moduleRef, moduleRef.ngModule);
     }
 
     // Get the class name of this module
@@ -44,12 +44,12 @@ export function initializeModule(
 
     // Create provider references for all of this module's providers
     const providerRefs = registerProviders(
-        getMetadata<(Class<any> | FactoryProvider)[]>(PROVIDERS, moduleRef, [])
+        getMetadata<(Type<any> | FactoryProvider)[]>(PROVIDERS, moduleRef, [])
     );
 
     // Create route references for all of this module's route
     const routeRefs = registerProviders(
-        getMetadata<Class<any>[]>(ROUTES, moduleRef, [])
+        getMetadata<Type<any>[]>(ROUTES, moduleRef, [])
     );
 
     // Providers and routes must be initialized together, since

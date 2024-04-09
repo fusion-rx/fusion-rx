@@ -1,2 +1,2 @@
-export type { Class } from './class';
-export { isClass } from './class';
+export type { Type } from './type';
+export { isType } from './type';

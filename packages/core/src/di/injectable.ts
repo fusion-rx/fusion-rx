@@ -1,12 +1,8 @@
-import { getInjectedDependencies } from '@fusion-rx/shared';
+import { Type, isType } from '../interface';
+import { CLASS_NAME, PROVIDED_IN } from '../reflection/metadata-keys';
+import { reflectInjectable } from '../reflection/reflect-injectable';
 
-import { Class, isClass } from '../interface';
-import { CLASS_NAME } from './module';
-
-export const PROVIDED_IN = '__ng-injectable-provided-in__';
-export const INJECTED_DEPS = '__ng-injected-deps__';
-
-interface Injectable {
+export interface Injectable {
     providedIn: 'root' | 'module' | null;
 }
 
@@ -15,19 +11,8 @@ interface Injectable {
  *
  * @publicApi
  */
-export const Injectable = (opts?: Injectable) => (instance: Class<any>) => {
-    Reflect.defineMetadata(
-        CLASS_NAME,
-        instance?.prototype?.constructor?.name,
-        instance
-    );
-    Reflect.defineMetadata(
-        INJECTED_DEPS,
-        getInjectedDependencies(instance),
-        instance
-    );
-    Reflect.defineMetadata(PROVIDED_IN, opts?.providedIn ?? 'module', instance);
-};
+export const Injectable = (opts?: Injectable) => (reference: Type<any>) =>
+    reflectInjectable(reference, opts);
 
 /**
  * Gets the metadata for injectables.
@@ -36,7 +21,7 @@ export const Injectable = (opts?: Injectable) => (instance: Class<any>) => {
  */
 export const isInjectableRef = (val: any) => {
     try {
-        if (isClass(val)) {
+        if (isType(val)) {
             const name: string = Reflect.getMetadata(CLASS_NAME, val);
             const providedIn: 'module' | 'root' =
                 Reflect.getMetadata(PROVIDED_IN, val) ?? 'module';

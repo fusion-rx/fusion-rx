@@ -1,5 +1,5 @@
-import { FactoryProvider } from '../di';
-import { Class } from '../interface';
+import { FactoryProvider } from '../../di';
+import { Type } from '../../interface';
 
 export declare type FsnModuleRef = {
     moduleName: string;
@@ -14,7 +14,7 @@ export declare type FsnInjectableRef = {
     injected: string[];
     /** Providers injected using @Inject decorator */
     dynamicInjections: any[];
-    reference: Class<any> | FactoryProvider;
+    reference: Type<any> | FactoryProvider;
     instance?: any;
 };
 

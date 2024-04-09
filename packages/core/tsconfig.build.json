@@ -1,7 +1,9 @@
 {
     "extends": "../../tsconfig.build.json",
     "compilerOptions": {
-        "outDir": "../../dist/compiler"
+        "outDir": "../../dist/core",
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true
     },
     "include": ["package.json", "src/public-api.ts", "src/**/*.ts"]
 }
