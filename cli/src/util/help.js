@@ -1,16 +1,14 @@
 // @ts-check
 
 import chalk from 'chalk';
-import { readFileSync } from 'fs';
 
 import { colorCLITags } from './color-cli-tags.js';
 
 /**
  * Formats and prints the `help.txt`.
- * @param {string} helpTxtPath The path to the `help.txt file.
+ * @param {string} helpText The path to the `help.txt file.
  */
-export const printHelp = (helpTxtPath) => {
-    const helpText = readFileSync(helpTxtPath, 'utf-8');
+export const printHelp = (helpText) => {
     const helpFormatted = helpText
         .split(/\n/g)
         .map((ln) => {

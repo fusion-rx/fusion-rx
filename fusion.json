@@ -16,14 +16,6 @@
                         "main": "main.ts",
                         "tsConfig": "tsconfig.app.json"
                     }
-                },
-                "test": {
-                    "builder": "jest",
-                    "options": {
-                        "main": "src/test.ts",
-                        "tsConfig": "tsconfig.spec.ts",
-                        "jestConfig": "jest.conf.js"
-                    }
                 }
             }
         },
@@ -38,14 +30,6 @@
                         "outputPath": "dist",
                         "main": "public-api.ts",
                         "tsConfig": "tsconfig.build.json"
-                    }
-                },
-                "test": {
-                    "builder": "jest",
-                    "options": {
-                        "main": "test.ts",
-                        "tsConfig": "tsconfig.spec.ts",
-                        "jestConfig": "jest.conf.js"
                     }
                 }
             }
@@ -72,14 +56,6 @@
                             }
                         }
                     }
-                },
-                "test": {
-                    "builder": "jest",
-                    "options": {
-                        "main": "test.ts",
-                        "tsConfig": "tsconfig.spec.ts",
-                        "jestConfig": "jest.conf.js"
-                    }
                 }
             }
         },
@@ -95,14 +71,6 @@
                         "main": "public-api.ts",
                         "tsConfig": "tsconfig.build.json"
                     }
-                },
-                "test": {
-                    "builder": "jest",
-                    "options": {
-                        "main": "test.ts",
-                        "tsConfig": "tsconfig.spec.ts",
-                        "jestConfig": "jest.conf.js"
-                    }
                 }
             }
         },
@@ -117,14 +85,6 @@
                         "outputPath": "dist",
                         "main": "public-api.ts",
                         "tsConfig": "tsconfig.build.json"
-                    }
-                },
-                "test": {
-                    "builder": "jest",
-                    "options": {
-                        "main": "test.ts",
-                        "tsConfig": "tsconfig.spec.ts",
-                        "jestConfig": "jest.conf.js"
                     }
                 }
             }

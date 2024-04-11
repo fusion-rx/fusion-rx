@@ -7,51 +7,21 @@ import ora from 'ora';
 
 import { readFusionConfig } from './fusion/read-fusion-config.js';
 import { writePackageManifest } from './manifest.js';
-import { execSync } from 'child_process';
+import { exec } from './util/exec-sync.js';
 
 /**
- *
- * @param {unknown} val
- * @returns {val is {
- *  output: (null | Buffer)[],
- *  stdout: Buffer,
- *  stderr: Buffer
- * }}
+ * Builds a typescript project by using the CLI.
+ * @param {string} projectRoot The root of the Typescript project to compile
+ * @param {string} tsConfigFileName The name of the tsconfig.json used for compilations
+ * @returns A promise of the command to execute the compilation
  */
-export const isExecSyncErr = (val) => {
-    return (
-        val !== null &&
-        typeof val === 'object' &&
-        'output' in val &&
-        'stdout' in val
-    );
-};
+export const buildWithTsCLI = (projectRoot, tsConfigFileName) =>
+    exec(`npx tsc -p ${join(projectRoot, tsConfigFileName)}`);
 
 /**
- *
- * @param {string} projectRoot
- * @param {string} tsConfigFileName
- * @returns
- */
-export const buildWithTsCLI = (projectRoot, tsConfigFileName) => {
-    try {
-        const output = execSync(
-            `npx tsc -p ${join(projectRoot, tsConfigFileName)}`
-        );
-        return output.toString('utf-8');
-    } catch (e) {
-        if (isExecSyncErr(e)) {
-            const err = e.stdout.toString('utf-8');
-            throw err;
-        }
-
-        throw e;
-    }
-};
-
-/**
- * @param {string} path
- * @toDo is there a way to do this with the typescript API?
+ * Lists all typescript files in a directory.
+ * @param {string} path The path to the project root
+ * @toDo Is there a way to do this with the typescript API?
  */
 const listAllTsFiles = (path) => {
     /** @type {string[]} */
@@ -71,9 +41,9 @@ const listAllTsFiles = (path) => {
 };
 
 /**
- *
+ * Creates a typescript program from a fusion.json file.
  * @param {import('./types').FusionCompilerOptions} options
- * @returns
+ * @returns A typescript program
  */
 export const createTsProgramFromFsnCompilerOpts = (options) => {
     // const allTsFiles = listAllTsFiles(options.sourceRoot);
@@ -102,14 +72,15 @@ export const compile = (projectName) => {
     );
 
     const spinner = ora().start('Compiling Fusion project');
-    new Promise((resolve, reject) => {
-        const out = createTsProgramFromFsnCompilerOpts(project);
-        const es2015 = out.emit();
 
-        if (es2015.diagnostics.length > 0) {
+    return new Promise((resolve, reject) => {
+        const out = createTsProgramFromFsnCompilerOpts(project);
+        const result = out.emit();
+
+        if (result.diagnostics.length > 0) {
             spinner.fail('Compilation failed');
             reject(
-                es2015.diagnostics
+                result.diagnostics
                     .map((diagnostic) => {
                         return `${diagnostic.category}: ${diagnostic.messageText} (${diagnostic.code})`;
                     })
@@ -118,7 +89,7 @@ export const compile = (projectName) => {
         }
 
         spinner.succeed();
-        resolve('done');
+        resolve(result);
     })
         .then((result) => {
             writePackageManifest(

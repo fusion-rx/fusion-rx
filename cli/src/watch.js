@@ -4,7 +4,6 @@ import EventEmitter from 'events';
 import ts from 'typescript';
 import { resolve } from 'path';
 
-import { logError, logSuccess, logWarning, logInfo } from './util/index.js';
 import { readTsConfig } from './typescript/index.js';
 import { readFusionConfig } from './fusion/read-fusion-config.js';
 
@@ -18,10 +17,8 @@ import { readFusionConfig } from './fusion/read-fusion-config.js';
  * }} WatchErrorEvent
  * @typedef {{ status: Diagnostic[] }} WatchEvent
  * @typedef {(...event: Diagnostic[]) => void } Callback
+ * @typedef { 'error' | 'suggestion' | 'warning' | 'recompile' | 'success' } TsCompilerEventType
  */
-
-/** @type { EventEmitter<WatchEvent>} */
-const watchEvent = new EventEmitter();
 
 /**
  * Watches the file for compilation changes
@@ -33,10 +30,14 @@ export const watchCli = (project) => {
 };
 
 /**
- * Logs a formatted diagnostic message to the console.
- * @param {Diagnostic} statusEvent
+ * Handles events emitted by the typescript compiler
+ * @param {Diagnostic} diagnostic A typescript diagnostic event
+ * @returns {{
+ *      type: TsCompilerEventType,
+ *      message: string
+ * }}
  */
-const logEvent = (statusEvent) => {
+const formatEvent = (diagnostic) => {
     /** @type {FormatDiagnosticsHost} **/
     const formatHost = {
         getCanonicalFileName: (path) => path,
@@ -45,40 +46,51 @@ const logEvent = (statusEvent) => {
     };
 
     // Format the diagnostic message and remove the prefix
-    let formattedMsg = ts.formatDiagnosticsWithColorAndContext(
-        [statusEvent],
+    let message = ts.formatDiagnosticsWithColorAndContext(
+        [diagnostic],
         formatHost
     );
-    formattedMsg = formattedMsg.substring(formattedMsg.indexOf(':') + 6);
+    message = message.substring(message.indexOf(':') + 6);
 
-    switch (statusEvent.category) {
+    switch (diagnostic.category) {
         case ts.DiagnosticCategory.Error:
-            logError(formattedMsg);
-            break;
+            return {
+                type: 'error',
+                message
+            };
         case ts.DiagnosticCategory.Suggestion:
-            logInfo(formattedMsg);
-            break;
+            return {
+                type: 'suggestion',
+                message
+            };
         case ts.DiagnosticCategory.Warning:
-            logWarning(formattedMsg);
-            break;
-        default:
-            if (formattedMsg.includes('error')) {
-                console.log(formattedMsg);
-            } else if (statusEvent.code === 6031 || statusEvent.code === 6032) {
-                // These events (there might be more) indicate that the
-                // code has changed, triggering a reload. The logs from
-                // the last compilation aren't valid, so clear the console
-                console.clear();
-                console.log(formattedMsg);
-            } else {
-                logSuccess(
-                    ts.formatDiagnosticsWithColorAndContext(
-                        [statusEvent],
-                        formatHost
-                    )
-                );
-            }
+            return {
+                type: 'warning',
+                message
+            };
     }
+
+    if (message.includes('error') && !message.includes('Found 0 errors')) {
+        return {
+            type: 'error',
+            message
+        };
+    }
+
+    if (diagnostic.code === 6031 || diagnostic.code === 6032) {
+        // These events (there might be more) indicate that the
+        // code has changed, triggering a reload. The logs from
+        // the last compilation aren't valid, so clear the console
+        return {
+            type: 'recompile',
+            message
+        };
+    }
+
+    return {
+        type: 'success',
+        message
+    };
 };
 
 /**
@@ -87,23 +99,26 @@ const logEvent = (statusEvent) => {
  * that is configured for building/watching.
  */
 export const watch = (project) => {
-    watchEvent.on('status', logEvent);
-
     const tsConfig = readTsConfig();
-
     tsConfig.watchOptions = {
         watchFile: ts.WatchFileKind.UseFsEventsOnParentDirectory
     };
 
-    const createProgram = ts.createSemanticDiagnosticsBuilderProgram;
-
+    /** @type {EventEmitter<{ [key in TsCompilerEventType]: any }>} */
+    const tsCompilerEventEmitter = new EventEmitter();
     const host = ts.createWatchCompilerHost(
         resolve(project.projectRoot, project.tsConfigFileName),
         {},
         ts.sys,
-        createProgram,
-        (diagnostic) => watchEvent.emit('status', diagnostic),
-        (diagnostic) => watchEvent.emit('status', diagnostic)
+        ts.createSemanticDiagnosticsBuilderProgram,
+        (diagnostic) => {
+            const evt = formatEvent(diagnostic);
+            tsCompilerEventEmitter.emit(evt.type, evt.message);
+        },
+        (diagnostic) => {
+            const evt = formatEvent(diagnostic);
+            tsCompilerEventEmitter.emit(evt.type, evt.message);
+        }
     );
 
     const origCreateProgram = host.createProgram;
@@ -112,11 +127,15 @@ export const watch = (project) => {
     host.createProgram = (rootNames, options, host, oldProgram) =>
         origCreateProgram(rootNames, options, host, oldProgram);
     const origPostProgramCreate = host.afterProgramCreate;
+    // @ts-ignore
     host.afterProgramCreate = (program) => {
         if (origPostProgramCreate) origPostProgramCreate(program);
     };
 
-    // Create an initial program, watch files, and update
-    // the program over time.
-    ts.createWatchProgram(host);
+    // Create
+
+    return {
+        watch: () => ts.createWatchProgram(host),
+        tsCompilerEventEmitter
+    };
 };

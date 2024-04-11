@@ -9,8 +9,17 @@ import { arg, args, printHelp } from './src/util/index.js';
 import { compile } from './src/compiler.js';
 import { watchCli } from './src/watch.js';
 import { serveCli } from './src/serve.js';
+import { readFileSync } from 'fs';
+import { fileURLToPath } from 'url';
+import { dirname, join } from 'path';
 
-const help = () => printHelp('help.txt');
+// @ts-ignore
+const metaUrl = import.meta.url;
+const rootFile = fileURLToPath(metaUrl);
+const rootDir = dirname(rootFile);
+
+const helpText = readFileSync(join(rootDir, 'help.txt'), 'utf-8');
+const help = () => printHelp(helpText);
 
 const build = () => {
     const project = arg('-p', '--project');
