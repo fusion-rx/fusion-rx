@@ -1,7 +1,7 @@
 import { FsnModule } from '@fusion-rx/core';
-import { ExpressModule } from '@fusion-rx/common';
 import { AppRoutes } from './app.routes';
 import { CharacterModule } from './character/character.module';
+import { ExpressModule } from '@fusion-rx/common';
 
 @FsnModule({
     imports: [

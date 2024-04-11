@@ -7,6 +7,25 @@ import ora from 'ora';
 
 import { readFusionConfig } from './fusion/read-fusion-config.js';
 import { writePackageManifest } from './manifest.js';
+import { execSync } from 'child_process';
+
+/**
+ *
+ * @param {unknown} val
+ * @returns {val is {
+ *  output: (null | Buffer)[],
+ *  stdout: Buffer,
+ *  stderr: Buffer
+ * }}
+ */
+export const isExecSyncErr = (val) => {
+    return (
+        val !== null &&
+        typeof val === 'object' &&
+        'output' in val &&
+        'stdout' in val
+    );
+};
 
 /**
  *
@@ -35,12 +54,12 @@ export const createTsProgramFromFsnCompilerOpts = (options) => {
         return tsFiles;
     };
 
-    const allTsFiles = listAllTsFiles(options.sourceRoot);
+    // const allTsFiles = listAllTsFiles(options.sourceRoot);
     const program = ts.createProgram({
         options: options.tscOptions,
         rootNames: Array.isArray(options.rootNames)
-            ? [...options.rootNames, ...allTsFiles]
-            : [options.rootNames, ...allTsFiles]
+            ? options.rootNames
+            : [options.rootNames]
     });
     return program;
 };
@@ -61,21 +80,38 @@ export const compile = (projectName) => {
     );
 
     const spinner = ora().start('Compiling Fusion project');
-    new Promise((resolve) => {
-        project.tscOptions.module = ts.ModuleKind.CommonJS;
-        project.tscOptions.target = ts.ScriptTarget.ES2017;
-        project.tscOptions.outDir = project.outDir;
-
-        const out = createTsProgramFromFsnCompilerOpts(project);
-        const es2015 = out.emit();
-        spinner.succeed('Compilation complete');
-
-        resolve(es2015);
-    }).then((result) => {
-        writePackageManifest(
-            join(project.projectRoot, 'package.json'),
-            join(project.outDir, 'package.json')
-        );
-        return result;
-    });
+    new Promise((resolve, reject) => {
+        try {
+            const output = execSync(
+                `npx tsc -p ${join(project.projectRoot, project.tsConfigFileName)}`
+            );
+            spinner.succeed();
+            resolve(output.toString('utf-8'));
+        } catch (e) {
+            if (isExecSyncErr(e)) {
+                spinner.fail('Compilation failed');
+                const err = e.stdout.toString('utf-8');
+                reject(err);
+            }
+        }
+    })
+        .then((result) => {
+            writePackageManifest(
+                join(project.projectRoot, 'package.json'),
+                join(project.outDir, 'package.json')
+            );
+            return result;
+        })
+        .catch((reason) => {
+            console.error('\n' + reason);
+        });
 };
+
+// project.tscOptions.module = ts.ModuleKind.CommonJS;
+// project.tscOptions.target = ts.ScriptTarget.ES2017;
+// project.tscOptions.declaration = true;
+// project.tscOptions.declarationMap = true;
+// project.tscOptions.lib = ['es2020'];
+// project.tscOptions.outDir = project.outDir;
+// const out = createTsProgramFromFsnCompilerOpts(project);
+// const es2015 = out.emit();

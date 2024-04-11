@@ -1,8 +1,8 @@
 import { FsnModule as FsnModule } from './module';
 import { Type } from '../interface';
 
-export interface ModuleWithProviders<T = Type<any>> extends FsnModule {
-    ngModule: T;
+export interface ModuleWithProviders<T = Type<any>> extends Partial<FsnModule> {
+    fsnModule: T;
 }
 
 export const isModuleWithProviders = (
@@ -12,6 +12,6 @@ export const isModuleWithProviders = (
         val !== null &&
         val !== undefined &&
         typeof val === 'object' &&
-        'ngModule' in val
+        'fsnModule' in val
     );
 };

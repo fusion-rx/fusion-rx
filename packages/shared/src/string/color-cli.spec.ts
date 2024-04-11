@@ -1,8 +1,8 @@
-import { applyColorFromTags } from './color-cli';
+import { colorString } from './color-cli';
 
 describe('Can color cli tags', () => {
     test('Can render tags, removing them', () => {
-        const textToRender = applyColorFromTags(
+        const textToRender = colorString(
             `This next word is <r>colored</r> red.`,
             'Red'
         );
@@ -13,7 +13,7 @@ describe('Can color cli tags', () => {
     });
 
     test('Can render tags, spacing them', () => {
-        const textToRender = applyColorFromTags(
+        const textToRender = colorString(
             `This next word is <r>colored</r> red.`,
             'Red',
             true

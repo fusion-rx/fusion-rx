@@ -1,7 +1,7 @@
 {
     "extends": "../../tsconfig.build.json",
     "compilerOptions": {
+        "sourceRoot": "src",
         "outDir": "../../dist/common"
-    },
-    "include": ["package.json", "./src/**/*.ts"]
+    }
 }

@@ -106,14 +106,12 @@ const evalSignature = (
     providedIn: 'root'
 })
 export class ExpressService implements AfterAppInit {
-    public express;
+    public express = express();
 
     constructor(
         @Inject('EXPRESS_PORT') private _expressPort: number,
         @Inject('EXPRESS_HOST') private _expressHost: string
-    ) {
-        this.express = express();
-    }
+    ) {}
 
     fsnAfterAppInit(): void {
         this.express.listen(this._expressPort, this._expressHost, () => {

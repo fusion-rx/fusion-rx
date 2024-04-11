@@ -1,8 +1,8 @@
-import { Type } from '../../interface';
-import { DummyDecorator } from '../../test';
-import { ReflectedInjectable } from '../compiler-facade-interface';
-import { Injectable } from '../injectable';
+import { Type } from '../interface';
+import { DummyDecorator } from '../test';
+import { Injectable } from '../di/injectable';
 import { reflectInject } from './reflect-inject';
+import { InjectableMetadataFacade } from './compiler-facade-interface';
 
 const valueToken = 'VALUE_TOKEN';
 
@@ -39,16 +39,18 @@ class ImportService {
     ) {}
 }
 
+type ReflectedInjectable = Type<InjectableMetadataFacade>;
+
 describe('Injectable', () => {
     beforeAll(() => {
-        reflectInject(<Type<ReflectedInjectable>>ImportService, valueToken, 0);
+        reflectInject(<ReflectedInjectable>ImportService, valueToken, 0);
         reflectInject(
-            <Type<ReflectedInjectable>>ImportService,
+            <ReflectedInjectable>ImportService,
             nonInjectableToken,
             1
         );
         reflectInject(
-            <Type<ReflectedInjectable>>ImportService,
+            <ReflectedInjectable>ImportService,
             dynamicallyInjectedToken,
             2
         );
@@ -56,24 +58,22 @@ describe('Injectable', () => {
 
     test('Can reflect dynamically injected dependencies', () => {
         expect(
-            (<Type<ReflectedInjectable>>ImportService).prototype.deps.length
+            (<ReflectedInjectable>ImportService).prototype.dependencies.length
         ).toEqual(3);
         expect(
-            (<Type<ReflectedInjectable>>ImportService).prototype.deps[0]
+            (<ReflectedInjectable>ImportService).prototype.dependencies[0]
         ).toEqual({
             token: valueToken
         });
         expect(
-            (<Type<ReflectedInjectable>>ImportService).prototype.deps[1]
+            (<ReflectedInjectable>ImportService).prototype.dependencies[1]
         ).toEqual({
             token: nonInjectableToken
         });
         expect(
-            (<Type<ReflectedInjectable>>ImportService).prototype.deps[2]
+            (<ReflectedInjectable>ImportService).prototype.dependencies[2]
         ).toEqual({
             token: dynamicallyInjectedToken
         });
     });
-
-    test('Dynamically injected', () => {});
 });

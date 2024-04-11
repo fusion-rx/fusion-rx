@@ -1,4 +1,4 @@
-import { ReflectedInjectable } from './compiler-facade-interface';
+import { InjectableMetadataFacade } from './compiler-facade-interface';
 import { Type } from '../interface';
 
 /**
@@ -9,16 +9,16 @@ import { Type } from '../interface';
  * @param parameterIndex The index of the dep
  */
 export const reflectInject = (
-    type: Type<ReflectedInjectable>,
+    type: Type<InjectableMetadataFacade>,
     token: string,
     parameterIndex: number
 ) => {
-    type.prototype.deps ??= [];
+    type.prototype.dependencies ??= [];
 
-    if (!type.prototype.deps[parameterIndex]) {
-        type.prototype.deps[parameterIndex] = { token };
+    if (!type.prototype.dependencies[parameterIndex]) {
+        type.prototype.dependencies[parameterIndex] = { token };
         return;
     }
 
-    type.prototype.deps[parameterIndex].token = token;
+    type.prototype.dependencies[parameterIndex].token = token;
 };

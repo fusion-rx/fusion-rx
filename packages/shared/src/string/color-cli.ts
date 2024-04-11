@@ -45,7 +45,7 @@ const tagSets: Record<Color, ColorTagSet> = {
     }
 };
 
-export const applyColorFromTags = (
+const colorTextLine = (
     line: string,
     color: Color,
     replaceTagsWithWhitespace: boolean = false
@@ -59,6 +59,17 @@ export const applyColorFromTags = (
             new RegExp(tagSets[color].close, 'g'),
             colors.White + (replaceTagsWithWhitespace ? ' ' : '').repeat(4)
         );
+
+export const colorTaggedText = (
+    text: string,
+    replaceTagsWithWhitespace: boolean = false
+) => {
+    text.split(/\n/g).map((line) => {
+        Object.keys(tagSets).forEach((color) => {
+            line = colorTextLine(line, <Color>color, replaceTagsWithWhitespace);
+        });
+    });
+};
 
 export const red = (str: string): string =>
     colors['Red'] + str + colors['White'];

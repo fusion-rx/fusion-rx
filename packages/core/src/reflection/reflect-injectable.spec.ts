@@ -1,8 +1,8 @@
-import { Type } from '../../interface';
-import { DummyDecorator } from '../../test';
-import { ReflectedInjectable } from '../compiler-facade-interface';
-import { Inject } from '../inject';
+import { Type } from '../interface';
+import { DummyDecorator } from '../test';
+import { Inject } from '../di/inject';
 import { reflectInjectable } from './reflect-injectable';
+import { InjectableMetadataFacade } from './compiler-facade-interface';
 
 describe('FusionRx dependency reflection', () => {
     @DummyDecorator()
@@ -28,33 +28,37 @@ describe('FusionRx dependency reflection', () => {
         ) {}
     }
 
+    type ReflectedInjectable = Type<InjectableMetadataFacade>;
+
     beforeAll(() => {
-        reflectInjectable(<Type<ReflectedInjectable>>StaticNoDeps);
-        reflectInjectable(<Type<ReflectedInjectable>>DynamicWithDeps);
-        reflectInjectable(<Type<ReflectedInjectable>>StaticWithDeps);
+        reflectInjectable(<ReflectedInjectable>StaticNoDeps);
+        reflectInjectable(<ReflectedInjectable>DynamicWithDeps);
+        reflectInjectable(<ReflectedInjectable>StaticWithDeps);
     });
 
     test('Can reflect metadata for class with no injected dependencies', () => {
         expect(
-            (<Type<ReflectedInjectable>>StaticNoDeps).prototype.instance
+            (<ReflectedInjectable>StaticNoDeps).prototype.instance
         ).toBeTruthy();
     });
 
     test('Can reflect metadata for class with injected dependencies', () => {
         expect(
-            (<Type<ReflectedInjectable>>DynamicWithDeps).prototype.deps.length
+            (<ReflectedInjectable>DynamicWithDeps).prototype.dependencies.length
         ).toEqual(1);
         expect(
-            (<Type<ReflectedInjectable>>DynamicWithDeps).prototype.deps[0].token
+            (<ReflectedInjectable>DynamicWithDeps).prototype.dependencies[0]
+                .token
         ).toEqual('StaticNoDeps');
     });
 
     test('Can reflect metadata for class with multiple dynamically injected deps', () => {
         expect(
-            (<Type<ReflectedInjectable>>StaticWithDeps).prototype.deps.length
+            (<ReflectedInjectable>StaticWithDeps).prototype.dependencies.length
         ).toEqual(3);
         expect(
-            (<Type<ReflectedInjectable>>StaticWithDeps).prototype.deps[0].token
+            (<ReflectedInjectable>StaticWithDeps).prototype.dependencies[0]
+                .token
         ).toEqual('STATIC_VAL');
     });
 });

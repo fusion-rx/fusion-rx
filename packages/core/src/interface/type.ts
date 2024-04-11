@@ -7,7 +7,7 @@
  *
  * @publicApi
  */
-// export const Class = Function;
+export const Type = Function;
 
 /**
  * Represents a {@link Type}, providing typescript with
@@ -15,32 +15,16 @@
  *
  * @publicApi
  */
-export interface Type<T extends object = {}, U extends object = {}>
-    extends Function {
+export interface Type<T extends object = {}> extends Function {
     prototype: T & {
         constructor: {
             name: string;
-        } & U;
+        };
         [classMember: string]: any;
     };
     new (...args: any[]): any;
 }
 
-export function isType<T extends object = {}, U extends object = {}>(
-    val: any
-): val is Type<T, U> {
+export function isType<T extends object = {}>(val: any): val is Type<T> {
     return val !== null && val !== undefined && typeof val === 'function';
 }
-
-/**
- * Dervies the name of `val` from its constructor.
- * @param val A class reference
- * @returns The name of `val`
- * @throws Will throw an error if `val`'s class name is undefined
- */
-export const getTokenFromType = <T extends object = {}>(val: Type<T>) => {
-    const name = val.prototype?.constructor?.name;
-    if (name === undefined)
-        throw Error('Failed to dervice class name from reference.');
-    return name;
-};

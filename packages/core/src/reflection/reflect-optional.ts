@@ -1,9 +1,9 @@
 import { Type } from '../interface';
-import { ReflectedInjectable } from './compiler-facade-interface';
+import { ReflectedInjectable } from './reflected-interface';
 
 /**
- * Reflects dependencies decorated with `@Optional()`
- * into the `deps` metadata of `type`.
+ * Reflects `@Optional()` parameter metadata into the
+ * `deps` metadata of `type`.
  * @param type A class decorated with `@Injectable`
  * @param parameterIndex The index of the dep
  */

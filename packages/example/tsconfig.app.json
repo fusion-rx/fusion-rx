@@ -1,7 +1,7 @@
 {
     "extends": "../../tsconfig.build.json",
     "compilerOptions": {
+        "sourceRoot": "app",
         "outDir": "../../dist/example"
-    },
-    "include": ["package.json", "app/**/*.json", "app/**/*.ts"]
+    }
 }

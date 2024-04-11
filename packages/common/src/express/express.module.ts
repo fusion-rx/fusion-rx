@@ -9,9 +9,8 @@ export class ExpressModule {
         host?: string;
     }): ModuleWithProviders<ExpressModule> {
         return {
-            ngModule: ExpressModule,
+            fsnModule: ExpressModule,
             providers: [
-                ExpressService,
                 {
                     provide: 'EXPRESS_PORT',
                     useValue: options?.port ?? 3005
@@ -19,9 +18,9 @@ export class ExpressModule {
                 {
                     provide: 'EXPRESS_HOST',
                     useValue: options?.host ?? '0.0.0.0'
-                }
-            ],
-            exports: [ExpressService]
+                },
+                ExpressService
+            ]
         };
     }
 }

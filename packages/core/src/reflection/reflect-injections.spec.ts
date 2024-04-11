@@ -1,8 +1,8 @@
-import { DummyDecorator } from '../../test';
+import { DummyDecorator } from '../test';
 import { reflectInjections } from './reflect-injections';
-import { Type } from '../../interface';
-import { ReflectedInjectable } from '../compiler-facade-interface';
-import { Inject } from '../inject';
+import { Type } from '../interface';
+import { Inject } from '../di/inject';
+import { InjectableMetadataFacade } from './compiler-facade-interface';
 
 describe('Reflect Injections', () => {
     @DummyDecorator()
@@ -32,44 +32,47 @@ describe('Reflect Injections', () => {
         ) {}
     }
 
+    type ReflectedInjectable = Type<InjectableMetadataFacade>;
+
     beforeAll(() => {
-        reflectInjections(<Type<ReflectedInjectable>>NoDeps);
-        reflectInjections(<Type<ReflectedInjectable>>HasDeps);
-        reflectInjections(<Type<ReflectedInjectable>>HasDynamicDep);
-        reflectInjections(<Type<ReflectedInjectable>>DynamicClass);
-        reflectInjections(<Type<ReflectedInjectable>>HasDynamicClass);
+        reflectInjections(<ReflectedInjectable>NoDeps);
+        reflectInjections(<ReflectedInjectable>HasDeps);
+        reflectInjections(<ReflectedInjectable>HasDynamicDep);
+        reflectInjections(<ReflectedInjectable>DynamicClass);
+        reflectInjections(<ReflectedInjectable>HasDynamicClass);
     });
 
     test('Can reflect class with no injections', () => {
         expect(
-            (<Type<ReflectedInjectable>>NoDeps).prototype.deps.length
+            (<ReflectedInjectable>NoDeps).prototype.dependencies.length
         ).toEqual(0);
     });
 
     test('Can reflect class with injections', () => {
         expect(
-            (<Type<ReflectedInjectable>>HasDeps).prototype.deps.length
+            (<ReflectedInjectable>HasDeps).prototype.dependencies.length
         ).toEqual(1);
         expect(
-            (<Type<ReflectedInjectable>>HasDeps).prototype.deps[0].token
+            (<ReflectedInjectable>HasDeps).prototype.dependencies[0].token
         ).toEqual('NoDeps');
     });
 
     test('Can reflect class with dynamic injections', () => {
         expect(
-            (<Type<ReflectedInjectable>>HasDynamicClass).prototype.deps.length
+            (<ReflectedInjectable>HasDynamicClass).prototype.dependencies.length
         ).toEqual(1);
         expect(
-            (<Type<ReflectedInjectable>>HasDynamicClass).prototype.deps[0].token
+            (<ReflectedInjectable>HasDynamicClass).prototype.dependencies[0]
+                .token
         ).toEqual('MY_DYNAMIC_CLASS');
     });
 
     test('Can reflect class with dynamic class injections', () => {
         expect(
-            (<Type<ReflectedInjectable>>HasDynamicDep).prototype.deps.length
+            (<ReflectedInjectable>HasDynamicDep).prototype.dependencies.length
         ).toEqual(1);
         expect(
-            (<Type<ReflectedInjectable>>HasDynamicDep).prototype.deps[0].token
+            (<ReflectedInjectable>HasDynamicDep).prototype.dependencies[0].token
         ).toEqual('MY_DYNAMIC_VAL');
     });
 });

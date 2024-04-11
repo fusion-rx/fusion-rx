@@ -1,5 +1,4 @@
-import { rootProviders_v1 } from './v1/bootstrap';
-import { FsnModuleRef, FsnInjectableRef } from './v1/refs';
+import { InjectableMetadataFacade } from '../reflection/compiler-facade-interface';
 
 /**
  * Method that is run after the local module is initialized.
@@ -15,12 +14,12 @@ export const implementsOnModuleInit = (val: any): val is OnModuleInit => {
         val !== undefined &&
         val !== null &&
         typeof val === 'object' &&
-        val.fsnOnModuleInit
+        'fsnOnModuleInit' in val
     );
 };
 
 export const onModuleInit = (
-    localProviders: Record<string, FsnInjectableRef>
+    localProviders: Record<string, InjectableMetadataFacade>
 ) => {
     Object.values(localProviders).forEach((provider) => {
         if (implementsOnModuleInit(provider.instance))
@@ -42,38 +41,6 @@ export const implementsAfterAppInit = (val: any): val is AfterAppInit => {
         val !== undefined &&
         val !== null &&
         typeof val === 'object' &&
-        val.fsnAfterAppInit
+        'fsnAfterAppInit' in val
     );
-};
-
-export const afterAppInit = (fsnModule: FsnModuleRef) => {
-    /**
-     * Calls `fsn
-     * @param moduleRef An initialized module reference
-     */
-    const processModuleProviders = (moduleRef: FsnModuleRef) => {
-        // Call `afterAppInit` on all providers that implement the
-        // `AfterAppInit` interface
-        Object.values(moduleRef.providers).forEach((provider) => {
-            if (implementsAfterAppInit(provider.instance)) {
-                provider.instance.fsnAfterAppInit();
-            }
-        });
-
-        // Recursively call `afterAppInit` on all providers declared
-        // by this module's imports
-        Object.values(moduleRef.imports ?? {}).forEach((imported) => {
-            processModuleProviders(imported);
-        });
-    };
-
-    // Check for `afterAppInit` lifecycle hook in root module
-    // providers and imported modules
-    processModuleProviders(fsnModule);
-
-    // Check for `afterAppInit` lifecycle hook in root providers
-    Object.values(rootProviders_v1).forEach((provider) => {
-        if (implementsAfterAppInit(provider.instance))
-            provider.instance.fsnAfterAppInit();
-    });
 };

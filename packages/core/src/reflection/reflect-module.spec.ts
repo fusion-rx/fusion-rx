@@ -1,82 +1,124 @@
-import { applyColorFromTags } from '@fusion-rx/shared';
-import { Type } from '../../interface';
-import { DummyDecorator } from '../../test';
-import { FsnModuleMetadataFacade } from '../compiler-facade-interface';
-import { FsnModule } from '../module';
+import { FsnModuleMetadataFacade } from './compiler-facade-interface';
+import { FsnModule, Inject, Injectable } from '../di';
+import { Type } from '../interface';
 import { reflectModule } from './reflect-module';
-import { readFileSync } from 'fs';
-import { join } from 'path';
-import { Injectable } from '../injectable';
-import { Inject } from '../inject';
 
-console.log(
-    applyColorFromTags(
-        readFileSync(join(__dirname, 'reflection.spec.txt'), 'utf-8'),
-        'Red',
-        true
-    )
-);
-
-describe('Fusion-rx Dependency Injection Reflection', () => {
-    /** EXTERNAL MODULE */
+describe('FsnModule Reflection', () => {
+    @Injectable()
+    class InjectableNoDeps {}
 
     @Injectable()
-    class ExternalNoDeps {
-        constructor() {}
+    class InjectableOneDep {
+        constructor(public noDeps: InjectableNoDeps) {}
+    }
+
+    class DynamicClassNoDeps {}
+
+    @Injectable()
+    class DynamicClassWithDeps {
+        constructor(public injectableNoDeps: InjectableNoDeps) {}
     }
 
     @Injectable()
-    class ExternalWithDeps {
-        constructor(public testInjected: ExternalNoDeps) {}
+    class InjectableDynamicDeps {
+        constructor(
+            @Inject('DEP_1') public staticValDep: string,
+            @Inject('DEP_2') public dynamicClassNoDeps: DynamicClassNoDeps,
+            @Inject('DEP_3') public dynamicClassWithDeps: DynamicClassWithDeps
+        ) {}
     }
 
-    @DummyDecorator()
-    class ExternalModule {}
-    const externalModuleMetadata: Partial<FsnModule> = {
-        providers: [ExternalNoDeps, ExternalWithDeps],
-        exports: [ExternalWithDeps]
-    };
-
-    /** ROOT MODULE */
-
-    @Injectable()
-    class StaticWithExternalDep {
-        constructor(public externalWithDeps: ExternalWithDeps) {}
-    }
-
-    @Injectable()
-    class StaticWithDeps {
-        constructor(@Inject('STATIC_VAL') public myDynamicInjectable: string) {}
-    }
-
-    @DummyDecorator()
-    class RootModule {}
-    const rootModuleMetadata: Partial<FsnModule> = {
-        imports: [ExternalModule],
+    class ModuleTest {}
+    const moduleMetadata: Partial<FsnModule> = {
         providers: [
+            InjectableNoDeps,
+            DynamicClassWithDeps,
+            InjectableDynamicDeps,
+            InjectableOneDep,
             {
-                provide: 'STATIC_VAL',
-                useValue: 'MyValue'
+                provide: 'DEP_1',
+                useValue: 'myTestValue'
             },
-            StaticWithDeps,
-            StaticWithExternalDep
+            {
+                provide: 'DEP_2',
+                useClass: DynamicClassNoDeps
+            },
+            {
+                provide: 'DEP_3',
+                useFactory: (
+                    arg1: string,
+                    arg2: DynamicClassNoDeps,
+                    arg3: DynamicClassWithDeps
+                ) => {
+                    return new InjectableDynamicDeps(arg1, arg2, arg3);
+                }
+            }
+        ],
+        exports: [
+            {
+                provide: 'DEP_1',
+                useValue: 'myTestValue'
+            },
+            {
+                provide: 'DEP_2',
+                useClass: DynamicClassNoDeps
+            },
+            {
+                provide: 'DEP_3',
+                useFactory: (
+                    arg1: string,
+                    arg2: DynamicClassNoDeps,
+                    arg3: DynamicClassWithDeps
+                ) => {
+                    return new InjectableDynamicDeps(arg1, arg2, arg3);
+                }
+            },
+            InjectableDynamicDeps
         ]
     };
 
+    class ModuleImportTest {}
+    const moduleImportTestMetadata: Partial<FsnModule> = {
+        imports: [ModuleTest]
+    };
+
+    type ReflectedModule = Type<FsnModuleMetadataFacade>;
+
     beforeAll(() => {
+        reflectModule(<ReflectedModule>ModuleTest, moduleMetadata);
         reflectModule(
-            ExternalModule as Type<FsnModuleMetadataFacade>,
-            externalModuleMetadata
-        );
-        reflectModule(
-            RootModule as Type<FsnModuleMetadataFacade>,
-            rootModuleMetadata
+            <ReflectedModule>ModuleImportTest,
+            moduleImportTestMetadata
         );
     });
 
-    test('Can initialize simple module', () => {
+    test('Can relfect module providers', () => {
         expect(
-            (<Type<FsnModuleMetadataFacade>>RootModule).prototype.name
+            Object.keys((<ReflectedModule>ModuleTest).prototype.providers)
+                .length
+        ).toEqual(7);
+        expect(
+            (<ReflectedModule>ModuleTest).prototype.providers['DEP_2']
+        ).toBeTruthy();
+    });
+
+    test('Can reflect module exports', () => {
+        expect((<ReflectedModule>ModuleTest).prototype.exports.length).toEqual(
+            4
+        );
+    });
+
+    test('Can reflect module imports', () => {
+        expect(
+            Object.keys((<ReflectedModule>ModuleImportTest).prototype.imports)
+                .length
+        ).toEqual(1);
+        expect(
+            (<ReflectedModule>ModuleImportTest).prototype.imports['ModuleTest']
+        ).toBeTruthy();
+        expect(
+            (<ReflectedModule>ModuleImportTest).prototype.imports['ModuleTest']
+                .prototype.exports
         ).toBeTruthy();
     });
 });

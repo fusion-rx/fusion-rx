@@ -1,3 +1,5 @@
+import { Type } from '../interface';
+
 export declare interface FactoryProvider {
     /**
      * A unique injection token.
@@ -13,18 +15,23 @@ export declare interface FactoryProvider {
      * provided in `deps`.
      */
     useFactory?: Function;
+
+    /**
+     * A class to
+     */
+    useClass?: Type<any>;
     /**
      * A list of tokens to be resolved by the injector.
      * The list of values is used as arguments to the
      * `useFactory` function.
      */
-    deps?: any[];
+    deps?: Type<any>[];
 }
 
 export const isFactoryProvider = (val: any): val is FactoryProvider => {
     return (
         typeof val === 'object' &&
         'provide' in val &&
-        ('useValue' in val || 'useFactory' in val)
+        ('useValue' in val || 'useFactory' in val || 'useClass' in val)
     );
 };
