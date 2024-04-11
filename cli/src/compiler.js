@@ -29,31 +29,53 @@ export const isExecSyncErr = (val) => {
 
 /**
  *
+ * @param {string} projectRoot
+ * @param {string} tsConfigFileName
+ * @returns
+ */
+export const buildWithTsCLI = (projectRoot, tsConfigFileName) => {
+    try {
+        const output = execSync(
+            `npx tsc -p ${join(projectRoot, tsConfigFileName)}`
+        );
+        return output.toString('utf-8');
+    } catch (e) {
+        if (isExecSyncErr(e)) {
+            const err = e.stdout.toString('utf-8');
+            throw err;
+        }
+
+        throw e;
+    }
+};
+
+/**
+ * @param {string} path
+ * @toDo is there a way to do this with the typescript API?
+ */
+const listAllTsFiles = (path) => {
+    /** @type {string[]} */
+    const tsFiles = [];
+
+    if (existsSync(path) && statSync(path).isDirectory()) {
+        readdirSync(path).forEach((pathOrDir) => {
+            tsFiles.push(...listAllTsFiles(join(path, pathOrDir)));
+        });
+    } else {
+        if (path.endsWith('.ts') && !path.endsWith('.spec.ts')) {
+            tsFiles.push(path);
+        }
+    }
+
+    return tsFiles;
+};
+
+/**
+ *
  * @param {import('./types').FusionCompilerOptions} options
  * @returns
  */
 export const createTsProgramFromFsnCompilerOpts = (options) => {
-    /**
-     * @param {string} path
-     * @toDo is there a way to do this with the typescript API?
-     */
-    const listAllTsFiles = (path) => {
-        /** @type {string[]} */
-        const tsFiles = [];
-
-        if (existsSync(path) && statSync(path).isDirectory()) {
-            readdirSync(path).forEach((pathOrDir) => {
-                tsFiles.push(...listAllTsFiles(join(path, pathOrDir)));
-            });
-        } else {
-            if (path.endsWith('.ts') && !path.endsWith('.spec.ts')) {
-                tsFiles.push(path);
-            }
-        }
-
-        return tsFiles;
-    };
-
     // const allTsFiles = listAllTsFiles(options.sourceRoot);
     const program = ts.createProgram({
         options: options.tscOptions,
@@ -81,19 +103,22 @@ export const compile = (projectName) => {
 
     const spinner = ora().start('Compiling Fusion project');
     new Promise((resolve, reject) => {
-        try {
-            const output = execSync(
-                `npx tsc -p ${join(project.projectRoot, project.tsConfigFileName)}`
+        const out = createTsProgramFromFsnCompilerOpts(project);
+        const es2015 = out.emit();
+
+        if (es2015.diagnostics.length > 0) {
+            spinner.fail('Compilation failed');
+            reject(
+                es2015.diagnostics
+                    .map((diagnostic) => {
+                        return `${diagnostic.category}: ${diagnostic.messageText} (${diagnostic.code})`;
+                    })
+                    .join('\n')
             );
-            spinner.succeed();
-            resolve(output.toString('utf-8'));
-        } catch (e) {
-            if (isExecSyncErr(e)) {
-                spinner.fail('Compilation failed');
-                const err = e.stdout.toString('utf-8');
-                reject(err);
-            }
         }
+
+        spinner.succeed();
+        resolve('done');
     })
         .then((result) => {
             writePackageManifest(
@@ -106,12 +131,3 @@ export const compile = (projectName) => {
             console.error('\n' + reason);
         });
 };
-
-// project.tscOptions.module = ts.ModuleKind.CommonJS;
-// project.tscOptions.target = ts.ScriptTarget.ES2017;
-// project.tscOptions.declaration = true;
-// project.tscOptions.declarationMap = true;
-// project.tscOptions.lib = ['es2020'];
-// project.tscOptions.outDir = project.outDir;
-// const out = createTsProgramFromFsnCompilerOpts(project);
-// const es2015 = out.emit();
