@@ -5,29 +5,15 @@ import ts from 'typescript';
 import { resolve } from 'path';
 
 import { readTsConfig } from './typescript/index.js';
-import { readFusionConfig } from './fusion/read-fusion-config.js';
 
 /**
+ * @typedef { 'error' | 'suggestion' | 'warning' | 'recompile' | 'success' } TsCompilerEventType
+ * @typedef {(...event: Diagnostic[]) => void } Callback
+ * @typedef {import('./types/index.js').FusionCompilerOptions} FusionCompilerOptions
  * @typedef {import('typescript').Diagnostic} Diagnostic
  * @typedef {import('typescript').FormatDiagnosticsHost} FormatDiagnosticsHost
- * @typedef {{
- *      code: number,
- *      message: string,
- *      raw: Diagnostic
- * }} WatchErrorEvent
  * @typedef {{ status: Diagnostic[] }} WatchEvent
- * @typedef {(...event: Diagnostic[]) => void } Callback
- * @typedef { 'error' | 'suggestion' | 'warning' | 'recompile' | 'success' } TsCompilerEventType
  */
-
-/**
- * Watches the file for compilation changes
- * @param {string} [project]
- */
-export const watchCli = (project) => {
-    const fsnProject = readFusionConfig(project);
-    watch(fsnProject);
-};
 
 /**
  * Handles events emitted by the typescript compiler
@@ -95,7 +81,7 @@ const formatEvent = (diagnostic) => {
 
 /**
  * Initializes a watcher.
- * @param {import('./types/index.js').FusionCompilerOptions} project The name of the tsconfig file
+ * @param {FusionCompilerOptions} project The name of the tsconfig file
  * that is configured for building/watching.
  */
 export const watch = (project) => {

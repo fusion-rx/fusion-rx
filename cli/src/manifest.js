@@ -1,4 +1,4 @@
-//@ts-check
+// @ts-check
 
 import { writeFileSync, existsSync } from 'fs';
 import { exit } from 'process';

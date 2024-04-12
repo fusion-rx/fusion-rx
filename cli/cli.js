@@ -7,11 +7,12 @@ import { exit } from 'process';
 
 import { arg, args, printHelp } from './src/util/index.js';
 import { compile } from './src/compiler.js';
-import { watchCli } from './src/watch.js';
-import { serveCli } from './src/serve.js';
+import { watch } from './src/watch.js';
+import { serve } from './src/serve.js';
 import { readFileSync } from 'fs';
 import { fileURLToPath } from 'url';
 import { dirname, join } from 'path';
+import { readFusionConfig } from './src/fusion/read-fusion-config.js';
 
 // @ts-ignore
 const metaUrl = import.meta.url;
@@ -20,25 +21,6 @@ const rootDir = dirname(rootFile);
 
 const helpText = readFileSync(join(rootDir, 'help.txt'), 'utf-8');
 const help = () => printHelp(helpText);
-
-const build = () => {
-    const project = arg('-p', '--project');
-    const watch = args.includes('--watch') ? true : false;
-
-    if (project) {
-        if (watch) return watchCli(project);
-        return compile(project);
-    } else {
-        if (watch) return watchCli();
-        return compile();
-    }
-};
-
-const serve = () => {
-    const project = arg('-p', '--project');
-
-    if (project) return serveCli(project);
-};
 
 const config = () => {
     const project = arg('-p', '--project');
@@ -61,12 +43,28 @@ if (args.includes('-h') || args.includes('--help')) {
     exit();
 }
 
+const project = arg('-p', '--project');
+
+const executeBuild = () => {
+    if (args.includes('--watch')) {
+        const fsnProject = readFusionConfig(project);
+        return watch(fsnProject);
+    }
+
+    return compile(project);
+};
+
+const executeServe = () => {
+    const fsnConfig = readFusionConfig(project);
+    return serve(fsnConfig);
+};
+
 switch (args[0]) {
     case 'build':
-        build();
+        executeBuild();
         break;
     case 'serve':
-        serve();
+        executeServe();
         break;
     case 'config':
         config();

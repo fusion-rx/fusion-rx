@@ -40,5 +40,6 @@ export const printHelp = (helpText) => {
             return ln;
         })
         .join('\n');
+
     console.log(helpFormatted);
 };
