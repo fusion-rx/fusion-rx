@@ -1,5 +1,5 @@
 {
-    "$schema": "./cli/src/fusion/workspace/schema.json",
+    "$schema": "node_modules/@fusion-rx/cli/src/fusion/workspace/schema.json",
     "name": "Fusion-rx",
     "version": "0.1.0",
     "newProjectsRoot": "packages",

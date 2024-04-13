@@ -1,3 +1,10 @@
+export type Ctor<T extends object = {}> = T & {
+    constructor: {
+        name: string;
+    };
+    [classmember: string]: any;
+};
+
 /**
  * Represents a type that an Injectable or other object
  * is instances of.
@@ -16,12 +23,7 @@ export const Type = Function;
  * @publicApi
  */
 export interface Type<T extends object = {}> extends Function {
-    prototype: T & {
-        constructor: {
-            name: string;
-        };
-        [classMember: string]: any;
-    };
+    prototype: Ctor<T>;
     new (...args: any[]): any;
 }
 

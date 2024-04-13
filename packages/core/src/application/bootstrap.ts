@@ -1,9 +1,8 @@
-import { isObservable } from 'rxjs';
-
 import { ErrorCode, FsnError } from '../application/error-codes';
 import {
     FsnModuleMetadataFacade,
-    InjectableMetadataFacade
+    InjectableMetadataFacade,
+    RouteMetadataFacade
 } from '../reflection/compiler-facade-interface';
 import { implementsAfterAppInit, implementsOnModuleInit } from './lifecycle';
 import {
@@ -12,13 +11,25 @@ import {
 } from '../di/module-with-provider';
 import { reflectModule } from '../reflection/reflect-module';
 import { Type } from '../interface';
+import { bootstrapRoute } from './bootstrap-routes';
+import { HttpsServerOptions, ServerOptions, FusionServer } from './server';
+
+/** Alias for Type<InjectableMetadataFacade> */
+export type I = Type<InjectableMetadataFacade>;
+
+/** Alias for Type<RouteMetadataFacade> */
+export type R = Type<RouteMetadataFacade>;
+
+(<I>FusionServer).prototype.instance = new FusionServer();
 
 /**
  * All providers declared in the root context.
  */
 const rootProviders: {
     [token: string]: Type<InjectableMetadataFacade>;
-} = {};
+} = {
+    [(<I>FusionServer).prototype.token]: <I>FusionServer
+};
 
 /**
  * The name of the root module; used to determine when
@@ -32,7 +43,10 @@ let rootModuleToken: string;
  * @param meta Module options injected via the `@FsnModule` decorator
  */
 export const bootstrap = (
-    rootModule: Type<any> | ModuleWithProviders
+    rootModule: Type<any> | ModuleWithProviders,
+    options?:
+        | Partial<ServerOptions>
+        | (Partial<ServerOptions> & HttpsServerOptions)
 ): Type<FsnModuleMetadataFacade> => {
     let type: Type<FsnModuleMetadataFacade>;
 
@@ -48,13 +62,14 @@ export const bootstrap = (
         type = rootModule;
     }
 
-    rootModuleToken = type.prototype.token;
+    bootstrapModule(type);
 
-    bootstrapper(type);
+    (<I>FusionServer).prototype.instance.listen(options);
+
     return type;
 };
 
-export const bootstrapper = (type: Type<FsnModuleMetadataFacade>) => {
+export const bootstrapModule = (type: Type<FsnModuleMetadataFacade>) => {
     const token = type.prototype.token;
 
     /** Holds the instance of providers that were imported via other modules. */
@@ -65,7 +80,7 @@ export const bootstrapper = (type: Type<FsnModuleMetadataFacade>) => {
 
     // Bootstrap imported modules
     Object.values(type.prototype.imports).forEach((imported) => {
-        bootstrapper(imported);
+        bootstrapModule(imported);
 
         // Detect circular module dependency
         if (Object.keys(imported.prototype.imports).includes(token)) {
@@ -204,12 +219,14 @@ export const bootstrapper = (type: Type<FsnModuleMetadataFacade>) => {
             ...resolveProviderDependencies(route)
         );
 
-        Object.keys(route.prototype.instance).forEach((routeMethod) => {
-            const classMember = route.prototype.instance[routeMethod];
-            if (isObservable(classMember)) {
-                classMember.subscribe();
-            }
-        });
+        bootstrapRoute(route);
+
+        // Object.keys(route.prototype.instance).forEach((routeMethod) => {
+        //     const classMember = route.prototype.instance[routeMethod];
+        //     if (isObservable(classMember)) {
+        //         classMember.subscribe();
+        //     }
+        // });
     });
 
     // Call onModuleInit for all providers in this module

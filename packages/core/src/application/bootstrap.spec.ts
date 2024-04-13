@@ -92,9 +92,7 @@ describe('Fusion-rx Dependency Injection Reflection', () => {
     }
 
     /** ROOT MODULE */
-    @Route({
-        template: ''
-    })
+    @Route({})
     class TestRoute {
         testEndpoint = new Observable<string>((subscriber) => {
             subscriber.next('Hello world');
