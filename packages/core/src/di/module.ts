@@ -1,7 +1,7 @@
-import { FactoryProvider } from './factory-provider';
-import { ModuleWithProviders } from './module-with-provider';
-import { Type } from '../interface/type';
-import { reflectModule } from '../reflection/reflect-module';
+import { FactoryProvider } from './factory-provider.js';
+import { ModuleWithProviders } from './module-with-provider.js';
+import { Type } from '../interface/type.js';
+import { reflectModule } from '../reflection/reflect-module.js';
 
 export declare interface FsnModule {
     providers: Array<Type<any> | FactoryProvider>;

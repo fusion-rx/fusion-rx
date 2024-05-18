@@ -1,4 +1,4 @@
-import { Type } from '../interface';
+import { Type } from '../interface/type.js';
 
 export declare interface FactoryProvider {
     /**

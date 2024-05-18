@@ -1,13 +1,19 @@
 {
     "compilerOptions": {
         "outDir": "./dist",
-        "module": "commonjs",
+        "module": "NodeNext",
         "emitDecoratorMetadata": true,
         "experimentalDecorators": true,
         "target": "es2017",
-        "lib": ["es2020"],
+        "lib": [
+            "es2020"
+        ],
         "incremental": true,
-        "types": ["reflect-metadata", "jest", "node"],
+        "types": [
+            "reflect-metadata",
+            "jest",
+            "node"
+        ],
         "baseUrl": "packages",
         "declaration": true,
         "declarationMap": true,
@@ -35,5 +41,7 @@
         "resolveJsonModule": true,
         "isolatedModules": true
     },
-    "exclude": ["./dist/*"]
+    "exclude": [
+        "./dist/*"
+    ]
 }

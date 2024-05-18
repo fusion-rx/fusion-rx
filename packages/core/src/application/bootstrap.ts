@@ -1,24 +1,20 @@
-import { ErrorCode, FsnError } from '../application/error-codes';
 import {
     FsnModuleMetadataFacade,
-    InjectableMetadataFacade,
-    RouteMetadataFacade
-} from '../reflection/compiler-facade-interface';
-import { implementsAfterAppInit, implementsOnModuleInit } from './lifecycle';
+    InjectableMetadataFacade
+} from '../reflection/compiler-facade-interface.js';
+import { implementsAfterAppInit, implementsOnModuleInit } from './lifecycle.js';
 import {
     ModuleWithProviders,
     isModuleWithProviders
-} from '../di/module-with-provider';
-import { reflectModule } from '../reflection/reflect-module';
-import { Type } from '../interface';
-import { bootstrapRoute } from './bootstrap-routes';
-import { HttpsServerOptions, ServerOptions, FusionServer } from './server';
+} from '../di/module-with-provider.js';
+import { reflectModule } from '../reflection/reflect-module.js';
+import { Type } from '../interface/type.js';
+import { HttpsServerOptions, ServerOptions, FusionServer } from './server.js';
+import { FsnError } from '../error/error.js';
+import { ErrorCode } from '../error/error-codes.js';
 
 /** Alias for Type<InjectableMetadataFacade> */
 export type I = Type<InjectableMetadataFacade>;
-
-/** Alias for Type<RouteMetadataFacade> */
-export type R = Type<RouteMetadataFacade>;
 
 (<I>FusionServer).prototype.instance = new FusionServer();
 
@@ -213,28 +209,9 @@ export const bootstrapModule = (type: Type<FsnModuleMetadataFacade>) => {
         }
     });
 
-    // Attempt to initialize all routes declared in this module
-    Object.values(type.prototype.routes).forEach((route) => {
-        route.prototype.instance = new route(
-            ...resolveProviderDependencies(route)
-        );
-
-        bootstrapRoute(route);
-
-        // Object.keys(route.prototype.instance).forEach((routeMethod) => {
-        //     const classMember = route.prototype.instance[routeMethod];
-        //     if (isObservable(classMember)) {
-        //         classMember.subscribe();
-        //     }
-        // });
-    });
-
     // Call onModuleInit for all providers in this module
     // that implement `onModuleInit`
-    [
-        ...Object.values(type.prototype.providers),
-        ...Object.values(type.prototype.routes)
-    ].forEach((provider) => {
+    Object.values(type.prototype.providers).forEach((provider) => {
         if (
             provider.prototype.instance &&
             implementsOnModuleInit(provider.prototype.instance)

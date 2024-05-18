@@ -1,4 +1,4 @@
-import { Type } from '../interface';
+import { Type } from '../interface/public-api';
 import { DummyDecorator } from '../test';
 import { Injectable } from '../di/injectable';
 import { reflectInject } from './reflect-inject';

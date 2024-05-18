@@ -1,3 +1,8 @@
+/**
+ * Assert class constructor type for objects.
+ *
+ * @publicApi
+ */
 export type Ctor<T extends object = {}> = T & {
     constructor: {
         name: string;

@@ -2,7 +2,8 @@ import { GlobalLogger } from '@fusion-rx/shared';
 import express, { Express } from 'express';
 import http from 'http';
 import https from 'https';
-import { Injectable } from '../di';
+
+import { Injectable } from '../di/injectable.js';
 
 export declare interface ServerOptions {
     port: number;

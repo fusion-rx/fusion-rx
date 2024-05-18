@@ -1,3 +1,8 @@
+/**
+ * Defines status codes for Fusion compiler errors.
+ *
+ * @publicApi
+ */
 export enum ErrorCode {
     DERIVE_CLASS_NAME = 1000,
     DERIVE_INJECTABLE_TOKEN = 2000,
@@ -13,12 +18,12 @@ export enum ErrorCode {
     INVALID_ROUTE = 4000
 }
 
-export const DefaultErrorMessages: Record<
-    ErrorCode,
-    {
-        message: string;
-    }
-> = {
+/**
+ * Defines default error messages for the Fusion compiler.
+ *
+ * @publicApi
+ */
+export const DefaultErrorMessages = {
     1000: {
         message: 'Failed to dervice class name from class reference.'
     },
@@ -56,18 +61,4 @@ export const DefaultErrorMessages: Record<
         message: 'Invalid route detected'
     }
 };
-
-export class FsnError extends Error {
-    constructor(
-        public code?: ErrorCode,
-        public details?: string
-    ) {
-        super(
-            details
-                ? details
-                : code
-                  ? DefaultErrorMessages[code].message
-                  : 'An unknown error was thrown by @fusion-rx/core'
-        );
-    }
-}
+//# sourceMappingURL=error-codes.js.map

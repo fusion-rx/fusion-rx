@@ -1,14 +1,14 @@
-import { FsnModule } from '../di/module';
-import { Type, isType } from '../interface';
-import { ErrorCode, FsnError } from '../application/error-codes';
-import { isFactoryProvider } from '../di/factory-provider';
+import { FsnModule } from '../di/module.js';
+import { Type, isType } from '../interface/type.js';
+import { FsnError } from '../error/error.js';
+import { ErrorCode } from '../error/error-codes.js';
+import { isFactoryProvider } from '../di/factory-provider.js';
 import {
     FsnModuleMetadataFacade,
-    InjectableMetadataFacade,
-    RouteMetadataFacade
-} from './compiler-facade-interface';
-import { isModuleWithProviders } from '../di/module-with-provider';
-import { reflectFactoryProvider } from './reflect-factory-provider';
+    InjectableMetadataFacade
+} from './compiler-facade-interface.js';
+import { isModuleWithProviders } from '../di/module-with-provider.js';
+import { reflectFactoryProvider } from './reflect-factory-provider.js';
 
 /**
  * Reflects `@FsnModule` decorator metadata into the prototype of
@@ -78,12 +78,5 @@ export const reflectModule = (
                 `decorated with @Injectable, or a FactoryProvider ` +
                 `was detected in the 'providers' array at index ${index} of module ${token}.`
         );
-    });
-
-    type.prototype.routes = {};
-    meta.routes?.forEach((route) => {
-        if (isType<RouteMetadataFacade>(route)) {
-            type.prototype.routes[route.prototype.token] = route;
-        }
     });
 };

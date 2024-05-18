@@ -1,5 +1,5 @@
-import { Type } from '../interface';
-import { ReflectedInjectable } from './reflected-interface';
+import { Type } from '../interface/type.js';
+import { ReflectedInjectable } from './reflected-interface.js';
 
 /**
  * Reflects `@Optional()` parameter metadata into the

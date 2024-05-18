@@ -4,9 +4,9 @@ import { Injectable } from '../di/injectable';
 import { Inject } from '../di/inject';
 import { bootstrap } from './bootstrap';
 import { AfterAppInit, OnModuleInit } from './lifecycle';
-import { ModuleWithProviders, Route } from '../di';
+import { ModuleWithProviders, Route } from '../di/public-api';
 import { Observable } from 'rxjs';
-import { Type } from '../interface';
+import { Type } from '../interface/public-api';
 
 describe('Fusion-rx Dependency Injection Reflection', () => {
     /** EXTERNAL MODULE */

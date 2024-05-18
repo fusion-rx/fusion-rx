@@ -1,3 +1,3 @@
-export * from './application';
-export * from './di';
-export * from './interface';
+export * from './application/public-api.js';
+export * from './di/public-api.js';
+export * from './interface/public-api.js';

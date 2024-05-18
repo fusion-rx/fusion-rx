@@ -1,9 +1,10 @@
 import { getMetadata } from '@fusion-rx/shared';
 
-import { ErrorCode, FsnError } from '../application/error-codes';
-import { InjectableMetadataFacade } from './compiler-facade-interface';
-import { PARAM_TYPES } from './metadata-keys';
-import { Type, isType } from '../interface';
+import { ErrorCode } from '../error/error-codes.js';
+import { FsnError } from '../error/error.js';
+import { InjectableMetadataFacade } from './compiler-facade-interface.js';
+import { PARAM_TYPES } from './metadata-keys.js';
+import { Type, isType } from '../interface/type.js';
 
 /**
  * Reflects dependency injection metadata into the prototype of

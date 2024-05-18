@@ -1,6 +1,12 @@
-import { FsnModule as FsnModule } from './module';
-import { Type } from '../interface';
+import { FsnModule } from './module.js';
+import { Type } from '../interface/type.js';
 
+/**
+ * Provides Fusion applications with the ability to
+ * implement dynamic modules.
+ *
+ * @publicApi
+ */
 export interface ModuleWithProviders<T = Type<any>> extends Partial<FsnModule> {
     fsnModule: T;
 }

@@ -1,5 +1,5 @@
-import { InjectableMetadataFacade } from './compiler-facade-interface';
-import { Type } from '../interface';
+import { InjectableMetadataFacade } from './compiler-facade-interface.js';
+import { Type } from '../interface/type.js';
 
 /**
  * Reflects dependencies directly injected with `@Inject()`

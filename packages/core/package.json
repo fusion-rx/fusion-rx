@@ -5,6 +5,7 @@
     "author": "Alexander Porrello",
     "license": "MIT",
     "main": "public-api.js",
+    "type": "module",
     "scripts": {
         "build": "npx parcel build",
         "test": "jest",

@@ -1,1 +1,1 @@
-export * from './dummy-decorator';
+export * from './dummy-decorator.js';

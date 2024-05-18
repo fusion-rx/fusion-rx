@@ -4,6 +4,7 @@
     "description": "FusionRx - The modern middleware developer's framework",
     "author": "Alexander Porrello",
     "license": "MIT",
+    "type": "module",
     "scripts": {
         "build": "npm run build:core && npm run build:node && npm run build:nest && npm run build:config",
         "build:cli": "cd packages/cli && npm run build",

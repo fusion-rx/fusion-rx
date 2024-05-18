@@ -1,5 +1,5 @@
-import { Type } from '../interface';
-import { reflectInjectable } from '../reflection/reflect-injectable';
+import { Type } from '../interface/type.js';
+import { reflectInjectable } from '../reflection/reflect-injectable.js';
 
 export interface Injectable {
     providedIn: 'root' | 'module' | null;

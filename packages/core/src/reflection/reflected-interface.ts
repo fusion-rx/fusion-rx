@@ -1,5 +1,6 @@
-import { FactoryProvider, ModuleWithProviders } from '../di';
-import { Type } from '../interface';
+import { FactoryProvider } from '../di/factory-provider.js';
+import { ModuleWithProviders } from '../di/module-with-provider.js';
+import { Type } from '../interface/type.js';
 
 /**
  * Metadata reflected into the prototype of classes

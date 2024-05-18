@@ -1,4 +1,4 @@
-import { InjectableMetadataFacade } from '../reflection/compiler-facade-interface';
+import { InjectableMetadataFacade } from '../reflection/compiler-facade-interface.js';
 
 /**
  * Method that is run after the local module is initialized.

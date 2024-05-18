@@ -1,12 +1,9 @@
-import { Type, RouteTemplate } from '../interface';
-import { ReflectedDependency } from './reflected-interface';
-import { RouteMethod, RouteParamsDef, RouteProvider } from '../di';
+import { Type } from '../interface/type.js';
+import { ReflectedDependency } from './reflected-interface.js';
 
 export declare interface FsnModuleMetadataFacade {
     /** The name of the module. */
     token: string;
-    /** The routes that this fsnModule declares */
-    routes: Record<string, Type<RouteMetadataFacade>>;
     /** Injectables declared by this module. */
     providers: Record<string, Type<InjectableMetadataFacade>>;
     /** The names of injectables exported from this module. */
@@ -27,36 +24,3 @@ export declare interface InjectableMetadataFacade {
     /** The type provided by a factory provider. */
     value?: any;
 }
-
-export declare type RegisteredRouteMetadataFacade = {
-    /** The method of the route. */
-    method: RouteMethod;
-
-    /** The route path. */
-    path: string;
-
-    /** The express parts that will be given to the method */
-    provide: RouteProvider[];
-
-    /** Type definition for parsing the url params */
-    urlParamsDef?: RouteParamsDef;
-
-    /** Type definition for parsing the query params */
-    queryParamsDef?: RouteParamsDef;
-};
-
-export declare type RouteMetadataFacade = InjectableMetadataFacade & {
-    /** The injection context has to be root for modules. */
-    providedIn: 'module';
-
-    /** The base URL for all the endpoints in this route. */
-    baseUrl: string;
-
-    /** The route definitions. */
-    template: RouteTemplate<any>;
-
-    /** Endpoints registered in this route. */
-    registered: {
-        [handlerName: string]: RegisteredRouteMetadataFacade;
-    };
-};

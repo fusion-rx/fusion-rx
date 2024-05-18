@@ -1,8 +1,9 @@
-import { ErrorCode, FsnError } from '../application/error-codes';
-import { Injectable } from '../di/injectable';
-import { InjectableMetadataFacade } from './compiler-facade-interface';
-import { Type } from '../interface';
-import { reflectInjections } from './reflect-injections';
+import { ErrorCode } from '../error/error-codes.js';
+import { FsnError } from '../error/error.js';
+import { Injectable } from '../di/injectable.js';
+import { InjectableMetadataFacade } from './compiler-facade-interface.js';
+import { Type } from '../interface/type.js';
+import { reflectInjections } from './reflect-injections.js';
 
 /**
  * Reflects `@Injectable` decorator metadata into the prototype of

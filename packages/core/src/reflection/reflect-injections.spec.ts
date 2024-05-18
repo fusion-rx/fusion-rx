@@ -1,6 +1,6 @@
 import { DummyDecorator } from '../test';
 import { reflectInjections } from './reflect-injections';
-import { Type } from '../interface';
+import { Type } from '../interface/public-api';
 import { Inject } from '../di/inject';
 import { InjectableMetadataFacade } from './compiler-facade-interface';
 
