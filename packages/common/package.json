@@ -5,6 +5,7 @@
     "author": "Alexander Porrello",
     "license": "MIT",
     "main": "public-api.js",
+    "type": "module",
     "scripts": {
         "postbuild": "node ../../tools/post-build/bin.js",
         "build": "npx parcel build && npm run postbuild",

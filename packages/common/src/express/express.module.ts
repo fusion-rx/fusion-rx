@@ -1,6 +1,6 @@
 import { FsnModule, ModuleWithProviders } from '@fusion-rx/core';
 
-import { ExpressService } from './express.service';
+import { ExpressService } from './express.service.js';
 
 @FsnModule({})
 export class ExpressModule {
