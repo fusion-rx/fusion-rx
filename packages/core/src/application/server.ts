@@ -1,9 +1,9 @@
-import { GlobalLogger } from '@fusion-rx/shared';
 import express, { Express } from 'express';
 import http from 'http';
 import https from 'https';
 
 import { Injectable } from '../di/injectable.js';
+import chalk from 'chalk';
 
 export declare interface ServerOptions {
     port: number;
@@ -53,9 +53,12 @@ export class FusionServer {
             hostname: options?.hostname ?? 'localhost'
         };
 
-        this.server.listen(serverOptions.port, serverOptions.hostname);
-        GlobalLogger.log(
-            `Application listening on ${serverOptions.hostname}:${serverOptions.port}`
-        );
+        this.server.listen(serverOptions.port, serverOptions.hostname, () => {
+            console.log(
+                chalk.bold.blue(
+                    `✨ Fusion is listening on ${serverOptions.hostname}:${serverOptions.port}`
+                )
+            );
+        });
     }
 }

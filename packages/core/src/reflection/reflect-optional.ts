@@ -1,5 +1,5 @@
 import { Type } from '../interface/type.js';
-import { ReflectedInjectable } from './reflected-interface.js';
+import { InjectableMetadataFacade } from './compiler-facade-interface.js';
 
 /**
  * Reflects `@Optional()` parameter metadata into the
@@ -8,15 +8,18 @@ import { ReflectedInjectable } from './reflected-interface.js';
  * @param parameterIndex The index of the dep
  */
 export const reflectOptional = (
-    type: Type<ReflectedInjectable>,
+    type: Type<InjectableMetadataFacade>,
     parameterIndex: number
 ) => {
-    type.prototype.deps ??= [];
+    type.prototype.dependencies ??= [];
 
-    if (!type.prototype.deps[parameterIndex]) {
-        type.prototype.deps[parameterIndex] = { token: '', optional: true };
+    if (!type.prototype.dependencies[parameterIndex]) {
+        type.prototype.dependencies[parameterIndex] = {
+            token: '',
+            optional: true
+        };
         return;
     }
 
-    type.prototype.deps[parameterIndex].optional = true;
+    type.prototype.dependencies[parameterIndex].optional = true;
 };
