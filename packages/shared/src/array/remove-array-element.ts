@@ -1,4 +1,4 @@
-import { equivalent } from '../object/equivalent';
+import { equivalent } from '../object/equivalent.js';
 
 /**
  * Removes an element from an array and returns the modified array.

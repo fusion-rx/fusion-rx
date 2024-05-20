@@ -1,4 +1,4 @@
-import { isNonNullable } from '../type/type-check';
+import { isNonNullable } from '../type/type-check.js';
 
 /**
  * Returns the index metadata of `ele`.

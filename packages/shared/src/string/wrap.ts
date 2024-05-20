@@ -1,4 +1,4 @@
-import { parseString } from '../type';
+import { parseString } from '../type/parse.js';
 
 /**
  * @param val The string to be modified.

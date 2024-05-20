@@ -1,3 +1,3 @@
-export { GlobalLogger, Logger } from './logger';
-export type { LogType } from './logger';
-export * from './log-date-time';
+export { Logger } from './logger.js';
+export type { LogType } from './logger.js';
+export * from './log-date-time.js';

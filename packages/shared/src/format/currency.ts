@@ -1,4 +1,4 @@
-import { FsnMath } from '../math';
+import { FsnMath } from '../math/math.js';
 
 /**
  * Formats `amount` as currency, not prepending the `$` character and

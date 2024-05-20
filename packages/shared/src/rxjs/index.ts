@@ -1,8 +1,8 @@
-export * from './event-subject';
-export * from './reactive-subject';
-export * from './toggle-subject';
-export type { FromTryCatchFn } from './interop';
-export { fromPromise, fromTryCatch } from './interop';
+export * from './event-subject.js';
+export * from './reactive-subject.js';
+export * from './toggle-subject.js';
+export type { FromTryCatchFn } from './interop/from-try-catch.js';
+export { fromPromise, fromTryCatch } from './interop/index.js';
 export {
     accumulate,
     filterNull,
@@ -11,4 +11,4 @@ export {
     mapArray,
     neverIfNull,
     scanToObject
-} from './operators';
+} from './operators/index.js';

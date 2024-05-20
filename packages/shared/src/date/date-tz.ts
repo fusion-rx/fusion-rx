@@ -1,4 +1,4 @@
-import { DateTimeFormatter } from './format-unit';
+import { DateTimeFormatter } from './format-unit.js';
 
 /**
  * Prepends zeros to `num` to make it two digits long.

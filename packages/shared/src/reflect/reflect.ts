@@ -23,4 +23,4 @@ export const preventExtensions = Reflect.preventExtensions;
 export const set = Reflect.set;
 export const setPrototypeOf = Reflect.setPrototypeOf;
 
-export * from './get-function-parameters';
+export * from './get-function-parameters.js';

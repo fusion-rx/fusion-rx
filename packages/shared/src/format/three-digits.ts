@@ -1,4 +1,4 @@
-import { twoDigits } from './two-digits';
+import { twoDigits } from './two-digits.js';
 
 /**
  * Prepends zeros to `num` to make it three digits long.

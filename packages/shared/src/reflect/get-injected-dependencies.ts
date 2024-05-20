@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { getClassName } from './get-class-name';
+import { getClassName } from './get-class-name.js';
 
 /**
  * Extracts injected dependencies from a class (function).

@@ -1,5 +1,5 @@
 import 'reflect-metadata';
-import { getPropertyMetadata } from './get-metadata';
+import { getPropertyMetadata } from './get-metadata.js';
 
 /**
  *

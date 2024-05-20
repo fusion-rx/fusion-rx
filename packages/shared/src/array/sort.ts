@@ -3,7 +3,7 @@ import {
     getArrayElementIndex,
     indexArray,
     isArrayIndexed
-} from './index-array';
+} from './index-array.js';
 
 /**
  * Provides all Fusion Array utilities.

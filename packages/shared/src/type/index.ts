@@ -1,5 +1,5 @@
-export * from './parse';
-export type { Nullable } from './type-check';
+export * from './parse.js';
+export type { Nullable } from './type-check.js';
 export {
     getParseType,
     isArrayBuffer,
@@ -25,4 +25,4 @@ export {
     isSubscription,
     isUnaryFunction,
     isUrlSearchParams
-} from './type-check';
+} from './type-check.js';

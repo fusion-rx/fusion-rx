@@ -1,4 +1,4 @@
-import { join } from './join';
+import { join } from './join.js';
 
 /**
  * Formats a dash-delimited string as camel case.

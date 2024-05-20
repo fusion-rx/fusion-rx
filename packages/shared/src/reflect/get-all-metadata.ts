@@ -1,6 +1,6 @@
 import 'reflect-metadata';
 
-import { getMetadata } from './get-metadata';
+import { getMetadata } from './get-metadata.js';
 
 /**
  * Returns all metadata from an object.

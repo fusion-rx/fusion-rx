@@ -1,5 +1,5 @@
 import { cyan, green, red, yellow, white, magenta } from 'chalk';
-import { logDateTime } from './log-date-time';
+import { logDateTime } from './log-date-time.js';
 
 export declare type LogType = 'LOG' | 'ERROR' | 'DEBUG' | 'VERBOSE' | 'WARN';
 
@@ -130,5 +130,3 @@ export class Logger {
         }
     }
 }
-
-export const GlobalLogger = new Logger('FusionRx');

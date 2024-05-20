@@ -1,4 +1,4 @@
-import { tryCatch } from '../operators';
+import { tryCatch } from '../operators/try.js';
 
 /**
  * Locates a nested object by key in `o`.

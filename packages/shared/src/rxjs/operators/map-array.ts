@@ -1,4 +1,4 @@
-import { parseArr } from '../../type';
+import { parseArr } from '../../type/parse.js';
 import { Observable, map } from 'rxjs';
 
 /**

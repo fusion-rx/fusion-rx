@@ -1,5 +1,5 @@
 import { BehaviorSubject, Observable } from 'rxjs';
-import { filterNull } from './operators';
+import { filterNull } from './operators/index.js';
 
 /**
  * An extension of BehaviorSubject for reactive design patterns.

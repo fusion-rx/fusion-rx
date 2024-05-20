@@ -3,7 +3,7 @@ import {
     SeinfeldCharacter,
     SeinfeldCharacters
 } from '@fusion-rx/test';
-import { removeArrayElement } from './remove-array-element';
+import { removeArrayElement } from './remove-array-element.js';
 
 describe('Array remove', () => {
     test('Can remove item from array', () => {

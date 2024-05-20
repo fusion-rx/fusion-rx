@@ -1,4 +1,4 @@
-import { isNonNullable, parseString } from '../type';
+import { isNonNullable, parseString } from '../type/index.js';
 import qs from 'querystring';
 
 /**

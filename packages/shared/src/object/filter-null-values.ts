@@ -1,5 +1,5 @@
-import { isNullable } from '../type';
-import { forEachKey } from './for-each-key';
+import { isNullable } from '../type/type-check.js';
+import { forEachKey } from './for-each-key.js';
 
 /**
  * Filters null values from an object.
