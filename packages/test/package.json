@@ -6,9 +6,7 @@
     "author": "Alexander Porrello",
     "license": "MIT",
     "source": "src/public-api.ts",
-    "main": "../../dist/test/index.js",
-    "module": "../../dist/test/index.mjs",
-    "types": "../../dist/test/index.types.d.ts",
+    "type": "module",
     "targets": {
         "main": {
             "context": "node",

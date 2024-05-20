@@ -3,5 +3,7 @@
     "compilerOptions": {
         "outDir": "../../dist/test"
     },
-    "include": ["package.json", "./src/*.ts"]
+    "include": [
+        "./src/public-api.ts"
+    ]
 }
