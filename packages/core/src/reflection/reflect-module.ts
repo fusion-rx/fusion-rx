@@ -9,6 +9,7 @@ import {
 } from './compiler-facade-interface.js';
 import { isModuleWithProviders } from '../di/module-with-provider.js';
 import { reflectFactoryProvider } from './reflect-factory-provider.js';
+import { M } from '../application/bootstrap.js';
 
 /**
  * Reflects `@FsnModule` decorator metadata into the prototype of
@@ -27,20 +28,26 @@ export const reflectModule = (
     }
 
     type.prototype.token = token;
-
     type.prototype.imports = {};
     meta.imports?.forEach((imported) => {
         if (isType<FsnModuleMetadataFacade>(imported)) {
             type.prototype.imports[imported.prototype.token] = imported;
         } else if (isModuleWithProviders(imported)) {
-            const fsnModule: Type<FsnModuleMetadataFacade> = imported.fsnModule;
-            reflectModule(fsnModule, {
-                exports: imported.exports,
+            @FsnModule({
                 imports: imported.imports,
+                exports: imported.exports,
                 providers: imported.providers,
                 routes: imported.routes
-            });
-            type.prototype.imports[fsnModule.prototype.token] = fsnModule;
+            })
+            class Module {}
+
+            (<M>Module).prototype.token = imported.fsnModule.prototype.token;
+            (<M>Module).prototype.constructor =
+                imported.fsnModule.prototype.constructor;
+
+            type.prototype.imports[imported.fsnModule.prototype.token] = <M>(
+                Module
+            );
         }
     });
 
@@ -79,4 +86,6 @@ export const reflectModule = (
                 `was detected in the 'providers' array at index ${index} of module ${token}.`
         );
     });
+
+    return type;
 };

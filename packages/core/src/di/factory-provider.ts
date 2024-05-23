@@ -35,3 +35,20 @@ export const isFactoryProvider = (val: any): val is FactoryProvider => {
         ('useValue' in val || 'useFactory' in val || 'useClass' in val)
     );
 };
+
+/**
+ * Helper for creating a factory provider.
+ * @param provide An injection token
+ * @param useValue A value to inject
+ * @returns A factory provider or undefined if `useValue` is undefined.
+ */
+export const provideVal = (
+    provide: string,
+    useValue?: any
+): FactoryProvider | undefined => {
+    if (useValue === undefined) return;
+    return {
+        provide,
+        useValue
+    };
+};

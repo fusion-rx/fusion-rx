@@ -24,5 +24,6 @@ export {
     isSubscriber,
     isSubscription,
     isUnaryFunction,
-    isUrlSearchParams
+    isUrlSearchParams,
+    isTruthy
 } from './type-check.js';

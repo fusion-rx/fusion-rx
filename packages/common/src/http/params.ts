@@ -69,7 +69,7 @@ export class HttpUrlEncodingCodec implements HttpParameterCodec {
     }
 }
 
-function paramParser(
+export function paramParser(
     rawParams: string,
     codec: HttpParameterCodec
 ): Map<string, string[]> {

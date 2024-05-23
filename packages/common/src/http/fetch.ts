@@ -8,9 +8,9 @@
 
 import { Observable, Observer } from 'rxjs';
 
-import { HttpBackend } from './backend';
-import { HttpHeaders } from './headers';
-import { HttpRequest } from './request';
+import { HttpBackend } from './backend.js';
+import { HttpHeaders } from './headers.js';
+import { HttpRequest } from './request.js';
 import {
     HttpDownloadProgressEvent,
     HttpErrorResponse,
@@ -19,7 +19,7 @@ import {
     HttpHeaderResponse,
     HttpResponse,
     HttpStatusCode
-} from './response';
+} from './response.js';
 
 const XSSI_PREFIX = /^\)\]\}',?\n/;
 

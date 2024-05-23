@@ -20,20 +20,20 @@ const colorize = (args: any[], colorFn: Function) => {
     });
 };
 
-const log = console.log;
-console.log = (...args) =>
-    log(
-        ...args.map((arg) => {
-            if (typeof arg === 'object') {
-                try {
-                    return arg;
-                } catch {
-                    return arg;
-                }
-            }
-            return logPrefix().toString() + arg;
-        })
-    );
+// const log = console.log;
+// console.log = (...args) =>
+//     log(
+//         ...args.map((arg) => {
+//             if (typeof arg === 'object') {
+//                 try {
+//                     return arg;
+//                 } catch {
+//                     return arg;
+//                 }
+//             }
+//             return logPrefix().toString() + arg;
+//         })
+//     );
 
 const debug = console.debug;
 console.debug = (...args) => debug(...colorize(args, Chalk.gray));

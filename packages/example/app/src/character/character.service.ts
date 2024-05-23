@@ -1,16 +1,18 @@
-import { filter, take } from 'rxjs';
+import { filter } from 'rxjs';
 import { Injectable } from '@fusion-rx/core';
-import { DatabaseService } from '../database/database.service';
+import { DatabaseService } from '../database/database.service.js';
+import { from, t_characters } from '@fusion-rx/test';
 
 @Injectable()
 export class CharacterService {
     constructor(private _databaseService: DatabaseService) {}
 
     public getCharacterByName(name: string) {
-        return this._databaseService.getAllCharacters().pipe(
-            filter((character) => character.name === name),
-            take(1)
-        );
+        return from(t_characters)
+            .select()
+            .where('pk_name')
+            .like(new RegExp(name))
+            .end();
     }
 
     public getCharacters(query: {
@@ -20,7 +22,7 @@ export class CharacterService {
     }) {
         return this._databaseService.getAllCharacters().pipe(
             filter((character) => {
-                const lastname = character.name.split(' ')[1];
+                const lastname = character.pk_name.split(' ')[1];
                 const age = character.age;
                 const decade = Math.floor(character.age * 0.1);
 

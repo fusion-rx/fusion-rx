@@ -1,17 +1,14 @@
 import { FsnModule } from '@fusion-rx/core';
-import { AppRoutes } from './app.routes';
-import { CharacterModule } from './character/character.module';
-import { ExpressModule } from '@fusion-rx/common';
+import { CharacterModule } from './character/character.module.js';
+import { RouterModule } from '@fusion-rx/core';
 
 @FsnModule({
     imports: [
-        ExpressModule.forRoot({
-            port: 1335,
-            host: '0.0.0.0'
-        }),
-        CharacterModule
-    ],
-    routes: [AppRoutes]
+        CharacterModule,
+        RouterModule.forRoot({
+            basePath: 'app'
+        })
+    ]
 })
 export class AppModule {
     constructor() {}

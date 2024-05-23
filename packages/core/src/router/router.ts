@@ -1,8 +1,7 @@
 import chalk from 'chalk';
 import { isNativeError, isPromise } from 'util/types';
-import { Inject, Injectable, Optional } from '@fusion-rx/core';
+import { Injectable } from '../di/public-api.js';
 import {
-    NEVER,
     Observable,
     Subscription,
     catchError,
@@ -11,8 +10,8 @@ import {
 } from 'rxjs';
 import { Request as ɵRequest, Response as ɵResponse } from 'express';
 
-import { StatusCode } from './http-status-codes.js';
-import { expressApp } from './listen.js';
+import { HttpStatusCode } from './http-status-codes.js';
+import { expressApp } from './server.js';
 import {
     ParamType,
     RequestDef,
@@ -20,7 +19,7 @@ import {
     RequestHandler,
     RequestHandlerWithBody
 } from './types.js';
-import { isRouterError } from './router-error.js';
+import { FsnRouterError, isRouterError } from './router-error.js';
 
 /** An alias for express `Request` objects. */
 export declare type FsnRequest = ɵRequest;
@@ -155,7 +154,9 @@ const formatResponseError = (error: any) => {
 /**
  * Registers a set of routes that have a common base path.
  */
-@Injectable()
+@Injectable({
+    providedIn: 'module'
+})
 export class Router {
     /**
      * An async callback that verifies incoming request.
@@ -166,8 +167,8 @@ export class Router {
      * ```
      */
     constructor(
-        @Optional() @Inject('BASE_PATH') public basePath?: string,
-        @Optional() @Inject('ROUTE_GUARD') public guard?: RouteGuard
+        public basePath?: string,
+        public guard?: RouteGuard
     ) {
         /**
          * Appends a given path to the route's basePath,
@@ -242,20 +243,59 @@ export class Router {
                     requestProvider['body'] = req.body;
                 }
 
-                let handlerRes: Observable<any> | Promise<any> | any;
-
-                handlerRes = handle(requestProvider, req, res);
+                const handlerRes = handle(requestProvider, req, res);
 
                 if (isObservable(handlerRes)) {
-                    subscription = this._handleObservable(handlerRes, res);
+                    const response: any[] = [];
+
+                    subscription = handlerRes
+                        .pipe(
+                            catchError((err) => {
+                                if (isNativeError(err)) {
+                                    if (
+                                        err.message ===
+                                        'no elements in sequence'
+                                    ) {
+                                        throw new FsnRouterError(
+                                            'NoContent',
+                                            'Message returned new project.'
+                                        );
+                                    }
+                                }
+
+                                throw err;
+                            })
+                        )
+                        .subscribe({
+                            next: (val) => {
+                                response.push(val);
+                            },
+                            error: (error) => {
+                                console.log(error);
+                                const formatted = formatResponseError(error);
+                                res.status(formatted.status).json(formatted);
+                            },
+                            complete: () => {
+                                if (response.length === 0) {
+                                    res.status(HttpStatusCode.NoContent).send({
+                                        code: HttpStatusCode.NoContent,
+                                        message: 'No response for your query.'
+                                    });
+                                } else if (response.length === 0) {
+                                    res.json(response[0]);
+                                } else {
+                                    res.json(response);
+                                }
+                            }
+                        });
                 } else if (isPromise(handlerRes)) {
                     handlerRes
                         .then((response) => {
                             if (response) {
                                 res.json(response);
                             } else {
-                                res.status(StatusCode.NoContent).json({
-                                    status: StatusCode.NoContent,
+                                res.status(HttpStatusCode.NoContent).json({
+                                    status: HttpStatusCode.NoContent,
                                     message: 'Respoonse returned no content.'
                                 });
                             }
@@ -267,8 +307,8 @@ export class Router {
                 } else {
                     if (handlerRes) res.json(handlerRes);
                     else {
-                        res.status(StatusCode.NoContent).json({
-                            status: StatusCode.NoContent,
+                        res.status(HttpStatusCode.NoContent).json({
+                            status: HttpStatusCode.NoContent,
                             message: 'Respoonse returned no content.'
                         });
                     }
@@ -281,35 +321,6 @@ export class Router {
         });
 
         return this;
-    }
-
-    private _handleObservable(handlerRes: Observable<any>, res: FsnResponse) {
-        return handlerRes
-            .pipe(
-                catchError((err) => {
-                    if (isNativeError(err)) {
-                        if (err.message === 'no elements in sequence') {
-                            res.status(StatusCode.NoContent).json({
-                                status: StatusCode.NoContent,
-                                message: 'Respoonse returned no content.'
-                            });
-
-                            return NEVER;
-                        }
-                    }
-
-                    throw err;
-                })
-            )
-            .subscribe({
-                next: (val) => {
-                    res.json(val);
-                },
-                error: (error) => {
-                    const formatted = formatResponseError(error);
-                    res.status(formatted.status).json(formatted);
-                }
-            });
     }
 
     /**
@@ -398,7 +409,7 @@ export class Router {
             register: <T extends RequestDef>(
                 handler: RequestHandler<T>
             ): Observable<any> | Promise<any> | any =>
-                this._handle('patch', path, handler, opts)
+                this._handle('get', path, handler, opts)
         };
     }
 
@@ -537,3 +548,18 @@ export class Router {
         };
     }
 }
+
+// export function FsnRouter(options: { basePath?: string; guard?: RouteGuard }) {
+//     return (type: any) => {
+//         console.log(options, type);
+//     };
+// }
+
+// export function Route(providers: {
+//     urlParams?: Record<string, ParamType>;
+//     queryParams?: Record<string, ParamType>;
+// }) {
+//     return (target: any, propertyKey: string, descriptor: any) => {
+//         // console.log(target, propertyKey, descriptor);
+//     };
+// }

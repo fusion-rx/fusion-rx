@@ -1,15 +1,11 @@
-import { Route } from '@fusion-rx/core';
-import { ExpressService } from '@fusion-rx/common';
+import { Router } from '@fusion-rx/core';
+import { Injectable } from '@fusion-rx/core';
 
-@Route({
-    template: `{
-        "hello-world": {}
-    }`
-})
+@Injectable()
 export class AppRoutes {
-    constructor(private _expressService: ExpressService) {}
+    constructor(private _router: Router) {}
 
-    registerHelloWorld = this._expressService.get('/hello-world-2', () => ({
-        response: 'This is also awesome'
+    testRoute = this._router.get('hello-world-2').register(() => ({
+        response: 'this is also awesome!'
     }));
 }

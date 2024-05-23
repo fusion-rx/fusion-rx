@@ -3,7 +3,6 @@ import http from 'http';
 import https from 'https';
 
 import { Injectable } from '../di/injectable.js';
-import chalk from 'chalk';
 
 export declare interface ServerOptions {
     port: number;
@@ -48,17 +47,17 @@ export class FusionServer {
               })
             : (this.server = http.createServer());
 
-        const serverOptions: ServerOptions = {
-            port: options?.port ?? 4100,
-            hostname: options?.hostname ?? 'localhost'
-        };
+        // const serverOptions: ServerOptions = {
+        //     port: options?.port ?? 4100,
+        //     hostname: options?.hostname ?? 'localhost'
+        // };
 
-        this.server.listen(serverOptions.port, serverOptions.hostname, () => {
-            console.log(
-                chalk.bold.blue(
-                    `✨ Fusion is listening on ${serverOptions.hostname}:${serverOptions.port}`
-                )
-            );
-        });
+        // this.server.listen(serverOptions.port, serverOptions.hostname, () => {
+        //     console.log(
+        //         chalk.bold.blue(
+        //             `✨ Fusion is listening on ${serverOptions.hostname}:${serverOptions.port}`
+        //         )
+        //     );
+        // });
     }
 }

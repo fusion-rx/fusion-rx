@@ -7,14 +7,20 @@ import {
     ModuleWithProviders,
     isModuleWithProviders
 } from '../di/module-with-provider.js';
-import { reflectModule } from '../reflection/reflect-module.js';
 import { Type } from '../interface/type.js';
-import { HttpsServerOptions, ServerOptions, FusionServer } from './server.js';
+import { FusionServer } from './server.js';
 import { FsnError } from '../error/error.js';
 import { ErrorCode } from '../error/error-codes.js';
+import { Subject } from 'rxjs';
+import { FsnModule } from '../public-api.js';
+
+export const afterAppInit = new Subject<Type<FsnModuleMetadataFacade>>();
 
 /** Alias for Type<InjectableMetadataFacade> */
-export type I = Type<InjectableMetadataFacade>;
+export declare type I = Type<InjectableMetadataFacade>;
+
+/** Alias for Type<FsnModuleMetadataFacade> */
+export declare type M = Type<FsnModuleMetadataFacade>;
 
 (<I>FusionServer).prototype.instance = new FusionServer();
 
@@ -39,33 +45,33 @@ let rootModuleToken: string;
  * @param meta Module options injected via the `@FsnModule` decorator
  */
 export const bootstrap = (
-    rootModule: Type<any> | ModuleWithProviders,
-    options?:
-        | Partial<ServerOptions>
-        | (Partial<ServerOptions> & HttpsServerOptions)
+    rootModule: Type<any> | ModuleWithProviders
+    // options?:
+    //     | Partial<ServerOptions>
+    //     | (Partial<ServerOptions> & HttpsServerOptions)
 ): Type<FsnModuleMetadataFacade> => {
-    let type: Type<FsnModuleMetadataFacade>;
-
-    if (isModuleWithProviders(rootModule)) {
-        type = rootModule.fsnModule;
-        reflectModule(type, {
-            exports: rootModule.exports,
-            imports: rootModule.imports,
-            providers: rootModule.providers,
-            routes: rootModule.routes
-        });
-    } else {
-        type = rootModule;
-    }
-
-    bootstrapModule(type);
-
-    (<I>FusionServer).prototype.instance.listen(options);
-
+    const type = bootstrapModule(rootModule);
+    afterAppInit.next(type);
     return type;
 };
 
-export const bootstrapModule = (type: Type<FsnModuleMetadataFacade>) => {
+export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
+    let type: Type<FsnModuleMetadataFacade>;
+
+    if (isModuleWithProviders(module)) {
+        @FsnModule({
+            exports: module.exports,
+            imports: module.imports,
+            providers: module.providers,
+            routes: module.routes
+        })
+        class Module {}
+        (<M>Module).prototype.token = module.fsnModule.prototype.token;
+        type = <M>Module;
+    } else {
+        type = module;
+    }
+
     const token = type.prototype.token;
 
     /** Holds the instance of providers that were imported via other modules. */
@@ -197,7 +203,7 @@ export const bootstrapModule = (type: Type<FsnModuleMetadataFacade>) => {
     };
 
     // Attempt to initialize all providers declared in this module
-    Object.values(type.prototype.providers).forEach((provider) => {
+    Object.values(type.prototype.providers ?? {}).forEach((provider) => {
         initializeProvider(provider);
 
         const providedIn = provider.prototype.providedIn;
@@ -211,7 +217,7 @@ export const bootstrapModule = (type: Type<FsnModuleMetadataFacade>) => {
 
     // Call onModuleInit for all providers in this module
     // that implement `onModuleInit`
-    Object.values(type.prototype.providers).forEach((provider) => {
+    Object.values(type.prototype.providers ?? {}).forEach((provider) => {
         if (
             provider.prototype.instance &&
             implementsOnModuleInit(provider.prototype.instance)

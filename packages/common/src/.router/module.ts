@@ -8,21 +8,17 @@ export class RouterModule {
         guard?: RouteGuard;
     }): ModuleWithProviders<RouterModule> {
         const providers = [];
-        if (options.basePath) {
-            providers.push({
-                provide: 'BASE_PATH',
-                useValue: options.basePath
-            });
-        }
-        if (options.guard) {
-            providers.push({
-                provide: 'ROUTE_GUARD',
-                useValue: options.guard
-            });
-        }
+        providers.push({
+            provide: 'BASE_PATH',
+            useValue: options.basePath ?? undefined
+        });
+        providers.push({
+            provide: 'ROUTE_GUARD',
+            useValue: options.guard ?? undefined
+        });
         return {
             fsnModule: RouterModule,
-            providers: [Router, ...providers],
+            providers: [...providers, Router],
             exports: [Router]
         };
     }

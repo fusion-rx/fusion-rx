@@ -6,7 +6,10 @@ import {
     UnaryFunction
 } from 'rxjs';
 
+/** @deprecated Use `Falsy` instead. */
 export declare type Nullable = null | undefined;
+
+export declare type Falsy = null | undefined;
 
 /**
  * Returns the parse type of `val`.
@@ -189,7 +192,17 @@ export function isUrlSearchParams(value: any): value is URLSearchParams {
 }
 
 /**
+ * Safely assert whether the given value is truthy.
+ */
+export const isTruthy = <T = any>(
+    value: T | Nullable
+): value is NonNullable<T> => {
+    return value !== null && value !== undefined;
+};
+
+/**
  * Safely assert whether the given value is not null or undefined.
+ * @deprecated Use `isTruthy` instead.
  */
 export const isNonNullable = <T = any>(
     value: T | Nullable
@@ -198,7 +211,15 @@ export const isNonNullable = <T = any>(
 };
 
 /**
+ * Safely assert whether the given value is falsy.
+ */
+export function isFalsy(value: unknown): value is Falsy {
+    return value === null || value === undefined;
+}
+
+/**
  * Safely assert whether the given value is null or undefined.
+ * @deprecated Use `isFalsy` instead.
  */
 export function isNullable(value: unknown): value is Nullable {
     return value === null || value === undefined;

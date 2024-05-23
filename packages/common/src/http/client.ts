@@ -9,12 +9,12 @@
 import { Injectable } from '@fusion-rx/core';
 import { Observable, of, concatMap, filter, map } from 'rxjs';
 
-import { HttpContext } from './context';
-import { HttpHeaders } from './headers';
-import { HttpParams, HttpParamsOptions } from './params';
-import { HttpRequest } from './request';
-import { HttpEvent, HttpResponse } from './response';
-import { FetchBackend } from './fetch';
+import { HttpContext } from './context.js';
+import { HttpHeaders } from './headers.js';
+import { HttpParams, HttpParamsOptions } from './params.js';
+import { HttpRequest } from './request.js';
+import { HttpEvent, HttpResponse } from './response.js';
+import { FetchBackend } from './fetch.js';
 
 /**
  * Exposed Fetch options for HttpClient.

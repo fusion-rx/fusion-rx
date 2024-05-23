@@ -1,53 +1,54 @@
-import { Route } from '@fusion-rx/core';
-import { CharacterService } from './character.service';
-import { ExpressService } from '@fusion-rx/common';
-import { handleNoElementsInSequence } from '@fusion-rx/shared';
-import { catchError, last, scan } from 'rxjs';
-import { SeinfeldCharacter } from '../database/character-db';
+import { Injectable } from '@fusion-rx/core';
+import { CharacterService } from './character.service.js';
+import { Router } from '@fusion-rx/core';
 
-@Route({
-    baseUrl: 'character',
-    templateUrl: './character.routes.json'
-})
+@Injectable()
 export class CharacterRouteService {
     constructor(
-        private _expressService: ExpressService,
-        public characterService: CharacterService
-    ) {}
+        public characterService: CharacterService,
+        private _router: Router
+    ) {
+        this._getAllCharacters();
+        this._getCharacterByName();
+    }
 
-    getCharacterByName = this._expressService.get<{
-        name: string;
-    }>(
-        '/character/:name',
-        {
-            params: {
-                name: 'string'
-            }
-        },
-        (next) => this.characterService.getCharacterByName(next.params.name)
-    );
+    private _getAllCharacters() {
+        this._router
+            .get('')
+            .provide({
+                queryParams: {
+                    lastname: 'string[]',
+                    age: '_number',
+                    decade: '_number'
+                }
+            })
+            .register<{
+                queryParams: {
+                    lastname: string[];
+                    age?: number;
+                    decade?: number;
+                };
+            }>((providers) =>
+                this.characterService.getCharacters(providers.queryParams)
+            );
+    }
 
-    getCharacter = this._expressService.get<{
-        lastname?: string[];
-        age?: number;
-        decade?: number;
-    }>(
-        '/character',
-        {
-            query: {
-                lastname: 'array',
-                age: 'number',
-                decade: 'number'
-            }
-        },
-        (next) =>
-            this.characterService.getCharacters(next.query).pipe(
-                scan((characters, character) => {
-                    characters.push(character);
-                    return characters;
-                }, [] as SeinfeldCharacter[]),
-                last(),
-                catchError((err) => handleNoElementsInSequence(err))
-            )
-    );
+    private _getCharacterByName() {
+        this._router
+            .get(':name')
+            .provide({
+                urlParams: {
+                    name: 'string'
+                }
+            })
+            .register<{
+                urlParams: {
+                    name: string;
+                };
+            }>((providers) => {
+                return this.characterService.getCharacterByName(
+                    providers.urlParams.name
+                );
+            });
+    }
 }

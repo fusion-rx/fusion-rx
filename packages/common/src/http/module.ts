@@ -1,6 +1,6 @@
 import { FsnModule } from '@fusion-rx/core';
-import { FetchBackend } from './fetch';
-import { HttpClient } from './client';
+import { FetchBackend } from './fetch.js';
+import { HttpClient } from './client.js';
 
 // export const HTTP_BACKEND = '__http-backend__';
 

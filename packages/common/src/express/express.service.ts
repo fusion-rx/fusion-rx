@@ -1,5 +1,4 @@
 import { AfterAppInit, Injectable, Inject } from '@fusion-rx/core';
-import { Logger } from '@fusion-rx/shared';
 import {
     NEVER,
     Observable,
@@ -8,12 +7,11 @@ import {
     concatMap,
     isObservable,
     map,
-    of
+    of,
+    take
 } from 'rxjs';
 import express, { Request, Response } from 'express';
 import { isPromise } from 'util/types';
-
-const logger = new Logger('ExpressService');
 
 export declare type HttpMethod = 'get' | 'put' | 'post' | 'patch' | 'delete';
 
@@ -109,16 +107,18 @@ export class ExpressService implements AfterAppInit {
     public express = express();
 
     constructor(
+        // @ts-ignore
         @Inject('EXPRESS_PORT') private _expressPort: number,
+        // @ts-ignore
         @Inject('EXPRESS_HOST') private _expressHost: string
     ) {}
 
     fsnAfterAppInit(): void {
-        this.express.listen(this._expressPort, this._expressHost, () => {
-            logger.log(
-                `Express server listening on ${this._expressHost}:${this._expressPort}`
-            );
-        });
+        // this.express.listen(this._expressPort, this._expressHost, () => {
+        //     console.log(
+        //         `Express server listening on ${this._expressHost}:${this._expressPort}`
+        //     );
+        // });
     }
 
     /**
@@ -150,7 +150,7 @@ export class ExpressService implements AfterAppInit {
         if (!endpoint.startsWith('/')) endpoint = '/' + endpoint;
 
         // Log the method type to the endpoint
-        logger.log(`Mapped ${args.method.toUpperCase()} => ${endpoint}`);
+        console.log(`Mapped ${args.method.toUpperCase()} => ${endpoint}`);
 
         const reqSubject = new Subject<{
             req: ReqResponse & {
@@ -186,6 +186,8 @@ export class ExpressService implements AfterAppInit {
                     req['body'] = request.body ?? {};
                 }
 
+                console.log(req);
+
                 reqSubject.next({
                     req,
                     res: response
@@ -195,12 +197,13 @@ export class ExpressService implements AfterAppInit {
 
         return reqSubject.pipe(
             concatMap((next) => {
+                console.log(next);
                 const handlerRes = args.handler(next.req);
 
                 let response: Observable<any>;
 
                 if (isObservable(handlerRes)) {
-                    response = handlerRes;
+                    response = handlerRes.pipe(take(1));
                 } else if (isPromise(handlerRes)) {
                     response = new Observable((subscriber) => {
                         handlerRes

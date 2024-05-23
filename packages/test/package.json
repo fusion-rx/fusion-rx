@@ -5,38 +5,17 @@
     "description": "Provides test data for unit testing.",
     "author": "Alexander Porrello",
     "license": "MIT",
-    "source": "src/public-api.ts",
+    "main": "public-api.js",
     "type": "module",
-    "targets": {
-        "main": {
-            "context": "node",
-            "outputFormat": "commonjs"
-        },
-        "module": {
-            "context": "browser",
-            "outputFormat": "esmodule"
-        }
-    },
     "scripts": {
-        "postbuild": "node ../../tools/post-build/index.js",
-        "copy:assets": "cp src/database.md ../../dist/test/database.md",
-        "build": "npx parcel build && npm run postbuild && copy:assets",
         "test": "jest",
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage"
     },
-    "dependencies": {},
-    "devDependencies": {},
-    "exports": {
-        "./package.json": {
-            "default": "./package.json"
-        },
-        ".": {
-            "node": "./index.js",
-            "esm2020": "./index.mjs",
-            "es2020": "./index.mjs",
-            "types": "./index.types.d.ts",
-            "default": "./index.js"
-        }
+    "dependencies": {
+        "rxjs": "^7.5.0"
+    },
+    "devDependencies": {
+        "typescript": "^5.1.3"
     }
 }

@@ -5,6 +5,7 @@
     "description": "An example Fusion application.",
     "author": "Alexander Porrello",
     "license": "MIT",
+    "type": "module",
     "scripts": {
         "build": "npx tsc -p tsconfig.app.json",
         "test": "jest",

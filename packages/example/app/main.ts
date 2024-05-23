@@ -1,4 +1,6 @@
+import '@fusion-rx/core/console/console.js';
+
 import { bootstrap } from '@fusion-rx/core';
-import { AppModule } from './src/app.module';
+import { AppModule } from './src/app.module.js';
 
 bootstrap(AppModule);

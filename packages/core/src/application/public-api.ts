@@ -1,2 +1,2 @@
 export type { AfterAppInit, OnModuleInit } from './lifecycle.js';
-export { bootstrap } from './bootstrap.js';
+export { bootstrap, afterAppInit } from './bootstrap.js';
