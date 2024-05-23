@@ -1,4 +1,4 @@
-import { Injectable } from '@fusion-rx/core';
+import { Injectable, Route } from '@fusion-rx/core';
 import { CharacterService } from './character.service.js';
 import { Router } from '@fusion-rx/core';
 
@@ -7,12 +7,10 @@ export class CharacterRouteService {
     constructor(
         public characterService: CharacterService,
         private _router: Router
-    ) {
-        this._getAllCharacters();
-        this._getCharacterByName();
-    }
+    ) {}
 
-    private _getAllCharacters() {
+    @Route()
+    getAllCharacters() {
         this._router
             .get('')
             .provide({
@@ -33,7 +31,8 @@ export class CharacterRouteService {
             );
     }
 
-    private _getCharacterByName() {
+    @Route()
+    getCharacterByName() {
         this._router
             .get(':name')
             .provide({

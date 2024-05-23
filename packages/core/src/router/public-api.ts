@@ -3,6 +3,7 @@ export { expressApp, listen } from './server.js';
 export { RouterModule } from './module.js';
 export { FsnRouterError, isRouterError } from './router-error.js';
 export { Router } from './router.js';
+export { FsnRouter, Route } from './decorator.js';
 
 export type {
     FsnReq,

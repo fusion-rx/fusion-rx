@@ -187,6 +187,7 @@ export class Router {
      */
     private _prependBasePath = (path: string) => {
         if (path.startsWith('/')) return this.basePath + path;
+        if (path.length === 0) return this.basePath + '';
         return this.basePath + '/' + path;
     };
 
@@ -548,18 +549,3 @@ export class Router {
         };
     }
 }
-
-// export function FsnRouter(options: { basePath?: string; guard?: RouteGuard }) {
-//     return (type: any) => {
-//         console.log(options, type);
-//     };
-// }
-
-// export function Route(providers: {
-//     urlParams?: Record<string, ParamType>;
-//     queryParams?: Record<string, ParamType>;
-// }) {
-//     return (target: any, propertyKey: string, descriptor: any) => {
-//         // console.log(target, propertyKey, descriptor);
-//     };
-// }
