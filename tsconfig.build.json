@@ -3,8 +3,7 @@
     "exclude": [
         "**/*.d.ts",
         "**/*.spec.ts",
-        "**/dist",
-        "**/test",
+        "**/dist/*",
         "**/node_modules"
     ]
 }

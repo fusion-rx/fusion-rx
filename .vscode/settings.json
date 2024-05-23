@@ -50,5 +50,12 @@
     "html.format.indentInnerHtml": true,
     "html.format.indentHandlebars": true,
     "html.format.wrapAttributes": "force",
-    "search.followSymlinks": false
+    "search.followSymlinks": false,
+    "search.exclude": {
+        "**/node_modules": true,
+        "**/bower_components": true,
+        "**/*.code-search": true,
+        "**/.*": true,
+        "**/dist": true
+    }
 }
