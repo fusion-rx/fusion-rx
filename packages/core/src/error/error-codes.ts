@@ -15,7 +15,8 @@ export enum ErrorCode {
     REFERENCES_SELF = 3002,
     INVALID_EXPORT = 3003,
     CIRCULAR_DEPENDENCY = 3004,
-    INVALID_ROUTE = 4000
+    INVALID_ROUTE = 4000,
+    ROUTE_FN_ERROR = 4001
 }
 
 /**
@@ -23,7 +24,12 @@ export enum ErrorCode {
  *
  * @publicApi
  */
-export const DefaultErrorMessages = {
+export const DefaultErrorMessages: Record<
+    ErrorCode,
+    {
+        message: string;
+    }
+> = {
     1000: {
         message: 'Failed to dervice class name from class reference.'
     },
@@ -59,6 +65,8 @@ export const DefaultErrorMessages = {
     },
     4000: {
         message: 'Invalid route detected'
+    },
+    4001: {
+        message: 'Failed to execute route method.'
     }
 };
-//# sourceMappingURL=error-codes.js.map

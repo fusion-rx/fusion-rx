@@ -1,5 +1,5 @@
 export * from './parse.js';
-export type { Nullable } from './type-check.js';
+export type { Nullable, Falsy } from './type-check.js';
 export {
     getParseType,
     isArrayBuffer,
@@ -7,6 +7,7 @@ export {
     isBlob,
     isConvertibleToArray,
     isDate,
+    isFalsy,
     isFormData,
     isFunction,
     isNativeError,
@@ -23,7 +24,7 @@ export {
     isSubject,
     isSubscriber,
     isSubscription,
+    isTruthy,
     isUnaryFunction,
-    isUrlSearchParams,
-    isTruthy
+    isUrlSearchParams
 } from './type-check.js';

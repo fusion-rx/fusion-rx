@@ -195,7 +195,7 @@ export function isUrlSearchParams(value: any): value is URLSearchParams {
  * Safely assert whether the given value is truthy.
  */
 export const isTruthy = <T = any>(
-    value: T | Nullable
+    value: T | Falsy
 ): value is NonNullable<T> => {
     return value !== null && value !== undefined;
 };
