@@ -1,11 +1,15 @@
-import { Router } from '@fusion-rx/core';
-import { Injectable } from '@fusion-rx/core';
+import { Route, Router } from '@fusion-rx/core';
 
-@Injectable()
+@Router({
+    basePath: 'app'
+})
 export class AppRoutes {
-    constructor(private _router: Router) {}
+    constructor() {}
 
-    testRoute = this._router.get('hello-world-2').register(() => ({
-        response: 'this is also awesome!'
-    }));
+    @Route({
+        method: 'get'
+    })
+    testRoute(): string {
+        return 'this is also awesome!';
+    }
 }

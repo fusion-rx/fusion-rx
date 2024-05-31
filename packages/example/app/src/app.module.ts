@@ -1,14 +1,10 @@
 import { FsnModule } from '@fusion-rx/core';
 import { CharacterModule } from './character/character.module.js';
-import { RouterModule } from '@fusion-rx/core';
+import { AppRoutes } from './app.routes.js';
 
 @FsnModule({
-    imports: [
-        CharacterModule,
-        RouterModule.forRoot({
-            basePath: 'app'
-        })
-    ]
+    imports: [CharacterModule],
+    routes: [AppRoutes]
 })
 export class AppModule {
     constructor() {}

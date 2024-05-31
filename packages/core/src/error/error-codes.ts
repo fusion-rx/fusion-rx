@@ -16,7 +16,8 @@ export enum ErrorCode {
     INVALID_EXPORT = 3003,
     CIRCULAR_DEPENDENCY = 3004,
     INVALID_ROUTE = 4000,
-    ROUTE_FN_ERROR = 4001
+    ROUTE_FN_ERROR = 4001,
+    UNRESOLVED_PARAMETER_NAME = 5000
 }
 
 /**
@@ -68,5 +69,8 @@ export const DefaultErrorMessages: Record<
     },
     4001: {
         message: 'Failed to execute route method.'
+    },
+    5000: {
+        message: 'Failed to resolve expected url/query param; none provided.'
     }
 };

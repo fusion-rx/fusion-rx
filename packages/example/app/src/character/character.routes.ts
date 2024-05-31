@@ -1,53 +1,33 @@
-import { Injectable, Route } from '@fusion-rx/core';
+import { PipeNum, PipeStrArr, Query, Route, Router } from '@fusion-rx/core';
 import { CharacterService } from './character.service.js';
-import { Router } from '@fusion-rx/core';
 
-@Injectable()
-export class CharacterRouteService {
-    constructor(
-        public characterService: CharacterService,
-        private _router: Router
-    ) {}
+@Router({
+    basePath: 'characters'
+})
+export class CharactersRoute {
+    constructor(public characterService: CharacterService) {}
 
-    @Route()
-    getAllCharacters() {
-        this._router
-            .get('')
-            .provide({
-                queryParams: {
-                    lastname: 'string[]',
-                    age: '_number',
-                    decade: '_number'
-                }
-            })
-            .register<{
-                queryParams: {
-                    lastname: string[];
-                    age?: number;
-                    decade?: number;
-                };
-            }>((providers) =>
-                this.characterService.getCharacters(providers.queryParams)
-            );
+    @Route({
+        method: 'get'
+    })
+    getAllCharacters(
+        @Query('lastname', PipeStrArr) lastname?: string[],
+        @Query('age', PipeNum) age?: number,
+        @Query('decade', PipeNum) decade?: number
+    ) {
+        console.log(lastname, age, decade);
+        return this.characterService.getCharacters({
+            lastname,
+            age,
+            decade
+        });
     }
 
-    @Route()
-    getCharacterByName() {
-        this._router
-            .get(':name')
-            .provide({
-                urlParams: {
-                    name: 'string'
-                }
-            })
-            .register<{
-                urlParams: {
-                    name: string;
-                };
-            }>((providers) => {
-                return this.characterService.getCharacterByName(
-                    providers.urlParams.name
-                );
-            });
-    }
+    // @Route({
+    //     method: 'get',
+    //     path: ':name'
+    // })
+    // getCharacterByName(@Param('name', false) name: string) {
+    //     return this.characterService.getCharacterByName(name);
+    // }
 }

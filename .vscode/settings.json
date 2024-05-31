@@ -2,12 +2,8 @@
     "json.schemas": [],
     "workbench.iconTheme": "material-icon-theme",
     "material-icon-theme.files.associations": {
-        "*.contract.ts": "capacitor",
         "*.decorator.ts": "edge",
-        "*.inserter.ts": "database",
-        "*.report.json": "contributing",
         "*.schema.ts": "gradle",
-        "*.table.json": "table",
         "*.types.ts": "tsconfig",
         ".editorconfig": "settings",
         "tsconfig.build.json": "parcel",
@@ -15,16 +11,9 @@
         "tsconfig.spec.json": "test-ts"
     },
     "material-icon-theme.folders.associations": {
-        "services": "controller",
-        "host": "app",
         ".old": "archive",
-        "gateway": "connection",
-        "microservices": "controller",
         "rxjs": "redux-reducer",
-        "websocket": "connection",
-        "deps": "include",
-        "lib": "src",
-        "config-manager": "config"
+        "lib": "src"
     },
     "editor.formatOnSave": true,
     "editor.formatOnPaste": true,
@@ -40,16 +29,7 @@
     "prettier.configPath": "./.prettierrc",
     "prettier.ignorePath": "./.prettierignore",
     "typescript.tsdk": "node_modules/typescript/lib",
-    "prettier.singleQuote": true,
-    "prettier.trailingComma": "none",
-    "prettier.singleAttributePerLine": true,
-    "prettier.tabWidth": 4,
-    "prettier.jsxSingleQuote": true,
-    "prettier.bracketSameLine": true,
     "references.preferredLocation": "peek",
-    "html.format.indentInnerHtml": true,
-    "html.format.indentHandlebars": true,
-    "html.format.wrapAttributes": "force",
     "search.followSymlinks": false,
     "search.exclude": {
         "**/node_modules": true,

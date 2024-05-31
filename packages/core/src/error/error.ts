@@ -1,3 +1,4 @@
+import { isNativeError } from 'util/types';
 import { DefaultErrorMessages, ErrorCode } from './error-codes.js';
 /**
  * An extension of Error that provides verbose logging
@@ -8,7 +9,8 @@ import { DefaultErrorMessages, ErrorCode } from './error-codes.js';
 export class FsnError extends Error {
     constructor(
         public code?: ErrorCode | undefined,
-        public details?: string | undefined
+        public details?: string | undefined,
+        error?: unknown
     ) {
         super(
             details
@@ -17,7 +19,10 @@ export class FsnError extends Error {
                   ? DefaultErrorMessages[code].message
                   : 'An unknown error was thrown by @fusion-rx/core'
         );
+
         this.code = code;
         this.details = details;
+
+        if (error && isNativeError(error)) this.stack = error.stack;
     }
 }

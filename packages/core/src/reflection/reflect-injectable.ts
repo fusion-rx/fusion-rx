@@ -13,7 +13,8 @@ import { reflectInjections } from './reflect-injections.js';
  */
 export const reflectInjectable = (
     type: Type<InjectableMetadataFacade>,
-    meta?: Injectable
+    meta?: Injectable,
+    isRoute = false
 ): void => {
     // Derive the class name (its 'token') from `type`
     const token = type?.prototype?.constructor?.name;
@@ -23,7 +24,7 @@ export const reflectInjectable = (
     if (!token) {
         throw new FsnError(
             ErrorCode.DERIVE_INJECTABLE_TOKEN,
-            `Failed to initialize `
+            `Failed to initialize ${isRoute ? 'route' : 'provider'}.`
         );
     }
 

@@ -10,6 +10,7 @@ import {
 import { isModuleWithProviders } from '../di/module-with-provider.js';
 import { reflectFactoryProvider } from './reflect-factory-provider.js';
 import { M } from '../application/bootstrap.js';
+import { RouterMetadataFacade } from '../router/router-facade-interface.js';
 
 /**
  * Reflects `@FsnModule` decorator metadata into the prototype of
@@ -60,6 +61,17 @@ export const reflectModule = (
         } else if (isFactoryProvider(provider)) {
             type.prototype.providers[provider.provide] =
                 reflectFactoryProvider(provider);
+        }
+    });
+
+    type.prototype.routes = {};
+    meta.routes?.forEach((route) => {
+        if (isType<RouterMetadataFacade>(route)) {
+            type.prototype.routes[
+                route.prototype.token ?? route.prototype.constructor.name
+            ] = route;
+        } else {
+            throw new FsnError(ErrorCode.INVALID_ROUTE);
         }
     });
 

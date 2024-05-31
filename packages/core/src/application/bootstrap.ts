@@ -1,3 +1,5 @@
+import '../console/console.js';
+
 import {
     FsnModuleMetadataFacade,
     InjectableMetadataFacade
@@ -8,11 +10,13 @@ import {
     isModuleWithProviders
 } from '../di/module-with-provider.js';
 import { Type } from '../interface/type.js';
-import { FusionServer } from './server.js';
+import { FusionServer, HttpsServerOptions, ServerOptions } from './server.js';
 import { FsnError } from '../error/error.js';
 import { ErrorCode } from '../error/error-codes.js';
 import { Subject } from 'rxjs';
 import { FsnModule } from '../public-api.js';
+import { handleErrors } from '../error/error-handler.js';
+import { bootstrapRouter } from './bootstrap-route-handler.js';
 
 export const afterAppInit = new Subject<Type<FsnModuleMetadataFacade>>();
 
@@ -22,16 +26,12 @@ export declare type I = Type<InjectableMetadataFacade>;
 /** Alias for Type<FsnModuleMetadataFacade> */
 export declare type M = Type<FsnModuleMetadataFacade>;
 
-(<I>FusionServer).prototype.instance = new FusionServer();
-
 /**
  * All providers declared in the root context.
  */
 const rootProviders: {
     [token: string]: Type<InjectableMetadataFacade>;
-} = {
-    [(<I>FusionServer).prototype.token]: <I>FusionServer
-};
+} = {};
 
 /**
  * The name of the root module; used to determine when
@@ -40,41 +40,61 @@ const rootProviders: {
 let rootModuleToken: string;
 
 /**
+ * The initial options set in `bootstrap`.
+ */
+export let initOptions: Partial<ServerOptions> | HttpsServerOptions;
+
+/**
  * Defines the metadata of a class decorated with `@FsnModule`.
- * @param type A class decorated with `@FsnModule`
- * @param meta Module options injected via the `@FsnModule` decorator
+ * @param rootModule A class decorated with `@FsnModule`
+ * @param options
  */
 export const bootstrap = (
-    rootModule: Type<any> | ModuleWithProviders
-    // options?:
-    //     | Partial<ServerOptions>
-    //     | (Partial<ServerOptions> & HttpsServerOptions)
-): Type<FsnModuleMetadataFacade> => {
+    rootModule: Type<any> | ModuleWithProviders,
+    options?: Partial<ServerOptions> | HttpsServerOptions
+) => {
+    let server: FusionServer | undefined;
+    // @todo - we only want to create the fusion server if the user
+    // has asked for it. Figure out how to do this.
+    server = new FusionServer();
+
+    const useErrorHandler = options?.exitOnUncaught ?? false;
+    if (useErrorHandler === false) {
+        handleErrors({
+            exitOnUncaught: false
+        });
+    }
+
     const type = bootstrapModule(rootModule);
     afterAppInit.next(type);
-    return type;
+
+    server?.listen(options);
+
+    return { root: type, server };
+};
+
+export const bootstrapModuleWithProviders = (module: ModuleWithProviders) => {
+    @FsnModule({
+        exports: module.exports,
+        imports: module.imports,
+        providers: module.providers,
+        routes: module.routes
+    })
+    class Module {}
+    (<M>Module).prototype.token = module.fsnModule.prototype.token;
+    return <M>Module;
 };
 
 export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
-    let type: Type<FsnModuleMetadataFacade>;
-
-    if (isModuleWithProviders(module)) {
-        @FsnModule({
-            exports: module.exports,
-            imports: module.imports,
-            providers: module.providers,
-            routes: module.routes
-        })
-        class Module {}
-        (<M>Module).prototype.token = module.fsnModule.prototype.token;
-        type = <M>Module;
-    } else {
-        type = module;
-    }
+    const type: Type<FsnModuleMetadataFacade> = isModuleWithProviders(module)
+        ? bootstrapModuleWithProviders(module)
+        : module;
 
     const token = type.prototype.token;
 
-    /** Holds the instance of providers that were imported via other modules. */
+    if (!rootModuleToken) rootModuleToken = token;
+
+    /** Providers that were imported via other modules. */
     const importedProviders: Record<
         string,
         Type<InjectableMetadataFacade>
@@ -88,19 +108,19 @@ export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
         if (Object.keys(imported.prototype.imports).includes(token)) {
             throw new FsnError(
                 ErrorCode.CIRCULAR_DEPENDENCY,
-                `Module ${type} is imported by ${imported.prototype.token}, ` +
-                    `which itself lists ${type} as a dependency.`
+                `Module ${type.prototype.token} is imported by ${imported.prototype.token}, ` +
+                    `which itself lists ${type.prototype.token} as a dependency.`
             );
         }
 
         // Register the exported providers of imported modules
         imported.prototype.exports.forEach((exported, index) => {
-            // TODO = check to see how references work. This mappinig might be
+            // @todo check to see how references work. This mappinig might be
             // unnecessary, as the class object prototype is global
             const importedProvider = imported.prototype.providers[exported];
 
             // Modules are responsible for resolving their own dependencies,
-            // so if an uninitialized provider slips through the cracks,
+            // so if a module exports an uninitialized provider,
             // we have to error
             if (!importedProvider.prototype.instance) {
                 throw new FsnError(
@@ -125,6 +145,8 @@ export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
     const resolveProviderDependencies = (
         provider: Type<InjectableMetadataFacade>
     ): any[] => {
+        // Create the error to throw if the dependency does not have a token
+        // or we fail to initialize the dependency
         const createResolveError = (depIndex: number, token?: string) =>
             new FsnError(
                 ErrorCode.CANNOT_RESOLVE_DEPENDENCY,
@@ -132,12 +154,13 @@ export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
                     `of ${provider.prototype.token} at index ${depIndex}`
             );
 
-        return (provider.prototype.dependencies ?? []).map((dep, index) => {
-            // Create the error to throw if the dependency does not have a token
-            // or we fail to initialize the dependency
+        // If the provider has no dependencies, we can return an empty array.
+        if (provider.prototype.dependencies?.length === 0) return [];
 
+        // Otherwise, we have to resolve the dependencies.
+        return provider.prototype.dependencies.map((dep, index) => {
             // If the dependency does not have a token, then it is not a valid
-            // injectable, so we have to error.
+            // provider, so we have to error.
             if (!dep.token) throw createResolveError(index);
 
             // Assign the provider to a variable for the sake of readability
@@ -148,6 +171,7 @@ export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
                 // If this provider has an instance, it's already initialized
                 if (localProvider.prototype.instance)
                     return localProvider.prototype.instance;
+
                 // If this provider has a value, it was a factory provider
                 // that provided a static value and is already initialized
                 if (localProvider.prototype.value !== undefined)
@@ -202,20 +226,28 @@ export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
         );
     };
 
-    // Attempt to initialize all providers declared in this module
-    Object.values(type.prototype.providers ?? {}).forEach((provider) => {
-        initializeProvider(provider);
+    const providers = {
+        ...(type.prototype.providers ?? {}),
+        ...(type.prototype.routes ?? {})
+    };
 
-        const providedIn = provider.prototype.providedIn;
+    // Attempt to initialize all providers declared in this module
+    Object.values(providers).forEach((provider) => {
+        initializeProvider(provider);
 
         // If this provider is initialized and is declared in the
         // `root` context, add it to the root providers
-        if (providedIn === 'root') {
+        if (provider.prototype.providedIn === 'root') {
             rootProviders[provider.prototype.token] = provider;
         }
     });
 
-    // Call onModuleInit for all providers in this module
+    // Initialize routes declared in this module
+    Object.values(type.prototype.routes ?? {}).forEach((router) => {
+        bootstrapRouter(router);
+    });
+
+    // Call `onModuleInit` for all providers in this module
     // that implement `onModuleInit`
     Object.values(type.prototype.providers ?? {}).forEach((provider) => {
         if (
@@ -226,8 +258,11 @@ export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
         }
     });
 
+    // If we've reached this point, all modules and providers in the application
+    // have been initialized, so we can invoke the `afterAppInit` lifecycle hook
+    // on all modules and providers that implement it.
     if (token === rootModuleToken) {
-        const invokeOnModuleInit = (
+        const invokeAfterAppInit = (
             moduleRef: Type<FsnModuleMetadataFacade>
         ) => {
             // Call `afterAppInit` on all providers that implement the
@@ -241,13 +276,13 @@ export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
             // Recursively call `afterAppInit` on all providers declared
             // by this module's imports
             Object.values(moduleRef.prototype.imports).forEach((imported) => {
-                invokeOnModuleInit(imported);
+                invokeAfterAppInit(imported);
             });
         };
 
         // Check for `afterAppInit` lifecycle hook in root module
         // providers and imported modules
-        invokeOnModuleInit(type);
+        invokeAfterAppInit(type);
     }
 
     return type;

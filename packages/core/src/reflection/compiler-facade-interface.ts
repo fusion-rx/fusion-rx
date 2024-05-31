@@ -1,4 +1,5 @@
 import { Type } from '../interface/type.js';
+import { RouterMetadataFacade } from '../router/router-facade-interface.js';
 import { ReflectedDependency } from './reflected-interface.js';
 
 export declare interface FsnModuleMetadataFacade {
@@ -6,6 +7,8 @@ export declare interface FsnModuleMetadataFacade {
     token: string;
     /** Injectables declared by this module. */
     providers: Record<string, Type<InjectableMetadataFacade>>;
+    /** The routes that this module declares. */
+    routes: Record<string, Type<RouterMetadataFacade>>;
     /** The names of injectables exported from this module. */
     exports: string[];
     /** The fsnModules that this module imports */

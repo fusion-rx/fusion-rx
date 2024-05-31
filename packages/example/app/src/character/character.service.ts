@@ -22,26 +22,19 @@ export class CharacterService {
     }) {
         return this._databaseService.getAllCharacters().pipe(
             filter((character) => {
-                const lastname = character.pk_name.split(' ')[1];
-                const age = character.age;
-                const decade = Math.floor(character.age * 0.1);
+                const lastname = query.lastname
+                    ? query.lastname.some(
+                          (nm) =>
+                              nm?.toLowerCase() ===
+                              character.pk_name.split(' ').pop()?.toLowerCase()
+                      )
+                    : true;
+                const age = query.age ? query.age === character.age : true;
+                const decade = query.decade
+                    ? query.decade === Math.floor(character.age * 0.1)
+                    : true;
 
-                if (
-                    query.lastname !== undefined &&
-                    !query.lastname.includes(lastname)
-                ) {
-                    return false;
-                }
-
-                if (query.age !== undefined && query.age !== age) {
-                    return false;
-                }
-
-                if (query.decade !== undefined && query.decade !== decade) {
-                    return false;
-                }
-
-                return true;
+                return lastname && age && decade;
             })
         );
     }
