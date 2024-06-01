@@ -7,9 +7,18 @@ export class AppRoutes {
     constructor() {}
 
     @Route({
-        method: 'get'
+        method: 'get',
+        path: 'info'
     })
-    testRoute(): string {
-        return 'this is also awesome!';
+    testRoute() {
+        return {
+            name: '@fusion-rx/example',
+            version: '0.1.0',
+            private: true,
+            description: 'An example Fusion application.',
+            author: 'Alexander Porrello',
+            license: 'MIT',
+            type: 'module'
+        };
     }
 }

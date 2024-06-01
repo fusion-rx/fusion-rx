@@ -1,7 +1,7 @@
-import { filter } from 'rxjs';
 import { Injectable } from '@fusion-rx/core';
 import { DatabaseService } from '../database/database.service.js';
 import { from, t_characters } from '@fusion-rx/test';
+import { filter } from 'rxjs';
 
 @Injectable()
 export class CharacterService {
@@ -15,7 +15,7 @@ export class CharacterService {
             .end();
     }
 
-    public getCharacters(query: {
+    getCharactersByAgeNameDecade(query: {
         lastname?: string[];
         age?: number;
         decade?: number;

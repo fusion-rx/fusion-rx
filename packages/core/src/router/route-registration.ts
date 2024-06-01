@@ -12,6 +12,7 @@ import { Subscription, catchError, isObservable } from 'rxjs';
 import { isNativeError, isPromise } from 'util/types';
 import { extractProvidersFromReq } from './request-parser.js';
 import { FsnRouterError, formatResponseError } from './router-error.js';
+import { logPrefix } from '../console/log-prefix.js';
 
 export declare type RegistrationOptions = {
     urlParams?: Record<string, ParamType>;
@@ -40,7 +41,10 @@ export const logRouteRegistration = (method: HttpMethod, path: string) => {
                 return chalk.bold.green(method.toUpperCase()) + '  ';
         }
     };
-    console.log(chalk.green(`${getMethodColor()} ${chalk.gray('=>')} ${path}`));
+    console.log(
+        logPrefix() +
+            chalk.green(`${getMethodColor()} ${chalk.gray('=>')} ${path}`)
+    );
 };
 
 const prependBasePath = (basePath: string, handlerPath: string) => {
@@ -106,10 +110,7 @@ export const registerRouteHandler = (
                         })
                     )
                     .subscribe({
-                        next: (val) => {
-                            response.push(val);
-                            console.log(val);
-                        },
+                        next: (val) => response.push(val),
                         error: (error) => {
                             console.error(error);
                             const formatted = formatResponseError(error);

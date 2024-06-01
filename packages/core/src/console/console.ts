@@ -20,21 +20,6 @@ const colorize = (args: any[], colorFn: Function) => {
     });
 };
 
-// const log = console.log;
-// console.log = (...args) =>
-//     log(
-//         ...args.map((arg) => {
-//             if (typeof arg === 'object') {
-//                 try {
-//                     return arg;
-//                 } catch {
-//                     return arg;
-//                 }
-//             }
-//             return logPrefix().toString() + arg;
-//         })
-//     );
-
 const debug = console.debug;
 console.debug = (...args) => debug(...colorize(args, Chalk.gray));
 
@@ -48,7 +33,6 @@ const error = console.error;
 console.error = (...args) => {
     args.forEach((arg) => {
         if (isNativeError(arg)) {
-            // error(Chalk.red(arg.stack));
             error(logPrefix().toString(), Chalk.red(console.log(arg.stack)));
         } else {
             error(logPrefix().toString(), Chalk.red(arg));

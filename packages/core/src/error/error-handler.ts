@@ -21,7 +21,6 @@ export const registerOnExitEvent = (event: Function) => {
  * `registerOnExitEvent`.
  */
 const executeOnExitEvents = () => {
-    console.log();
     exitEvents.forEach((evt) => {
         try {
             evt();

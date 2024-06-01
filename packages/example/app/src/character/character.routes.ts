@@ -1,4 +1,11 @@
-import { PipeNum, PipeStrArr, Query, Route, Router } from '@fusion-rx/core';
+import {
+    Param,
+    PipeNum,
+    PipeStrArr,
+    Query,
+    Route,
+    Router
+} from '@fusion-rx/core';
 import { CharacterService } from './character.service.js';
 
 @Router({
@@ -15,19 +22,18 @@ export class CharactersRoute {
         @Query('age', PipeNum) age?: number,
         @Query('decade', PipeNum) decade?: number
     ) {
-        console.log(lastname, age, decade);
-        return this.characterService.getCharacters({
+        return this.characterService.getCharactersByAgeNameDecade({
             lastname,
             age,
             decade
         });
     }
 
-    // @Route({
-    //     method: 'get',
-    //     path: ':name'
-    // })
-    // getCharacterByName(@Param('name', false) name: string) {
-    //     return this.characterService.getCharacterByName(name);
-    // }
+    @Route({
+        method: 'get',
+        path: ':name'
+    })
+    getCharacterByName(@Param('name', false) name: string) {
+        return this.characterService.getCharacterByName(name);
+    }
 }
