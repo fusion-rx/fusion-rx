@@ -1,15 +1,13 @@
-import { CosmoKramer, SeinfeldCharacters } from '@fusion-rx/test';
+import { data } from '@fusion-rx/test';
 import { equivalent } from './equivalent.js';
 
 describe('Compare', () => {
     test('Can compare array of objects; true', () => {
-        expect(equivalent(SeinfeldCharacters, SeinfeldCharacters)).toEqual(
-            true
-        );
+        expect(equivalent(data, data)).toEqual(true);
     });
 
     test('Can compare array of objects; false', () => {
-        expect(equivalent([CosmoKramer], SeinfeldCharacters)).toEqual(false);
+        expect(equivalent([data.characters[0]], data)).toEqual(false);
     });
 
     const nestedObject = {

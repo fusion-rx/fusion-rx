@@ -21,6 +21,7 @@ export default {
     moduleNameMapper: {
         '(.+)\\.js': '$1'
     },
+    modulePathIgnorePatterns: ['<rootDir>/dist/'],
     globals: {
         'ts-jest': {
             useESM: true

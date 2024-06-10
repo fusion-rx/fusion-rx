@@ -5,15 +5,12 @@
     "description": "Provides test data for unit testing.",
     "author": "Alexander Porrello",
     "license": "MIT",
-    "main": "public-api.js",
+    "main": "src/public-api.js",
     "type": "module",
     "scripts": {
         "test": "jest",
         "test:watch": "jest --watch",
         "test:cov": "jest --coverage"
-    },
-    "dependencies": {
-        "rxjs": "^7.5.0"
     },
     "devDependencies": {
         "typescript": "^5.1.3"
