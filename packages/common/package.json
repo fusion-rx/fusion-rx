@@ -4,25 +4,10 @@
     "description": "Extends functionality of @fusion-rx/core.",
     "author": "Alexander Porrello",
     "license": "MIT",
-    "main": "public-api.js",
+    "main": "src/public-api.js",
     "type": "module",
-    "scripts": {
-        "postbuild": "node ../../tools/post-build/bin.js",
-        "build": "npx parcel build && npm run postbuild",
-        "test": "jest",
-        "test:watch": "jest --watch",
-        "test:cov": "jest --coverage"
-    },
     "dependencies": {
         "@fusion-rx/core": "0.1.0",
-        "@fusion-rx/shared": "0.1.0",
-        "qs": "^6.11.2",
-        "reflect-metadata": "^0.1.13",
-        "rxjs": "^7.5.0",
-        "express": "^4.18.3"
-    },
-    "devDependencies": {
-        "@types/qs": "^6.9.10",
-        "@types/express": "^4.17.21"
+        "rxjs": "^7.5.0"
     }
 }

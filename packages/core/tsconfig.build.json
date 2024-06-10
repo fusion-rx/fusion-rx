@@ -1,7 +1,10 @@
 {
     "extends": "../../tsconfig.build.json",
     "compilerOptions": {
-        "sourceRoot": "src",
+        "rootDir": ".",
         "outDir": "../../dist/core"
-    }
+    },
+    "include": [
+        "src/public-api.ts"
+    ]
 }

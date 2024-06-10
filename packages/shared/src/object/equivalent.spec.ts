@@ -1,5 +1,5 @@
 import { CosmoKramer, SeinfeldCharacters } from '@fusion-rx/test';
-import { equivalent } from './equivalent';
+import { equivalent } from './equivalent.js';
 
 describe('Compare', () => {
     test('Can compare array of objects; true', () => {

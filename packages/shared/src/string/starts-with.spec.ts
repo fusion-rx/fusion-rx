@@ -1,4 +1,4 @@
-import { startsWith } from './starts-with';
+import { startsWith } from './starts-with.js';
 
 describe('Starts with', () => {
     test('Evaluates regular expressions; true.', () => {

@@ -1,5 +1,20 @@
+/**
+ * Evaluates whether `val` starts with `token`
+ * @param val A string to search
+ * @param token A regular express used to evaluate whether `val`
+ * starts with a value
+ *
+ * @publicApi
+ */
 export function startsWith(val: string, token: RegExp): boolean;
 
+/**
+ * Evaluates whether `val` starts with `token`
+ * @param val A string to search
+ * @param token A token or array of tokens that might be at the start of `val`
+ *
+ * @publicApi
+ */
 export function startsWith(
     val: string,
     token: string[] | string,

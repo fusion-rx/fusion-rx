@@ -1,5 +1,5 @@
-import { isConvertibleToArray } from './type-check';
-import { parseArr } from './parse';
+import { isConvertibleToArray } from './type-check.js';
+import { parseArr } from './parse.js';
 
 describe('coerceArray operator', () => {
     // Test case: Convertible scenarios

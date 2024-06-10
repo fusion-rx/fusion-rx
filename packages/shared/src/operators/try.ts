@@ -3,6 +3,8 @@
  * @param trier A function that may throw an exception
  * @param catcher A function that handles caught exceptions
  * @returns T returned from `trier` or T returned from `catcher
+ *
+ * @publicApi
  */
 export function tryCatch<T = any>(
     trier: () => T,
@@ -14,6 +16,8 @@ export function tryCatch<T = any>(
  * @param trier A function that may throw an exception
  * @param catcher (optional) A function that handles caught exceptions
  * @returns T or void returned from `trier` or T or void returned from `catcher
+ *
+ * @publicApi
  */
 export function tryCatch<T = any>(
     trier: () => T | void,
@@ -25,6 +29,8 @@ export function tryCatch<T = any>(
  * @param trier A function that may throw an exception
  * @param catcher A function that handles caught exceptions
  * @returns void
+ *
+ * @publicApi
  */
 export function tryCatch(
     trier: () => void,
@@ -32,12 +38,12 @@ export function tryCatch(
 ): void;
 
 export function tryCatch<T = any>(
-    t: () => T | void,
-    c?: (error: any) => T | void
+    trier: () => T | void,
+    catcher?: (error: any) => T | void
 ): T | void {
     try {
-        return t();
+        return trier();
     } catch (e) {
-        if (c) return c(e);
+        if (catcher) return catcher(e);
     }
 }

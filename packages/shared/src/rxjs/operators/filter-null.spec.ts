@@ -1,5 +1,5 @@
 import { last, of, scan } from 'rxjs';
-import { filterNull } from './filter-nulls';
+import { filterNull } from './filter-nulls.js';
 
 describe('filterNull operator', () => {
     test('Can filter nulls and undefineds', (done) => {

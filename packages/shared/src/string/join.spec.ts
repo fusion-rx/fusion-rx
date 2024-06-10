@@ -1,4 +1,4 @@
-import { joinURL } from './join';
+import { joinURL } from './join.js';
 
 describe('Join URL', () => {
     test('Can join URL', () => {

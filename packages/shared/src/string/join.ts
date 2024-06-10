@@ -1,10 +1,12 @@
-import { isNonNullable, parseString } from '../type/index.js';
+import { isTruthy, parseString } from '../type/public-api.js';
 import qs from 'querystring';
 
 /**
  * Delimits an array of values with spaces.
  * @param val Strings to be delimited.
  * @returns Stringified array delimited with spaces.
+ *
+ * @publicApi
  */
 export const join = (...val: (string | number | symbol)[]): string =>
     val.map((s) => parseString(s)).join(' ');
@@ -13,6 +15,8 @@ export const join = (...val: (string | number | symbol)[]): string =>
  * Joins together an array of values without spaces.
  * @param val Strings to be delimited.
  * @returns Stringified array whose values should be joined.
+ *
+ * @publicApi
  */
 export const squish = (...val: (string | number | symbol)[]): string =>
     val.map((s) => parseString(s)).join('');
@@ -21,6 +25,8 @@ export const squish = (...val: (string | number | symbol)[]): string =>
  * Delimits an array of values with `comma + space`.
  * @param val Strings to be delimited.
  * @returns Stringified array delimited with `comma + space`.
+ *
+ * @publicApi
  */
 export const flatList = (...val: (string | number | symbol)[]): string =>
     val.map((s) => parseString(s)).join(', ');
@@ -29,6 +35,8 @@ export const flatList = (...val: (string | number | symbol)[]): string =>
  *
  * @param val Strings to be delimited.
  * @returns Stringified array delimited with `- + listItem + \n`
+ *
+ * @publicApi
  */
 export const list = (...val: (string | number | symbol)[]): string =>
     val.map((s) => join('\t-', s)).join('\n');
@@ -37,6 +45,8 @@ export const list = (...val: (string | number | symbol)[]): string =>
  * Delimits an array of values with `\n`.
  * @param val Strings to be delimited.
  * @returns Stringified array delimited with `\n`.
+ *
+ * @publicApi
  */
 export const newLine = (...val: (string | number | symbol)[]): string =>
     val.map((s) => parseString(s)).join('\n');
@@ -46,6 +56,8 @@ export const newLine = (...val: (string | number | symbol)[]): string =>
  * @param delimiter The joining character(s) - i.e. `', '`, `\n`.
  * @param val Strings to be delimited.
  * @returns Stringified array delimited with custom delimiter.
+ *
+ * @publicApi
  */
 export const joinWith = (
     delimiter: string,
@@ -244,7 +256,7 @@ export function joinURL(
 
 export function joinURL(...urlSegments: any[]): string {
     urlSegments = urlSegments
-        .filter((segment) => isNonNullable<any>(segment))
+        .filter((segment) => isTruthy<any>(segment))
         .flatMap((segment) => segment);
 
     const finalArg = urlSegments.pop();
@@ -254,7 +266,7 @@ export function joinURL(...urlSegments: any[]): string {
         toReturn = joinWith('/', ...urlSegments, finalArg);
     } else {
         for (let key of Object.keys(finalArg)) {
-            if (!isNonNullable<any>(finalArg[key])) {
+            if (!isTruthy<any>(finalArg[key])) {
                 delete finalArg[key];
             } else if (Array.isArray(finalArg[key])) {
                 finalArg[key] = finalArg[key].join(',');

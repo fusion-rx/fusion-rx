@@ -1,7 +1,7 @@
-import { FsnModuleMetadataFacade } from './compiler-facade-interface';
-import { FsnModule, Inject, Injectable } from '../di/public-api';
-import { Type } from '../interface/public-api';
-import { reflectModule } from './reflect-module';
+import { FsnModule, Inject, Injectable } from '../di/public-api.js';
+import { FsnModuleMetadataFacade } from './compiler-facade-interface.js';
+import { Type } from '../interface/public-api.js';
+import { reflectModule } from './reflect-module.js';
 
 describe('FsnModule Reflection', () => {
     @Injectable()

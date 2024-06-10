@@ -1,6 +1,6 @@
-import { Type } from '../interface/type.js';
-import { RouterMetadataFacade } from '../router/router-facade-interface.js';
 import { ReflectedDependency } from './reflected-interface.js';
+import { RouterMetadataFacade } from '../router/router-facade-interface.js';
+import { Type } from '../interface/type.js';
 
 export declare interface FsnModuleMetadataFacade {
     /** The name of the module. */
@@ -15,6 +15,9 @@ export declare interface FsnModuleMetadataFacade {
     imports: Record<string, Type<FsnModuleMetadataFacade>>;
 }
 
+/** Alias for Type<FsnModuleMetadataFacade> */
+export declare type M = Type<FsnModuleMetadataFacade>;
+
 export declare interface InjectableMetadataFacade {
     /** The class name or provided token */
     token: string;
@@ -27,3 +30,6 @@ export declare interface InjectableMetadataFacade {
     /** The type provided by a factory provider. */
     value?: any;
 }
+
+/** Alias for Type<InjectableMetadataFacade> */
+export declare type I = Type<InjectableMetadataFacade>;

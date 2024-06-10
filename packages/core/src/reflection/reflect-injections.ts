@@ -1,5 +1,3 @@
-import { getMetadata } from '@fusion-rx/shared';
-
 import { ErrorCode } from '../error/error-codes.js';
 import { FsnError } from '../error/error.js';
 import { InjectableMetadataFacade } from './compiler-facade-interface.js';
@@ -17,34 +15,65 @@ export const reflectInjections = (
 ): void => {
     type.prototype.dependencies ??= [];
 
-    getMetadata<(Type | null)[]>(PARAM_TYPES, type, []).forEach(
-        (dep, index) => {
-            if (!dep) {
-                throw new FsnError(
-                    ErrorCode.INVALID_INJECTABLE,
-                    `Failed to resolve injectable at index ${index} of ${type.prototype.token}.`
-                );
-            }
+    const injected = Reflect.getMetadata(PARAM_TYPES, type);
 
-            if (!isType(dep)) {
-                throw new FsnError(
-                    ErrorCode.INVALID_INJECTABLE,
-                    `Failed to resolve injectable at index ${index} of ${type.prototype.token}.`
-                );
-            }
-
-            if (!type.prototype.dependencies[index]) {
-                type.prototype.dependencies[index] = {
-                    token: dep.prototype.constructor.name
-                };
-
-                return;
-            }
-
-            if (type.prototype.dependencies[index].token.length === 0) {
-                type.prototype.dependencies[index].token =
-                    dep.prototype.constructor.name;
-            }
+    (Array.isArray(injected) ? injected : []).forEach((dep, index) => {
+        if (!dep) {
+            throw new FsnError(
+                ErrorCode.INVALID_INJECTABLE,
+                `Failed to resolve injectable at index ${index} of ${type.prototype.token}.`
+            );
         }
-    );
+
+        if (!isType(dep)) {
+            throw new FsnError(
+                ErrorCode.INVALID_INJECTABLE,
+                `Failed to resolve injectable at index ${index} of ${type.prototype.token}.`
+            );
+        }
+
+        if (!type.prototype.dependencies[index]) {
+            type.prototype.dependencies[index] = {
+                token: dep.prototype.constructor.name
+            };
+
+            return;
+        }
+
+        if (type.prototype.dependencies[index].token.length === 0) {
+            type.prototype.dependencies[index].token =
+                dep.prototype.constructor.name;
+        }
+    });
+
+    // getMetadata<(Type | null)[]>(PARAM_TYPES, type, []).forEach(
+    //     (dep, index) => {
+    //         if (!dep) {
+    //             throw new FsnError(
+    //                 ErrorCode.INVALID_INJECTABLE,
+    //                 `Failed to resolve injectable at index ${index} of ${type.prototype.token}.`
+    //             );
+    //         }
+
+    //         if (!isType(dep)) {
+    //             throw new FsnError(
+    //                 ErrorCode.INVALID_INJECTABLE,
+    //                 `Failed to resolve injectable at index ${index} of ${type.prototype.token}.`
+    //             );
+    //         }
+
+    //         if (!type.prototype.dependencies[index]) {
+    //             type.prototype.dependencies[index] = {
+    //                 token: dep.prototype.constructor.name
+    //             };
+
+    //             return;
+    //         }
+
+    //         if (type.prototype.dependencies[index].token.length === 0) {
+    //             type.prototype.dependencies[index].token =
+    //                 dep.prototype.constructor.name;
+    //         }
+    //     }
+    // );
 };

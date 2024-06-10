@@ -1,5 +1,5 @@
-import { BehaviorSubject, Observable } from 'rxjs';
-import { filterNull } from './operators/index.js';
+import { BehaviorSubject, Observable, filter } from 'rxjs';
+import { Falsy, isTruthy } from '../public-api.js';
 
 /**
  * An extension of BehaviorSubject for reactive design patterns.
@@ -40,7 +40,7 @@ import { filterNull } from './operators/index.js';
  * <div>{{ foo$ | async }}</div>
  * ````
  */
-export class ReactiveSubject<T> extends BehaviorSubject<T | null> {
+export class ReactiveSubject<T> extends BehaviorSubject<T | Falsy> {
     /**
      * Used in combination with the Angular async pipe to emit
      * new values to the template.
@@ -49,7 +49,7 @@ export class ReactiveSubject<T> extends BehaviorSubject<T | null> {
 
     constructor(value?: T) {
         super(value ?? null);
-        this.next$ = this.pipe(filterNull);
+        this.next$ = this.pipe(filter(isTruthy));
     }
 
     /**

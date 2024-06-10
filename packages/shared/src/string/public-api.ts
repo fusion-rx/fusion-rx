@@ -9,4 +9,3 @@ export * from './prepend.js';
 export * from './starts-with.js';
 export * from './title-case.js';
 export * from './wrap.js';
-export * from './color-cli.js';

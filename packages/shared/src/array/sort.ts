@@ -5,10 +5,6 @@ import {
     isArrayIndexed
 } from './index-array.js';
 
-/**
- * Provides all Fusion Array utilities.
- */
-
 export enum SortDirection {
     NO_SORT,
     ASCENDING,

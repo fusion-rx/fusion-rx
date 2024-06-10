@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { mapArray } from './map-array';
+import { mapArray } from './map-array.js';
 
 describe('coerceArray operator', () => {
     test('Can return array from array', (done) => {

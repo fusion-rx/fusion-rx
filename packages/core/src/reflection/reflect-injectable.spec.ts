@@ -1,8 +1,8 @@
-import { Type } from '../interface/public-api';
-import { DummyDecorator } from '../test';
-import { Inject } from '../di/inject';
-import { reflectInjectable } from './reflect-injectable';
-import { InjectableMetadataFacade } from './compiler-facade-interface';
+import { DummyDecorator } from '../test/dummy-decorator.js';
+import { Inject } from '../di/inject.js';
+import { InjectableMetadataFacade } from './compiler-facade-interface.js';
+import { Type } from '../interface/public-api.js';
+import { reflectInjectable } from './reflect-injectable.js';
 
 describe('FusionRx dependency reflection', () => {
     @DummyDecorator()

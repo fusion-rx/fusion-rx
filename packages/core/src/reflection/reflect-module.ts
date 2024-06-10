@@ -1,16 +1,16 @@
-import { FsnModule } from '../di/module.js';
-import { Type, isType } from '../interface/type.js';
-import { FsnError } from '../error/error.js';
 import { ErrorCode } from '../error/error-codes.js';
-import { isFactoryProvider } from '../di/factory-provider.js';
+import { FsnError } from '../error/error.js';
+import { FsnModule } from '../di/module.js';
 import {
     FsnModuleMetadataFacade,
-    InjectableMetadataFacade
+    InjectableMetadataFacade,
+    M
 } from './compiler-facade-interface.js';
+import { RouterMetadataFacade } from '../router/router-facade-interface.js';
+import { Type, isType } from '../interface/type.js';
+import { isFactoryProvider } from '../di/factory-provider.js';
 import { isModuleWithProviders } from '../di/module-with-provider.js';
 import { reflectFactoryProvider } from './reflect-factory-provider.js';
-import { M } from '../application/bootstrap.js';
-import { RouterMetadataFacade } from '../router/router-facade-interface.js';
 
 /**
  * Reflects `@FsnModule` decorator metadata into the prototype of

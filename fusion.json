@@ -44,17 +44,7 @@
                     "options": {
                         "outputPath": "dist",
                         "main": "public-api.ts",
-                        "tsConfig": "tsconfig.build.json",
-                        "targets": {
-                            "main": {
-                                "context": "node",
-                                "outputFormat": "commonjs"
-                            },
-                            "module": {
-                                "context": "browser",
-                                "outputFormat": "esmodule"
-                            }
-                        }
+                        "tsConfig": "tsconfig.build.json"
                     }
                 }
             }

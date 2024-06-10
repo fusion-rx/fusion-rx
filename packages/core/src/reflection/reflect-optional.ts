@@ -1,5 +1,5 @@
-import { Type } from '../interface/type.js';
 import { InjectableMetadataFacade } from './compiler-facade-interface.js';
+import { Type } from '../interface/type.js';
 
 /**
  * Reflects `@Optional()` parameter metadata into the

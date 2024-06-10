@@ -6,7 +6,11 @@ const logDate = (process.env['log_date'] ?? 'true') === 'true';
 const logTime = (process.env['log_time'] ?? 'true') === 'true';
 const logPID = (process.env['log_pid'] ?? 'true') === 'true';
 
-/** Creates a prefix for verbose logging. */
+/**
+ * Creates a prefix for verbose logging.
+ *
+ * @publicApi
+ */
 export const logPrefix = () => {
     const pipe = chalk.gray(' │ ');
     const pid = logPID ? process.pid + pipe : '';

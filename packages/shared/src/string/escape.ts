@@ -1,6 +1,8 @@
 /**
- * @param val The string to be modified.
+ * @param val A string to be escaped
  * @returns A string wrapped in double quotation marks.
+ *
+ * @publicApi
  */
 export const escape = (val: string): string =>
     val.replace(/\//g, '').replace(/\./g, '');

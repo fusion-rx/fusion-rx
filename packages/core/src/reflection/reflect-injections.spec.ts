@@ -1,8 +1,8 @@
-import { DummyDecorator } from '../test';
-import { reflectInjections } from './reflect-injections';
-import { Type } from '../interface/public-api';
-import { Inject } from '../di/inject';
-import { InjectableMetadataFacade } from './compiler-facade-interface';
+import { DummyDecorator } from '../test/dummy-decorator.js';
+import { Inject } from '../di/inject.js';
+import { InjectableMetadataFacade } from './compiler-facade-interface.js';
+import { Type } from '../interface/public-api.js';
+import { reflectInjections } from './reflect-injections.js';
 
 describe('Reflect Injections', () => {
     @DummyDecorator()

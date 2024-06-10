@@ -1,7 +1,7 @@
-import { Type } from '../interface/type.js';
-import { RouterMetadataFacade } from '../router/router-facade-interface.js';
-import { FsnError } from '../error/error.js';
 import { ErrorCode } from '../error/error-codes.js';
+import { FsnError } from '../error/error.js';
+import { RouterMetadataFacade } from '../router/router-facade-interface.js';
+import { Type } from '../interface/type.js';
 import { registerRouteHandler } from '../router/route-registration.js';
 
 /**

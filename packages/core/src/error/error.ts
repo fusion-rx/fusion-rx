@@ -1,5 +1,7 @@
 import { isNativeError } from 'util/types';
+
 import { DefaultErrorMessages, ErrorCode } from './error-codes.js';
+
 /**
  * An extension of Error that provides verbose logging
  * metadata.

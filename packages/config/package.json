@@ -1,0 +1,24 @@
+{
+    "name": "@fusion-rx/config",
+    "version": "0.0.1",
+    "description": "Provides configuration functionality for Node.js applications.",
+    "author": "Alexander Porrello",
+    "license": "MIT",
+    "main": "src/public-api",
+    "scripts": {
+        "build": "npx tsc -p tsconfig.build.json && cp README.md ../../dist",
+        "watch": "npx tsc -p tsconfig.build.json --watch",
+        "format": "prettier --write \"src/**/*.ts\" \"test/**/*.ts\"",
+        "test": "jest",
+        "test:watch": "jest --watch",
+        "test:cov": "jest --coverage",
+        "test:debug": "node --inspect-brk -r tsconfig-paths/register -r ts-node/register node_modules/.bin/jest --runInBand"
+    },
+    "dependencies": {
+        "@fusion-rx/common": "^1.0.0",
+        "@fusion-rx/node": "^18.16.0",
+        "reflect-metadata": "^0.1.13",
+        "chokidar": "^3.5.3",
+        "rxjs": "^7.5.0"
+    }
+}

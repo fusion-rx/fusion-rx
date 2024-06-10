@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "RxConfig Asset Options",
+    "description": "JSON Schema for `rxconfig.json` description file `assets` options.",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "collection": {
+            "type": "string",
+            "description": "Specify the name of the asset collection."
+        },
+        "overloads": {
+            "type": "boolean",
+            "description": "Specifies if the assets within `name` are overloaded."
+        }
+    }
+}

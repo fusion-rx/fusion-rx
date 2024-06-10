@@ -1,12 +1,11 @@
-import { FsnModuleMetadataFacade } from '../reflection/compiler-facade-interface';
-import { FsnModule } from '../di/module';
-import { Injectable } from '../di/injectable';
-import { Inject } from '../di/inject';
-import { bootstrap } from './bootstrap';
-import { AfterAppInit, OnModuleInit } from './lifecycle';
-import { ModuleWithProviders, Route } from '../di/public-api';
-import { Observable } from 'rxjs';
-import { Type } from '../interface/public-api';
+import { AfterAppInit, OnModuleInit } from './lifecycle.js';
+import { FsnModule } from '../di/module.js';
+import { FsnModuleMetadataFacade } from '../reflection/compiler-facade-interface.js';
+import { Inject } from '../di/inject.js';
+import { Injectable } from '../di/injectable.js';
+import { ModuleWithProviders } from '../di/public-api.js';
+import { Type } from '../interface/public-api.js';
+import { bootstrap } from './bootstrap.js';
 
 describe('Fusion-rx Dependency Injection Reflection', () => {
     /** EXTERNAL MODULE */
@@ -91,15 +90,6 @@ describe('Fusion-rx Dependency Injection Reflection', () => {
         }
     }
 
-    /** ROOT MODULE */
-    @Route({})
-    class TestRoute {
-        testEndpoint = new Observable<string>((subscriber) => {
-            subscriber.next('Hello world');
-            subscriber.complete();
-        });
-    }
-
     @Injectable()
     class StaticWithExternalDep {
         constructor(public externalWithDeps: ExternalWithDeps) {}
@@ -121,15 +111,14 @@ describe('Fusion-rx Dependency Injection Reflection', () => {
             },
             StaticWithDeps,
             StaticWithExternalDep
-        ],
-        routes: [TestRoute]
+        ]
     })
     class RootModule {}
 
     let rootModule: Type<FsnModuleMetadataFacade>;
 
     beforeAll(() => {
-        rootModule = bootstrap(RootModule);
+        rootModule = bootstrap(RootModule).root;
     });
 
     test('Can initialize a root module', () => {

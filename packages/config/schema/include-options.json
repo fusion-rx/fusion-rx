@@ -1,0 +1,17 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "RxConfig Include Options",
+    "description": "JSON Schema for `rxconfig.json` description file `include` options.",
+    "type": "object",
+    "additionalProperties": false,
+    "properties": {
+        "exports": {
+            "type": "array",
+            "description": "List the configurations to be included in the build. Defaults to including all files."
+        },
+        "replaceCore": {
+            "type": "boolean",
+            "description": "Project files should replace core configuration files instead of overloading them."
+        }
+    }
+}

@@ -1,8 +1,8 @@
-import { Type } from '../interface/public-api';
-import { DummyDecorator } from '../test';
-import { Injectable } from '../di/injectable';
-import { reflectInject } from './reflect-inject';
-import { InjectableMetadataFacade } from './compiler-facade-interface';
+import { DummyDecorator } from '../test/dummy-decorator.js';
+import { Injectable } from '../di/injectable.js';
+import { InjectableMetadataFacade } from './compiler-facade-interface.js';
+import { Type } from '../interface/public-api.js';
+import { reflectInject } from './reflect-inject.js';
 
 const valueToken = 'VALUE_TOKEN';
 

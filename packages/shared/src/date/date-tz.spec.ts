@@ -1,4 +1,4 @@
-import { DateTz, isDateTZ } from './date-tz';
+import { DateTz, isDateTZ } from './date-tz.js';
 
 describe('tz-date', () => {
     let cetDate: DateTz;

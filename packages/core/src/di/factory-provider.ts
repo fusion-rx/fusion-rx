@@ -1,5 +1,10 @@
 import { Type } from '../interface/type.js';
 
+/**
+ * Create dynamic providers.
+ *
+ * @publicApi
+ */
 export declare interface FactoryProvider {
     /**
      * A unique injection token.

@@ -1,4 +1,4 @@
-import { formatCurrency } from './currency';
+import { formatCurrency } from './currency.js';
 
 describe('Currency formatter', () => {
     test('Can format values less than one', () => {

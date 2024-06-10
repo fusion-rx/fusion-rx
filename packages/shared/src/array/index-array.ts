@@ -1,4 +1,4 @@
-import { isNonNullable } from '../type/type-check.js';
+import { isTruthy } from '../type/type-check.js';
 
 /**
  * Returns the index metadata of `ele`.
@@ -40,7 +40,5 @@ export function indexArray<T extends object>(arr: T[]) {
  * @publicApi
  */
 export function isArrayIndexed<T extends object>(arr: T[]) {
-    return arr.every((val) =>
-        isNonNullable<number>(getArrayElementIndex<T>(val))
-    );
+    return arr.every((val) => isTruthy<number>(getArrayElementIndex<T>(val)));
 }

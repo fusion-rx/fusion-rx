@@ -1,4 +1,4 @@
-import { parseString } from './parse';
+import { parseString } from './parse.js';
 
 describe('string utility', () => {
     test('Can stringify number', () => {

@@ -1,5 +1,5 @@
 import { isArrayLike, isNonNullable } from './type-check.js';
-import { quote } from '../string/index.js';
+import { quote } from '../string/public-api.js';
 
 /** Extracts the type `T` from an `Array<T>`. */
 type Unarray<T> = T extends Array<infer U> ? U : T;

@@ -1,4 +1,4 @@
-import { threeDigits } from './three-digits';
+import { threeDigits } from './three-digits.js';
 
 describe('Make three digits', () => {
     test('Can make single-digit string two digits', () => {

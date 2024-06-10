@@ -1,10 +1,9 @@
 import { Subject, filter, map } from 'rxjs';
 
-export class EventSubject<
-    T extends {
-        [key: string]: any;
-    }
-> extends Subject<Partial<T>> {
+/**
+ * An RxJS equivalent for Node's `EventEmitter`.
+ */
+export class EventSubject<T extends object> extends Subject<Partial<T>> {
     private _next = this.pipe(
         map((nextVal) => {
             if (typeof nextVal === 'object') {

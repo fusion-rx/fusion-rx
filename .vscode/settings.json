@@ -27,13 +27,11 @@
     "prettier.enable": true,
     "prettier.requireConfig": true,
     "prettier.configPath": "./.prettierrc",
-    "prettier.ignorePath": "./.prettierignore",
     "typescript.tsdk": "node_modules/typescript/lib",
     "references.preferredLocation": "peek",
     "search.followSymlinks": false,
     "search.exclude": {
         "**/node_modules": true,
-        "**/bower_components": true,
         "**/*.code-search": true,
         "**/.*": true,
         "**/dist": true

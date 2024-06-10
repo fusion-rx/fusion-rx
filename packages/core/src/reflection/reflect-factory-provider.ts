@@ -1,8 +1,8 @@
-import { InjectableMetadataFacade } from './compiler-facade-interface.js';
-import { FactoryProvider } from '../di/factory-provider.js';
-import { Type, isType } from '../interface/type.js';
-import { FsnError } from '../error/error.js';
 import { ErrorCode } from '../error/error-codes.js';
+import { FactoryProvider } from '../di/factory-provider.js';
+import { FsnError } from '../error/error.js';
+import { InjectableMetadataFacade } from './compiler-facade-interface.js';
+import { Type, isType } from '../interface/type.js';
 
 export const reflectFactoryProvider = (provider: FactoryProvider) => {
     let factoryProviderClass: Type<InjectableMetadataFacade>;

@@ -1,30 +1,31 @@
 import '../console/console.js';
 
+import { Subject } from 'rxjs';
+
+import { ErrorCode } from '../error/error-codes.js';
+import { FsnError } from '../error/error.js';
+import { FsnModule } from '../di/module.js';
 import {
     FsnModuleMetadataFacade,
-    InjectableMetadataFacade
+    InjectableMetadataFacade,
+    M
 } from '../reflection/compiler-facade-interface.js';
-import { implementsAfterAppInit, implementsOnModuleInit } from './lifecycle.js';
+import { FusionServer, HttpsServerOptions, ServerOptions } from './server.js';
 import {
     ModuleWithProviders,
     isModuleWithProviders
 } from '../di/module-with-provider.js';
 import { Type } from '../interface/type.js';
-import { FusionServer, HttpsServerOptions, ServerOptions } from './server.js';
-import { FsnError } from '../error/error.js';
-import { ErrorCode } from '../error/error-codes.js';
-import { Subject } from 'rxjs';
-import { FsnModule } from '../public-api.js';
-import { handleErrors } from '../error/error-handler.js';
 import { bootstrapRouter } from './bootstrap-route-handler.js';
+import { handleErrors } from '../error/error-handler.js';
+import { implementsAfterAppInit, implementsOnModuleInit } from './lifecycle.js';
 
+/**
+ * Emits after the application is bootstrapped.
+ *
+ * @publicApi
+ */
 export const afterAppInit = new Subject<Type<FsnModuleMetadataFacade>>();
-
-/** Alias for Type<InjectableMetadataFacade> */
-export declare type I = Type<InjectableMetadataFacade>;
-
-/** Alias for Type<FsnModuleMetadataFacade> */
-export declare type M = Type<FsnModuleMetadataFacade>;
 
 /**
  * All providers declared in the root context.
@@ -34,46 +35,21 @@ const rootProviders: {
 } = {};
 
 /**
- * The name of the root module; used to determine when
- * `afterAppInit` lifecycle hook should be invoked.
- */
-let rootModuleToken: string;
-
-/**
  * The initial options set in `bootstrap`.
  */
 export let initOptions: Partial<ServerOptions> | HttpsServerOptions;
 
 /**
- * Defines the metadata of a class decorated with `@FsnModule`.
- * @param rootModule A class decorated with `@FsnModule`
- * @param options
+ * Converts a `ModuleWithProviders` to a class decorated with `@FusionModule`.
+ * @param module A class decorated with `@FsnModule` or a `ModuleWithProviders`.
+ * @returns Either the class decorated with `@FsnModule` or a dynamic class
+ * decorated with the metadata of a `ModuleWithProviders`
  */
-export const bootstrap = (
-    rootModule: Type<any> | ModuleWithProviders,
-    options?: Partial<ServerOptions> | HttpsServerOptions
-) => {
-    let server: FusionServer | undefined;
-    // @todo - we only want to create the fusion server if the user
-    // has asked for it. Figure out how to do this.
-    server = new FusionServer();
+export const evaluateDeclaredModule = (
+    module: Type<any> | ModuleWithProviders
+): M => {
+    if (!isModuleWithProviders(module)) return module;
 
-    const useErrorHandler = options?.exitOnUncaught ?? false;
-    if (useErrorHandler === false) {
-        handleErrors({
-            exitOnUncaught: false
-        });
-    }
-
-    const type = bootstrapModule(rootModule);
-    afterAppInit.next(type);
-
-    server?.listen(options);
-
-    return { root: type, server };
-};
-
-export const bootstrapModuleWithProviders = (module: ModuleWithProviders) => {
     @FsnModule({
         exports: module.exports,
         imports: module.imports,
@@ -85,14 +61,61 @@ export const bootstrapModuleWithProviders = (module: ModuleWithProviders) => {
     return <M>Module;
 };
 
-export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
-    const type: Type<FsnModuleMetadataFacade> = isModuleWithProviders(module)
-        ? bootstrapModuleWithProviders(module)
-        : module;
+/**
+ * Defines the metadata of a class decorated with `@FsnModule`.
+ * @param rootModule A class decorated with `@FsnModule`
+ * @param options
+ *
+ * @publicApi
+ */
+export const bootstrap = (
+    rootModule: Type<any> | ModuleWithProviders,
+    options?: Partial<ServerOptions> | HttpsServerOptions
+) => {
+    // @todo We only want to init `server` if the user has asked for it.
+    let server: FusionServer | undefined;
+    server = new FusionServer();
 
+    const useErrorHandler = options?.exitOnUncaught ?? false;
+    if (useErrorHandler === false) {
+        handleErrors({
+            exitOnUncaught: false
+        });
+    }
+
+    const root = bootstrapModule(evaluateDeclaredModule(rootModule));
+    afterAppInit.next(root);
+
+    // If we've reached this point, all modules and providers in the application
+    // have been initialized, so we can invoke the `afterAppInit` lifecycle hook
+    // on all modules and providers that implement it.
+    const invokeAfterAppInit = (moduleRef: Type<FsnModuleMetadataFacade>) => {
+        // Call `afterAppInit` on all providers that implement the
+        // `AfterAppInit` interface
+        Object.values(moduleRef.prototype.providers).forEach((provider) => {
+            if (implementsAfterAppInit(provider.prototype.instance)) {
+                provider.prototype.instance.fsnAfterAppInit();
+            }
+        });
+
+        // Recursively call `afterAppInit` on all providers declared
+        // by this module's imports
+        Object.values(moduleRef.prototype.imports).forEach((imported) => {
+            invokeAfterAppInit(imported);
+        });
+    };
+
+    // Check for `afterAppInit` lifecycle hook in root module
+    // providers and imported modules
+    invokeAfterAppInit(root);
+
+    server?.listen(options);
+    return { root, server };
+};
+
+export const bootstrapModule = (type: M) => {
+    /** This module's token. */
     const token = type.prototype.token;
-
-    if (!rootModuleToken) rootModuleToken = token;
 
     /** Providers that were imported via other modules. */
     const importedProviders: Record<
@@ -102,7 +125,7 @@ export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
 
     // Bootstrap imported modules
     Object.values(type.prototype.imports).forEach((imported) => {
-        bootstrapModule(imported);
+        bootstrapModule(evaluateDeclaredModule(imported));
 
         // Detect circular module dependency
         if (Object.keys(imported.prototype.imports).includes(token)) {
@@ -226,6 +249,9 @@ export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
         );
     };
 
+    /**
+     * All providers and routes declared in this module.
+     */
     const providers = {
         ...(type.prototype.providers ?? {}),
         ...(type.prototype.routes ?? {})
@@ -257,33 +283,6 @@ export const bootstrapModule = (module: Type<any> | ModuleWithProviders) => {
             provider.prototype.instance.fsnOnModuleInit();
         }
     });
-
-    // If we've reached this point, all modules and providers in the application
-    // have been initialized, so we can invoke the `afterAppInit` lifecycle hook
-    // on all modules and providers that implement it.
-    if (token === rootModuleToken) {
-        const invokeAfterAppInit = (
-            moduleRef: Type<FsnModuleMetadataFacade>
-        ) => {
-            // Call `afterAppInit` on all providers that implement the
-            // `AfterAppInit` interface
-            Object.values(moduleRef.prototype.providers).forEach((provider) => {
-                if (implementsAfterAppInit(provider.prototype.instance)) {
-                    provider.prototype.instance.fsnAfterAppInit();
-                }
-            });
-
-            // Recursively call `afterAppInit` on all providers declared
-            // by this module's imports
-            Object.values(moduleRef.prototype.imports).forEach((imported) => {
-                invokeAfterAppInit(imported);
-            });
-        };
-
-        // Check for `afterAppInit` lifecycle hook in root module
-        // providers and imported modules
-        invokeAfterAppInit(type);
-    }
 
     return type;
 };

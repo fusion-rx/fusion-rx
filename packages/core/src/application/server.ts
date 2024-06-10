@@ -1,8 +1,9 @@
+import chalk from 'chalk';
 import express, { Express } from 'express';
 import http from 'http';
 import https from 'https';
+
 import { registerOnExitEvent } from '../error/error-handler.js';
-import chalk from 'chalk';
 
 export declare type ServerOptions = {
     port: number | string;

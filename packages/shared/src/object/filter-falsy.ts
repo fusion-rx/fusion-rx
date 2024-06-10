@@ -1,16 +1,16 @@
-import { isNullable } from '../type/type-check.js';
+import { isFalsy } from '../type/type-check.js';
 import { forEachKey } from './for-each-key.js';
 
 /**
  * Filters null values from an object.
  * @param val An object
- * @returns `val` with all null values removed
+ * @returns `val` with all falsy values removed
  *
  * @publicApi
  */
-export const filterNullValues = <T extends object>(val: T) => {
+export const filterFalsy = <T extends object>(val: T) => {
     forEachKey(val, (v, key) => {
-        if (isNullable(v)) {
+        if (isFalsy(v)) {
             delete val[key];
         }
     });

@@ -1,4 +1,4 @@
-import { formatCamelCase } from './camel-case';
+import { formatCamelCase } from './camel-case.js';
 
 describe('Format camel case', () => {
     const cc = 'loremIpsumDolorSitAmet';

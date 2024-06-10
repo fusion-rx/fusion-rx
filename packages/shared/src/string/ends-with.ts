@@ -1,5 +1,20 @@
+/**
+ * Evaluates whether `val` ends with with `token`
+ * @param val A string to search
+ * @param token A regular express used to evaluate whether `val`
+ * ends with a value
+ *
+ * @publicApi
+ */
 export function endsWith(val: string, token: RegExp): boolean;
 
+/**
+ * Evaluates whether `val` ends with `token`
+ * @param val A string to search
+ * @param token A token or array of tokens that might be at the ends of `val`
+ *
+ * @publicApi
+ */
 export function endsWith(
     val: string,
     token: string[] | string,

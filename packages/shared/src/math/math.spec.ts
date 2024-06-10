@@ -1,4 +1,4 @@
-import { FsnMath } from './math';
+import { FsnMath } from './math.js';
 
 describe('Rounding', () => {
     test('Can round to preicision of 3', () => {

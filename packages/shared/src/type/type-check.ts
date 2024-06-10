@@ -61,7 +61,7 @@ export const isBlob = (value: any): value is Blob =>
 export const isConvertibleToArray = (val: any) => {
     // Strings are convertable to arrays, but that's not generally
     // desired behavior.
-    if (isNullable(val) || typeof val === 'string') return false;
+    if (isFalsy(val) || typeof val === 'string') return false;
 
     if (typeof val === 'object' && ('length' in val || 'size' in val)) {
         return true;
@@ -79,7 +79,7 @@ export const isConvertibleToArray = (val: any) => {
  * Safely assert whether the given value is a Date.
  */
 export const isDate = (val: any): val is Date =>
-    isNonNullable<Date>(val) && typeof val.getDate === 'function';
+    isTruthy<Date>(val) && typeof val.getDate === 'function';
 
 /**
  * Safely assert whether the given value is a FormData instance.
@@ -93,7 +93,7 @@ export const isFormData = (value: any): value is FormData =>
  * Safely assert whether the given value is a function.
  */
 export function isFunction(value: unknown): value is (...args: any[]) => any {
-    return isNonNullable<any>(value) && typeof value === 'function';
+    return isTruthy<any>(value) && typeof value === 'function';
 }
 
 /**
@@ -101,14 +101,14 @@ export function isFunction(value: unknown): value is (...args: any[]) => any {
  * JavaScript error.
  */
 export const isNativeError = (e: any): e is Error =>
-    isNonNullable(e) && typeof e === 'object' && 'message' in e && 'name' in e;
+    isTruthy(e) && typeof e === 'object' && 'message' in e && 'name' in e;
 
 /**
  * Safely assert whether the given valus is an object that is
  * not null or undefined.
  */
 export function isNonNullObject<T>(val: T | Nullable): val is NonNullable<T> {
-    return isNonNullable<T>(val) && typeof val === 'object';
+    return isTruthy<T>(val) && typeof val === 'object';
 }
 
 /**
@@ -116,7 +116,7 @@ export function isNonNullObject<T>(val: T | Nullable): val is NonNullable<T> {
  */
 export function isObserver<T>(value: any): value is Observer<T> {
     return (
-        value &&
+        isTruthy(value) &&
         isFunction(value.next) &&
         isFunction(value.error) &&
         isFunction(value.complete)
@@ -128,7 +128,7 @@ export function isObserver<T>(value: any): value is Observer<T> {
  */
 export function isObjectKey<T>(val: unknown): val is keyof T {
     return (
-        (isNonNullable<any> && typeof val === 'string') ||
+        (isTruthy<any> && typeof val === 'string') ||
         typeof val === 'symbol' ||
         typeof val === 'number'
     );
@@ -176,7 +176,7 @@ export function isSubscription(value: any): value is Subscription {
 export function isUnaryFunction<T = any, A = any>(
     val: unknown
 ): val is UnaryFunction<T, A> {
-    return val !== undefined && val !== null && typeof val === 'function';
+    return isTruthy(val) && typeof val === 'function';
 }
 
 /**
@@ -229,36 +229,36 @@ export function isNullable(value: unknown): value is Nullable {
  * Safely assert whether the given value is a parsable boolean.
  */
 export const isParsableBoolean = (val: any): boolean =>
-    val !== undefined && val !== null && (val === 'true' || val === 'false');
+    isTruthy(val) && (val === 'true' || val === 'false');
 
 /**
  * Safely assert whether the given value is a parsable date.
  */
-export const isParsableDate = (str: any): boolean => !isNaN(Date.parse(str));
+export const isParsableDate = (str: any): boolean =>
+    isTruthy(str) && !isNaN(Date.parse(str));
 
 /**
  * Safely assert whether the given value is a parsable float.
  */
 export const isParsableFloat = (val: any): boolean =>
-    new RegExp('(^[1-9]{1,}).([1-9]{1,}$)', 'g').test(val);
+    isTruthy(val) && new RegExp('(^[1-9]{1,}).([1-9]{1,}$)', 'g').test(val);
 
 /**
  * Safely assert whether the given value is a parsable integer.
  */
 export const isParsableInteger = (val: any): boolean =>
-    new RegExp('^[1-9]{1,}$', 'g').test(val);
+    isTruthy(val) && new RegExp('^[1-9]{1,}$', 'g').test(val);
 
 const wrappedWithBraces = (val: string) =>
-    val.startsWith('{') && val.endsWith('}');
+    isTruthy(val) && val.startsWith('{') && val.endsWith('}');
 
 const wrappedWithBrackets = (val: string) =>
-    val.startsWith('[') && val.endsWith(']');
+    isTruthy(val) && val.startsWith('[') && val.endsWith(']');
 
 /**
  * Safely assert whether the given value is a parsable JSON object.
  */
 export const isParsableJSON = (val: any): boolean =>
-    val !== undefined &&
-    val !== null &&
+    isTruthy(val) &&
     typeof val === 'string' &&
     (wrappedWithBraces(val) || wrappedWithBrackets(val));

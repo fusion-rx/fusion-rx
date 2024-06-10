@@ -1,0 +1,35 @@
+{
+    "$schema": "http://json-schema.org/draft-04/schema#",
+    "title": "RxConfig",
+    "description": "JSON Schema for `rxconfig.json` description file.",
+    "type": "object",
+    "properties": {
+        "name": {
+            "type": "string",
+            "description": "The name of the project."
+        },
+        "version": {
+            "type": "string",
+            "description": "The version of the built configuration"
+        },
+        "compilerOptions": {
+            "$ref": "compiler-options.json"
+        },
+        "include": {
+            "type": "object",
+            "description": "Specify configurations to be included in the build, where keys are module names.",
+            "additionalProperties": {
+                "type": "object",
+                "$ref": "./include-options.json"
+            }
+        },
+        "assets": {
+            "type": "array",
+            "description": "Specify asset collections to include in the build.",
+            "items": {
+                "type": "object",
+                "$ref": "./asset-options.json"
+            }
+        }
+    }
+}

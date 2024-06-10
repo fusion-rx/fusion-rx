@@ -1,4 +1,4 @@
-import { prependZeros } from './prepend-zeros';
+import { prependZeros } from './prepend-zeros.js';
 
 describe('Prepend zeros', () => {
     test('Can add four zeros', () => {

@@ -4,7 +4,7 @@
     "description": "Provides core functionality for FusionRx packages.",
     "author": "Alexander Porrello",
     "license": "MIT",
-    "main": "public-api.js",
+    "main": "src/public-api.js",
     "type": "module",
     "scripts": {
         "build": "npx parcel build",
@@ -13,11 +13,11 @@
         "test:cov": "jest --coverage"
     },
     "dependencies": {
-        "@fusion-rx/shared": "0.1.0",
         "reflect-metadata": "^0.1.13",
-        "rxjs": "^7.5.0"
+        "rxjs": "^7.5.0",
+        "split2": "^4.2.0"
     },
     "devDependencies": {
-        "@types/qs": "^6.9.10"
+        "@types/split2": "^4.2.3"
     }
 }

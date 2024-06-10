@@ -1,4 +1,12 @@
-export function digitToText(digit: number) {
+/**
+ * Returns the word form of a number, such as `2 => two`,
+ * `7 => seven`.
+ * @param num A number to convert to its word form
+ * @returns The tens word form of `num`
+ *
+ * @publicApi
+ */
+export function digitToWord(digit: number) {
     switch (digit) {
         case 0:
             return 'zero';
