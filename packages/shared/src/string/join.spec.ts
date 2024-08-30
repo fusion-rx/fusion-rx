@@ -31,4 +31,19 @@ describe('Join URL', () => {
         });
         expect(url).toEqual('api/test?query=value');
     });
+
+    test('Can join params with numbers, booleans, arrays', () => {
+        const url = joinURL('api', 'test', {
+            query: 'value',
+            query2: 23,
+            query3: true,
+            query4: ['hello', 'world']
+        });
+
+        const comma = '%2C';
+
+        expect(url).toEqual(
+            `api/test?query=value&query2=23&query3=true&query4=hello${comma}world`
+        );
+    });
 });

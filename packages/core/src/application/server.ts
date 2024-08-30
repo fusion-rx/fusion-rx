@@ -17,7 +17,7 @@ export declare type HttpsServerOptions = Partial<ServerOptions> & {
     cert: string;
 };
 
-const isHttpsServerOptions = (val: any): val is HttpsServerOptions => {
+export const isHttpsServerOptions = (val: any): val is HttpsServerOptions => {
     return (
         val !== undefined &&
         val !== null &&

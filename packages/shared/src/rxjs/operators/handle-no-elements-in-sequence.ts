@@ -1,5 +1,5 @@
 import { of } from 'rxjs';
-import { isNativeError } from 'util/types';
+import { isNativeError } from '../../type/type-check.js';
 
 /**
  * Handles cases in observables where it is valid for no data to be returned,

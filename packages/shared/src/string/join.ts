@@ -1,5 +1,4 @@
 import { isTruthy, parseString } from '../type/public-api.js';
-import qs from 'querystring';
 
 /**
  * Delimits an array of values with spaces.
@@ -260,21 +259,17 @@ export function joinURL(...urlSegments: any[]): string {
         .flatMap((segment) => segment);
 
     const finalArg = urlSegments.pop();
-    let toReturn: string;
 
     if (typeof finalArg === 'string') {
-        toReturn = joinWith('/', ...urlSegments, finalArg);
-    } else {
-        for (let key of Object.keys(finalArg)) {
-            if (!isTruthy<any>(finalArg[key])) {
-                delete finalArg[key];
-            } else if (Array.isArray(finalArg[key])) {
-                finalArg[key] = finalArg[key].join(',');
-            }
-        }
-
-        toReturn = joinWith('/', ...urlSegments) + '?' + qs.stringify(finalArg);
+        return joinWith('/', ...urlSegments, finalArg);
     }
 
-    return toReturn;
+    const params = new URLSearchParams();
+
+    Object.keys(finalArg).forEach((key) => {
+        if (!isTruthy(finalArg[key])) return;
+        params.set(key, finalArg[key]);
+    });
+
+    return joinWith('/', ...urlSegments) + '?' + params.toString();
 }

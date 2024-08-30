@@ -3,5 +3,8 @@
     "compilerOptions": {
         "sourceRoot": "app",
         "outDir": "../../dist/example"
-    }
+    },
+    "include": [
+        "app/main.js"
+    ]
 }
