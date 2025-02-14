@@ -1,5 +1,5 @@
 {
-    "name": "@fusion-rx/shared",
+    "name": "@fsnjs/shared",
     "version": "0.1.0",
     "description": "Provides functionality shared between all Fusion packages.",
     "author": "Alexander Porrello",

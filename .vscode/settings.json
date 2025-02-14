@@ -36,12 +36,7 @@
         "**/.hg": true,
         "**/CVS": true,
         "**/.DS_Store": true,
-        "**/Thumbs.db": true,
-        "**/common": true,
-        "**/config": true,
-        "**/core": true,
-        "**/example": true,
-        "**/test": true
+        "**/Thumbs.db": true
     },
     "search.exclude": {
         "**/node_modules": true,

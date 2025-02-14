@@ -27,7 +27,7 @@
                 "build": {
                     "builder": "tsc",
                     "options": {
-                        "outputPath": "dist",
+                        "outputPath": "dist/shared",
                         "main": "public-api.ts",
                         "tsConfig": "tsconfig.build.json"
                     }
@@ -59,6 +59,21 @@
                     "options": {
                         "outputPath": "dist",
                         "main": "public-api.ts",
+                        "tsConfig": "tsconfig.build.json"
+                    }
+                }
+            }
+        },
+        "truthy": {
+            "projectType": "library",
+            "root": "packages/truthy",
+            "sourceRoot": "packages/truthy",
+            "architect": {
+                "build": {
+                    "builder": "tsc",
+                    "options": {
+                        "outputPath": "dist/truthy",
+                        "main": "index.ts",
                         "tsConfig": "tsconfig.build.json"
                     }
                 }
